@@ -157,6 +157,7 @@ Transform:
   m_Children:
   - {fileID: 963194228}
   - {fileID: 1184946048}
+  - {fileID: 1166875189}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &69857197
@@ -391,6 +392,67 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &496492890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 496492891}
+  - component: {fileID: 496492892}
+  m_Layer: 0
+  m_Name: Pistol
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &496492891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496492890}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1166875189}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &496492892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496492890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30f2b1254b833c94cb4d917b2de07343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: Unnamed Weapon
+  damage: 10
+  fireRate: 5
+  audioSource: {fileID: 0}
+  shootSound: {fileID: 0}
+  fpsCamera: {fileID: 963194227}
+  muzzlePoint: {fileID: 1130995930}
+  muzzleFlash: {fileID: 0}
+  impactPrefab: {fileID: 823792228608533002, guid: d4f80ee1afbbb7841bcaf7877ac5c886, type: 3}
+  tracerPrefab: {fileID: 0}
+  range: 100
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  impactForce: 50
+  impactLife: 5
+  tracerDuration: 0.03
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,6 +547,64 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &814696880
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 814696881}
+  - component: {fileID: 814696882}
+  m_Layer: 0
+  m_Name: Sniper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &814696881
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 814696880}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1166875189}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &814696882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 814696880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1eb143acb7bd084e82b3e595a5f3bdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: Unnamed Weapon
+  damage: 10
+  fireRate: 1
+  audioSource: {fileID: 0}
+  shootSound: {fileID: 0}
+  fpsCamera: {fileID: 963194227}
+  muzzlePoint: {fileID: 1130995930}
+  muzzleFlash: {fileID: 0}
+  impactPrefab: {fileID: 823792228608533002, guid: d4f80ee1afbbb7841bcaf7877ac5c886, type: 3}
+  range: 1000
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  impactLife: 5
 --- !u!850595691 &828320763
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -811,6 +931,88 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1130995929
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1130995930}
+  m_Layer: 0
+  m_Name: BulletSpwn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1130995930
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130995929}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.35, y: 0, z: 0.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1184946048}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1166875188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1166875189}
+  - component: {fileID: 1166875190}
+  m_Layer: 0
+  m_Name: WeaponHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1166875189
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166875188}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 496492891}
+  - {fileID: 2037854703}
+  - {fileID: 814696881}
+  m_Father: {fileID: 69857195}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1166875190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166875188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51aed7c34c8c259438aa6c8ba6b0839f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons:
+  - {fileID: 496492892}
+  - {fileID: 2037854704}
+  - {fileID: 814696882}
 --- !u!1 &1184946047
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,6 +1024,7 @@ GameObject:
   - component: {fileID: 1184946048}
   - component: {fileID: 1184946051}
   - component: {fileID: 1184946050}
+  - component: {fileID: 1184946052}
   m_Layer: 0
   m_Name: PlayerBody
   m_TagString: Untagged
@@ -841,7 +1044,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1130995930}
   m_Father: {fileID: 69857195}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1184946050
@@ -894,6 +1098,35 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1184946047}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1184946052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184946047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30f2b1254b833c94cb4d917b2de07343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: Unnamed Weapon
+  damage: 25
+  fireRate: 6
+  audioSource: {fileID: 0}
+  shootSound: {fileID: 0}
+  fpsCamera: {fileID: 963194227}
+  muzzlePoint: {fileID: 1130995930}
+  muzzleFlash: {fileID: 0}
+  impactPrefab: {fileID: 823792228608533002, guid: d4f80ee1afbbb7841bcaf7877ac5c886, type: 3}
+  tracerPrefab: {fileID: 0}
+  range: 100
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  impactForce: 50
+  impactLife: 5
+  tracerDuration: 0.03
 --- !u!1 &1304615733
 GameObject:
   m_ObjectHideFlags: 0
@@ -1572,6 +1805,58 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &2037854702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2037854703}
+  - component: {fileID: 2037854704}
+  m_Layer: 0
+  m_Name: RocketLauncher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2037854703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037854702}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1166875189}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2037854704
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037854702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7130d69aa199c44bb8c66bf3db630ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: Unnamed Weapon
+  damage: 10
+  fireRate: 5
+  audioSource: {fileID: 0}
+  shootSound: {fileID: 0}
+  muzzlePoint: {fileID: 1130995930}
+  rocketPrefab: {fileID: 823792228608533002, guid: d4f80ee1afbbb7841bcaf7877ac5c886, type: 3}
+  rocketSpeed: 50
 --- !u!1 &2140576733
 GameObject:
   m_ObjectHideFlags: 0
