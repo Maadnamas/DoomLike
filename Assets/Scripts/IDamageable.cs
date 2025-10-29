@@ -1,7 +1,7 @@
 public interface IDamageable
 {
     /// <summary>
-    /// Aplica daño. Devuelve true si el objeto murió (o si quieres reaccionar).
+    /// Aplica dao. Devuelve true si el objeto murió (o si quieres reaccionar).
     /// </summary>
     /// <param name="amount">Cantidad de daño a aplicar.</param>
     /// <param name="hitPoint">Punto del impacto (opcional).</param>
