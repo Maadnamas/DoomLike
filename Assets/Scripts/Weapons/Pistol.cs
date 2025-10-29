@@ -27,18 +27,20 @@ public class Pistol : WeaponBase
         RaycastHit hit;
         if (Physics.Raycast(origin, dir, out hit, range, hitMask, QueryTriggerInteraction.Ignore))
         {
-            if (impactPrefab)
+            IDamageable dmg = hit.collider.GetComponentInParent<IDamageable>();
+            if (dmg != null)
+                dmg.TakeDamage(damage, hit.point, hit.normal);
+            else
+                        if (impactPrefab)
             {
                 GameObject fx = Instantiate(impactPrefab, hit.point + hit.normal * 0.01f, Quaternion.LookRotation(hit.normal));
                 Destroy(fx, impactLife);
             }
 
+
+
             if (hit.rigidbody != null)
                 hit.rigidbody.AddForceAtPosition(dir * impactForce, hit.point, ForceMode.Impulse);
-
-            IDamageable dmg = hit.collider.GetComponentInParent<IDamageable>();
-            if (dmg != null)
-                dmg.TakeDamage(damage, hit.point, hit.normal);
 
             if (tracerPrefab && muzzlePoint)
                 StartCoroutine(SpawnTracer(muzzlePoint.position, hit.point));
@@ -47,6 +49,8 @@ public class Pistol : WeaponBase
         {
             StartCoroutine(SpawnTracer(muzzlePoint.position, origin + dir * range));
         }
+
+        currentAmmo --;
     }
 
     IEnumerator SpawnTracer(Vector3 from, Vector3 to)

@@ -29,5 +29,7 @@ public class SniperRifle : WeaponBase
             if (dmg != null)
                 dmg.TakeDamage(damage, hit.point, hit.normal);
         }
+
+        currentAmmo--;
     }
 }

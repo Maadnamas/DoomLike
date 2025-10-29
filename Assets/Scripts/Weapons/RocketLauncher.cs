@@ -14,12 +14,14 @@ public class RocketLauncher : WeaponBase
 
         if (rocketPrefab && muzzlePoint)
         {
-            
+
             Vector3 shootDir = fpsCamera ? fpsCamera.transform.forward : muzzlePoint.forward;
 
             GameObject rocket = Instantiate(rocketPrefab, muzzlePoint.position, Quaternion.LookRotation(shootDir));
             Rigidbody rb = rocket.GetComponent<Rigidbody>();
             if (rb) rb.velocity = shootDir * rocketSpeed;
         }
+
+        currentAmmo --;
     }
 }

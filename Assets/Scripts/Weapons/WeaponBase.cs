@@ -12,18 +12,21 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected AudioClip shootSound;
     [SerializeField] protected Camera fpsCamera;
     [SerializeField] protected Animator animator;
+    [SerializeField] protected int MaxAmmo;
+    public int currentAmmo;
 
     protected float nextTimeToFire;
 
     protected virtual void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-        animator = GetComponent<Animator>(); 
+        animator = GetComponent<Animator>();
+        currentAmmo = MaxAmmo;
     }
 
     public virtual void TryShoot()
     {
-        if (Time.time >= nextTimeToFire)
+        if (Time.time >= nextTimeToFire && currentAmmo > 0)
         {
             nextTimeToFire = Time.time + 1f / fireRate;
             Shoot();
@@ -40,5 +43,14 @@ public abstract class WeaponBase : MonoBehaviour
     public virtual void SetActive(bool active)
     {
         gameObject.SetActive(active);
+    }
+
+    public virtual void AddAmmo(int ammoAmmount)
+    {
+        currentAmmo += ammoAmmount;
+        if (currentAmmo > MaxAmmo)
+        {
+            currentAmmo = MaxAmmo;
+        }
     }
 }

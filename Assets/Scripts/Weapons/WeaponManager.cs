@@ -6,7 +6,8 @@ public class WeaponManager : MonoBehaviour
 {
     [Header("Weapons")]
     public WeaponBase[] weapons;
-    private int currentIndex = 0;
+    public int currentIndex = 0;
+    public int currentweaponammo = 0;
 
     [Header("UI")]
     public Image weaponImage;
@@ -38,6 +39,11 @@ public class WeaponManager : MonoBehaviour
         if (Input.GetButton("Fire1"))
         {
             weapons[currentIndex].TryShoot();
+        }
+
+        if (currentIndex != 0)
+        {
+            currentweaponammo = weapons[currentIndex].currentAmmo;
         }
     }
 
@@ -82,5 +88,10 @@ public class WeaponManager : MonoBehaviour
         }
 
         isTransitioning = false;
+    }
+
+    public void ReloadAmmo(int ammoType, int ammoAmount)
+    {
+        weapons[ammoType+1].AddAmmo(ammoAmount);
     }
 }
