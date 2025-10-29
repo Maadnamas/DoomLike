@@ -4,18 +4,16 @@ using System.Collections;
 public class Pistol : WeaponBase
 {
     [Header("References")]
-    public Camera fpsCamera;
-    public Transform muzzlePoint;
-    public ParticleSystem muzzleFlash;
-    public GameObject impactPrefab;
-    public LineRenderer tracerPrefab;
+    [SerializeField] private ParticleSystem muzzleFlash;
+    [SerializeField] private GameObject impactPrefab;
+    [SerializeField] private LineRenderer tracerPrefab;
 
     [Header("Settings")]
-    public float range = 100f;
-    public LayerMask hitMask = ~0;
-    public float impactForce = 50f;
-    public float impactLife = 5f;
-    public float tracerDuration = 0.03f;
+    [SerializeField]  float range = 100f;
+    [SerializeField]  LayerMask hitMask = ~0;
+    [SerializeField]  float impactForce = 50f;
+    [SerializeField]  float impactLife = 5f;
+    [SerializeField]  float tracerDuration = 0.03f;
 
     protected override void Shoot()
     {

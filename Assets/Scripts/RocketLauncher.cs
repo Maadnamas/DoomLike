@@ -3,9 +3,9 @@ using UnityEngine;
 public class RocketLauncher : WeaponBase
 {
     [Header("References")]
-    public Transform muzzlePoint;
-    public GameObject rocketPrefab;
-    public float rocketSpeed = 50f;
+
+    [SerializeField] protected GameObject rocketPrefab;
+    [SerializeField] protected float rocketSpeed = 50f;
 
     protected override void Shoot()
     {
@@ -14,9 +14,12 @@ public class RocketLauncher : WeaponBase
 
         if (rocketPrefab && muzzlePoint)
         {
-            GameObject rocket = Instantiate(rocketPrefab, muzzlePoint.position, muzzlePoint.rotation);
+            
+            Vector3 shootDir = fpsCamera ? fpsCamera.transform.forward : muzzlePoint.forward;
+
+            GameObject rocket = Instantiate(rocketPrefab, muzzlePoint.position, Quaternion.LookRotation(shootDir));
             Rigidbody rb = rocket.GetComponent<Rigidbody>();
-            if (rb) rb.velocity = muzzlePoint.forward * rocketSpeed;
+            if (rb) rb.velocity = shootDir * rocketSpeed;
         }
     }
 }

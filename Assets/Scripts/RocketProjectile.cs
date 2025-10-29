@@ -4,15 +4,15 @@ using UnityEngine;
 public class RocketProjectile : MonoBehaviour
 {
     [Header("Rocket Settings")]
-    public float speed = 50f;                // Velocidad hacia adelante
-    public float spiralAmplitude = 0.2f;     // Amplitud del movimiento circular
-    public float spiralFrequency = 10f;      // Frecuencia del movimiento circular
-    public float lifeTime = 5f;              // Tiempo antes de autodestruirse
+    [SerializeField] float speed = 50f;                
+    [SerializeField] float spiralAmplitude = 0.2f;     
+    [SerializeField] float spiralFrequency = 10f;      
+    [SerializeField] float lifeTime = 5f;              
 
     [Header("Explosion Settings")]
-    public float explosionRadius = 5f;       // Radio de daño en área
-    public float explosionDamage = 50f;      // Daño en área
-    public GameObject explosionEffect;       // Partícula opcional al explotar
+    [SerializeField] float explosionRadius = 5f;       
+    [SerializeField] float explosionDamage = 50f;      
+    [SerializeField] GameObject explosionEffect;       
 
     private Rigidbody rb;
     private Vector3 startPosition;
@@ -49,7 +49,14 @@ public class RocketProjectile : MonoBehaviour
     {
         // Instancia efecto visual
         if (explosionEffect)
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        {
+            GameObject effect = Instantiate(explosionEffect, transform.position, Quaternion.identity);
+            var ps = effect.GetComponent<ParticleSystem>();
+            if (ps != null)
+                Destroy(effect, ps.main.duration);
+            else
+                Destroy(effect, 2f); // por si acaso
+        }
 
         // Busca objetos en el radio
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius);

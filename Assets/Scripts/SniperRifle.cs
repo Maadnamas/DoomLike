@@ -3,13 +3,11 @@ using UnityEngine;
 public class SniperRifle : WeaponBase
 {
     [Header("References")]
-    public Camera fpsCamera;
-    public Transform muzzlePoint;
-    public ParticleSystem muzzleFlash;
-    public GameObject impactPrefab;
-    public float range = 1000f;
-    public LayerMask hitMask = ~0;
-    public float impactLife = 5f;
+    [SerializeField]  ParticleSystem muzzleFlash;
+    [SerializeField]  GameObject impactPrefab;
+    [SerializeField]  float range = 1000f;
+    [SerializeField]  LayerMask hitMask = ~0;
+    [SerializeField] float impactLife = 5f;
 
     protected override void Shoot()
     {
