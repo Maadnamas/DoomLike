@@ -12,7 +12,7 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected AudioClip shootSound;
     [SerializeField] protected Camera fpsCamera;
     [SerializeField] protected Animator animator;
-    [SerializeField] protected int MaxAmmo;
+    [SerializeField] public int MaxAmmo;
     public int currentAmmo;
 
     protected float nextTimeToFire;

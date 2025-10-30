@@ -90,8 +90,13 @@ public class WeaponManager : MonoBehaviour
         isTransitioning = false;
     }
 
-    public void ReloadAmmo(int ammoType, int ammoAmount)
+    public bool ReloadAmmo(int ammoType, int ammoAmount)
     {
-        weapons[ammoType+1].AddAmmo(ammoAmount);
+        if (weapons[ammoType].currentAmmo < weapons[ammoType].MaxAmmo)
+        {
+            weapons[ammoType].AddAmmo(ammoAmount);
+            return true;
+        }
+        else return false;
     }
 }

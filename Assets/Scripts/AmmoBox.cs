@@ -24,8 +24,11 @@ public class AmmoBox : MonoBehaviour, ICollectable
         WeaponManager pj = other.gameObject.GetComponentInChildren<WeaponManager>();
         if (pj != null)
         {
-            pj.ReloadAmmo((int)m_AmmoType, m_AmmoCount);
-            Collect();
+            if (pj.ReloadAmmo(((int)m_AmmoType+1), m_AmmoCount))
+            {
+                Collect();
+            }
+
         }
     }
 }
