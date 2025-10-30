@@ -31,7 +31,7 @@ public class EructoSystemm : MonoBehaviour
     {
         burpTimer -= Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.E) && burpTimer <= 0f)
+        if (Input.GetKeyDown(KeyCode.C) && burpTimer <= 0f)
         {
             Burp();
             burpTimer = burpCooldown;
