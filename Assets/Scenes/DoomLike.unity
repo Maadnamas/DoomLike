@@ -396,9 +396,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   burpSmokePrefab: {fileID: 7477376247269608055, guid: f2302e962716cb14fbf4bf5316b42196, type: 3}
-  burpSound: {fileID: 0}
+  burpSounds:
+  - {fileID: 8300000, guid: 29735dbaefefe7244bce8840e853e0ff, type: 3}
+  - {fileID: 8300000, guid: 7ae3c927daa766f48afaf3cfcf4b1290, type: 3}
+  - {fileID: 8300000, guid: f4a7a710567474149a5f4ad11b2a1cb8, type: 3}
+  - {fileID: 8300000, guid: e8382af70619cf445955fbf22bdfba2b, type: 3}
   burpCooldown: 3
-  spawnDistance: 1
+  spawnDistance: 0.9
+  minPitch: 0.85
+  maxPitch: 1.05
 --- !u!1 &331708536
 GameObject:
   m_ObjectHideFlags: 0

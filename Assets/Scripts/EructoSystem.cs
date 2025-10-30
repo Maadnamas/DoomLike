@@ -5,17 +5,22 @@ using UnityEngine;
 public class EructoSystemm : MonoBehaviour
 {
     [Header("eructo setins")]
-    public GameObject burpSmokePrefab;  
+    public GameObject burpSmokePrefab;      
 
-    public AudioClip burpSound;  
+    public AudioClip[] burpSounds;          
+
+    public float burpCooldown = 3f;      
     
-    public float burpCooldown = 3f;
-
-    public float spawnDistance = 1f;
+    public float spawnDistance = 1f;        
 
     private float burpTimer = 0f;
-
     private AudioSource audioSource;
+
+    [Header("Pitch stenigns")]
+    public float minPitch = 0.95f;         
+
+    public float maxPitch = 1.05f;           
+
 
     void Start()
     {
@@ -35,18 +40,23 @@ public class EructoSystemm : MonoBehaviour
 
     void Burp()
     {
-
         if (burpSmokePrefab)
         {
             Vector3 spawnPos = transform.position + transform.forward * spawnDistance;
+
             GameObject smoke = Instantiate(burpSmokePrefab, spawnPos, Quaternion.identity);
             Destroy(smoke, 2f);
         }
 
-        if (burpSound)
+
+        if (burpSounds != null && burpSounds.Length > 0)
         {
-            audioSource.pitch = Random.Range(0.8f, 1.3f);
-            audioSource.PlayOneShot(burpSound);
+            int randomIndex = Random.Range(0, burpSounds.Length);
+            AudioClip chosenClip = burpSounds[randomIndex];
+
+            audioSource.pitch = Random.Range(minPitch, maxPitch); 
+            audioSource.volume = Random.Range(0.8f, 1f);
+            audioSource.PlayOneShot(chosenClip);
         }
 
         Debug.Log("SE COMUNICA MEDIANTE ESTE DEBUG.LOG QUE MASON HA ERUCTADO");
