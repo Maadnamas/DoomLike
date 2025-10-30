@@ -404,7 +404,7 @@ MonoBehaviour:
   burpCooldown: 3
   spawnDistance: 0.9
   minPitch: 0.85
-  maxPitch: 1.05
+  maxPitch: 1.2
 --- !u!1 &331708536
 GameObject:
   m_ObjectHideFlags: 0
