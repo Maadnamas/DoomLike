@@ -10,16 +10,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Rotación con Mouse")]
     public float mouseSensitivity = 2f;
 
-    [Header("Gravedad")]
-    public float gravity = -9.81f;
-    public float groundCheckDistance = 0.3f;
-    public LayerMask groundMask;
-
     private CharacterController controller;
     private Camera playerCamera;
     private float xRotation = 0f;
-    private Vector3 velocity;
-    private bool isGrounded;
 
     void Start()
     {
@@ -32,19 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        CheckGround();
         Movimiento();
         RotacionMouse();
-        AplicarGravedad();
-    }
-
-    void CheckGround()
-    {
-        Vector3 checkPosition = transform.position + Vector3.down * (controller.height / 2f - 0.1f);
-        isGrounded = Physics.CheckSphere(checkPosition, groundCheckDistance, groundMask);
-
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2f; // mantiene pegado al suelo
     }
 
     void Movimiento()
@@ -56,12 +38,6 @@ public class PlayerMovement : MonoBehaviour
 
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : moveSpeed;
         controller.Move(move * currentSpeed * Time.deltaTime);
-    }
-
-    void AplicarGravedad()
-    {
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
 
     void RotacionMouse()
@@ -76,11 +52,4 @@ public class PlayerMovement : MonoBehaviour
         playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
     }
 
-    void OnDrawGizmosSelected()
-    {
-        if (controller == null) return;
-        Gizmos.color = Color.yellow;
-        Vector3 checkPosition = transform.position + Vector3.down * (controller.height / 2f - 0.1f);
-        Gizmos.DrawWireSphere(checkPosition, groundCheckDistance);
-    }
 }
