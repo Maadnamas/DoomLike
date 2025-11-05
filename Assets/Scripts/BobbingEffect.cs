@@ -84,15 +84,19 @@ public class BobbingEffect : MonoBehaviour
 
     bool IsMoving()
     {
-        // Detectar movimiento horizontal basado en input, no en velocity del controller
+        // si tenemos CharacterController, usar su velocity para saber si realmente nos movemos
+        if (playerController != null)
+        {
+            Vector3 v = playerController.velocity;
+            // ignorar componente y para no contar caidas verticales
+            v.y = 0f;
+            return v.magnitude > 0.1f;
+        }
+
+        // fallback: usar input
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        Vector3 inputVector = new Vector3(horizontal, 0f, vertical);
-
-        // Si el jugador está en el aire, no hacer bobbing
-        if (playerController != null && !playerController.isGrounded)
-            return false;
-
+        Vector3 inputVector = new Vector3(horizontal, 0, vertical);
         return inputVector.magnitude > 0.1f;
     }
 
