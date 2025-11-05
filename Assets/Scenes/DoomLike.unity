@@ -785,7 +785,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: Pistol
-  weaponSprite: {fileID: 21300000, guid: b9d785f6378627c44939e9c97647244f, type: 3}
+  weaponSprite: {fileID: 21300000, guid: 591a6421d4d89414a895b79ff4d367b3, type: 3}
   muzzlePoint: {fileID: 1130995930}
   damage: 10
   fireRate: 5
@@ -850,7 +850,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: Hands
-  weaponSprite: {fileID: 21300000, guid: 4bdb8ffa708a306458ee71e236bf8092, type: 3}
+  weaponSprite: {fileID: 21300000, guid: 3495a108977324d44adf0ec525e09df6, type: 3}
   muzzlePoint: {fileID: 0}
   damage: 10
   fireRate: 5
@@ -5920,7 +5920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: Sniper
-  weaponSprite: {fileID: 0}
+  weaponSprite: {fileID: 21300000, guid: f2ad2241f6894ab4d95ba67e7304da94, type: 3}
   muzzlePoint: {fileID: 1130995930}
   damage: 10
   fireRate: 1
