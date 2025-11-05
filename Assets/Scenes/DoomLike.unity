@@ -1798,6 +1798,16 @@ MonoBehaviour:
   fpsCamera: {fileID: 963194227}
   MaxAmmo: 0
   currentAmmo: 0
+  meleeRange: 2
+  meleeRadius: 0.4
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  impactForce: 40
+  impactPrefab: {fileID: 0}
+  impactLife: 2
+  handAnimator: {fileID: 1304615737}
+  animationTrigger: Shoot
 --- !u!1 &699141228
 GameObject:
   m_ObjectHideFlags: 0
