@@ -62,7 +62,12 @@ public class WeaponManager : MonoBehaviour
         currentIndex = index;
 
         if (weaponUIAnimator)
-            weaponUIAnimator.SetInteger("WeaponID", weapons[currentIndex].weaponID);
+        {
+            Debug.Log("Se cambio el Weapon ID de la animacion a" + weapons[currentIndex].weaponID);
+            weaponUIAnimator.SetInteger("weaponID", weapons[currentIndex].weaponID);
+            weaponUIAnimator.SetTrigger("ChangeW");
+        }
+
 
         weapons[currentIndex].OnShoot += () =>
         {

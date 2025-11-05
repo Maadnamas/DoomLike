@@ -11215,7 +11215,7 @@ MonoBehaviour:
   currentIndex: 0
   currentweaponammo: 0
   weaponImage: {fileID: 1304615735}
-  weaponUIAnimator: {fileID: 0}
+  weaponUIAnimator: {fileID: 1304615737}
   transitionSpeed: 1500
   downamount: 500
 --- !u!1 &1169471698
