@@ -18,12 +18,17 @@ public class Hand : WeaponBase
         StartCoroutine(PunchRoutine());
     }
 
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            TryShoot();
+        }
+    }
+
     private IEnumerator PunchRoutine()
     {
         isPunching = true;
-
-        if (animator)
-            animator.SetTrigger("Shoot");
 
         if (audioSource && shootSound)
             audioSource.PlayOneShot(shootSound);
