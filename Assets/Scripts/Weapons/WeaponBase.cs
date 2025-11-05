@@ -4,6 +4,7 @@ public abstract class WeaponBase : MonoBehaviour
 {
     [Header("General Stats")]
     public string weaponName = "Unnamed Weapon";
+    public int weaponID = 00;
     public Sprite weaponSprite;
     [SerializeField] protected Transform muzzlePoint;
     [SerializeField] protected float damage = 10f;
@@ -11,16 +12,15 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected AudioSource audioSource;
     [SerializeField] protected AudioClip shootSound;
     [SerializeField] protected Camera fpsCamera;
-    [SerializeField] protected Animator animator;
     [SerializeField] public int MaxAmmo;
     public int currentAmmo;
+    public System.Action OnShoot;
 
     protected float nextTimeToFire;
 
     protected virtual void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-        animator = GetComponent<Animator>();
         currentAmmo = MaxAmmo;
     }
 
@@ -30,11 +30,7 @@ public abstract class WeaponBase : MonoBehaviour
         {
             nextTimeToFire = Time.time + 1f / fireRate;
             Shoot();
-
-            if (animator)
-            {
-                animator.SetTrigger("Shoot");
-            }
+            OnShoot?.Invoke();
         }
     }
 

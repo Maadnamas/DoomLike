@@ -11,6 +11,7 @@ public class WeaponManager : MonoBehaviour
 
     [Header("UI")]
     public Image weaponImage;
+    public Animator weaponUIAnimator;
     public float transitionSpeed = 400f;
     [SerializeField] float downamount = 200f;
 
@@ -25,6 +26,8 @@ public class WeaponManager : MonoBehaviour
             weaponImageRect = weaponImage.GetComponent<RectTransform>();
             originalPos = weaponImageRect.anchoredPosition;
         }
+
+        System.Array.Sort(weapons, (a, b) => a.weaponID.CompareTo(b.weaponID));
 
         SelectWeapon(0);
     }
@@ -57,6 +60,16 @@ public class WeaponManager : MonoBehaviour
         StartCoroutine(ChangeWeaponUI(index));
 
         currentIndex = index;
+
+        if (weaponUIAnimator)
+            weaponUIAnimator.SetInteger("WeaponID", weapons[currentIndex].weaponID);
+
+        weapons[currentIndex].OnShoot += () =>
+        {
+            if (weaponUIAnimator)
+                weaponUIAnimator.SetTrigger("Shoot");
+        };
+
         Debug.Log($"arma actual: {weapons[index].weaponName}");
     }
 
@@ -92,6 +105,7 @@ public class WeaponManager : MonoBehaviour
 
     public bool ReloadAmmo(int ammoType, int ammoAmount)
     {
+
         if (weapons[ammoType].currentAmmo < weapons[ammoType].MaxAmmo)
         {
             weapons[ammoType].AddAmmo(ammoAmount);

@@ -5,9 +5,9 @@ using UnityEngine;
 
 enum AmmoType
 {
-    Pistol,
-    Rocket,
-    Sniper
+    Pistol = 1,
+    Rocket = 2,
+    Sniper = 3
 }
 
 public class AmmoBox : MonoBehaviour, ICollectable
@@ -24,7 +24,7 @@ public class AmmoBox : MonoBehaviour, ICollectable
         WeaponManager pj = other.gameObject.GetComponentInChildren<WeaponManager>();
         if (pj != null)
         {
-            if (pj.ReloadAmmo(((int)m_AmmoType+1), m_AmmoCount))
+            if (pj.ReloadAmmo(((int)m_AmmoType), m_AmmoCount))
             {
                 Collect();
             }
