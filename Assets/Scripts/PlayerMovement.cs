@@ -42,11 +42,9 @@ public class PlayerMovement : MonoBehaviour
 
     void CheckGround()
     {
-        Vector3 checkPosition = transform.position + Vector3.down * (controller.height / 2f - 0.1f);
+        // El punto de chequeo un poco más abajo del centro
+        Vector3 checkPosition = transform.position + Vector3.down * (controller.height / 2f + 0.1f);
         isGrounded = Physics.CheckSphere(checkPosition, groundCheckDistance, groundMask);
-
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2f;
     }
 
     void Movimiento()
@@ -67,7 +65,14 @@ public class PlayerMovement : MonoBehaviour
 
     void AplicarGravedad()
     {
+        // Si está en el suelo y la velocidad vertical es negativa, la reseteamos suavemente
+        if (isGrounded && velocity.y < 0)
+            velocity.y = -5f; // en vez de -2 o 0, esto ayuda a mantener pegado al suelo
+
+        // Aplicar gravedad acumulativa
         velocity.y += gravity * Time.deltaTime;
+
+        // Mover
         controller.Move(velocity * Time.deltaTime);
     }
 
