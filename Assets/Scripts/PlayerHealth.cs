@@ -38,7 +38,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.J))
-            TakeDamage(20,Vector3.zero, Vector3.zero);
+            TakeDamage(20, Vector3.zero, Vector3.zero);
 
         if (Input.GetKeyDown(KeyCode.H))
             Heal(15);
@@ -109,6 +109,22 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         {
             healAmount = (int)amount,
             currentHealth = currentHealth
+        });
+    }
+
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+
+    public void SetCurrentHealth(int value)
+    {
+        currentHealth = Mathf.Clamp(value, 0, maxHealth);
+
+        EventManager.TriggerEvent(GameEvents.UI_UPDATE_HEALTH, new DamageEventData
+        {
+            currentHealth = currentHealth,
+            maxHealth = maxHealth
         });
     }
 }

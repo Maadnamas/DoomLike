@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
@@ -65,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
     void AplicarGravedad()
     {
         if (isGrounded && velocity.y < 0)
-            velocity.y = -5f; 
+            velocity.y = -5f;
 
 
         velocity.y += gravity * Time.deltaTime;
@@ -91,5 +93,65 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.color = Color.yellow;
         Vector3 checkPosition = transform.position + Vector3.down * (controller.height / 2f - 0.1f);
         Gizmos.DrawWireSphere(checkPosition, groundCheckDistance);
+    }
+
+    // guardar
+    public PlayerMemento SaveState(PlayerHealth health, WeaponManager weaponManager)
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        // Obtener info de armas
+        List<PlayerMemento.WeaponData> weaponList = new List<PlayerMemento.WeaponData>();
+        foreach (var weapon in weaponManager.weapons)
+        {
+            var data = new PlayerMemento.WeaponData
+            {
+                weaponID = weapon.weaponID,
+                currentAmmo = weapon.currentAmmo
+            };
+            weaponList.Add(data);
+        }
+
+        // Crear snapshot
+        return new PlayerMemento(
+            sceneName,
+            transform.position,
+            transform.rotation,
+            xRotation,
+            health.GetCurrentHealth(),
+            weaponList,
+            weaponManager.currentIndex
+        );
+    }
+
+    public void LoadState(PlayerMemento memento, PlayerHealth health, WeaponManager weaponManager)
+    {
+        CharacterController controller = GetComponent<CharacterController>();
+        if (controller.enabled) controller.enabled = false;
+
+        transform.position = memento.position;
+        transform.rotation = memento.playerRotation;
+
+        // Restaurar rotación vertical (cámara)
+        xRotation = memento.cameraPitch;
+        if (Camera.main)
+            Camera.main.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+
+        controller.enabled = true;
+
+        // Restaurar vida
+        health.SetCurrentHealth(memento.health);
+
+        // Restaurar armas y munición
+        for (int i = 0; i < weaponManager.weapons.Length && i < memento.weapons.Count; i++)
+        {
+            weaponManager.weapons[i].currentAmmo = memento.weapons[i].currentAmmo;
+        }
+
+        weaponManager.currentIndex = memento.equippedWeaponIndex;
+
+        // Forzar selección del arma
+        weaponManager.SendMessage("SelectWeapon", weaponManager.currentIndex,
+            SendMessageOptions.DontRequireReceiver);
     }
 }
