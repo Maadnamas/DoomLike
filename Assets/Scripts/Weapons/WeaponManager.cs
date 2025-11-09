@@ -63,17 +63,22 @@ public class WeaponManager : MonoBehaviour
 
         if (weaponUIAnimator)
         {
-            Debug.Log("Se cambio el Weapon ID de la animacion a" + weapons[currentIndex].weaponID);
             weaponUIAnimator.SetInteger("weaponID", weapons[currentIndex].weaponID);
             weaponUIAnimator.SetTrigger("ChangeW");
         }
-
 
         weapons[currentIndex].OnShoot += () =>
         {
             if (weaponUIAnimator)
                 weaponUIAnimator.SetTrigger("Shoot");
         };
+
+        // EVENTO AGREGADO
+        EventManager.TriggerEvent(GameEvents.WEAPON_SWITCHED, new WeaponSwitchEventData
+        {
+            weaponName = weapons[currentIndex].weaponName,
+            ammoCount = weapons[currentIndex].currentAmmo
+        });
 
         Debug.Log($"arma actual: {weapons[index].weaponName}");
     }
@@ -84,18 +89,15 @@ public class WeaponManager : MonoBehaviour
 
         if (weaponImageRect)
         {
-            // baja el icono
             while (weaponImageRect.anchoredPosition.y > originalPos.y - downamount)
             {
                 weaponImageRect.anchoredPosition -= new Vector2(0, transitionSpeed * Time.deltaTime);
                 yield return null;
             }
 
-            // cambia el sprite
             if (weapons[newIndex].weaponSprite != null)
                 weaponImage.sprite = weapons[newIndex].weaponSprite;
 
-            // sube de nuevo
             while (weaponImageRect.anchoredPosition.y < originalPos.y)
             {
                 weaponImageRect.anchoredPosition += new Vector2(0, transitionSpeed * Time.deltaTime);
@@ -110,7 +112,6 @@ public class WeaponManager : MonoBehaviour
 
     public bool ReloadAmmo(int ammoType, int ammoAmount)
     {
-
         if (weapons[ammoType].currentAmmo < weapons[ammoType].MaxAmmo)
         {
             weapons[ammoType].AddAmmo(ammoAmount);

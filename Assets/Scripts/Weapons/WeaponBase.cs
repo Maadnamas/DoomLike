@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    [Header("General Stats")]
+    [Header("Weapon Settings")]
     public string weaponName = "Unnamed Weapon";
     public int weaponID = 00;
     public Sprite weaponSprite;
@@ -31,6 +31,13 @@ public abstract class WeaponBase : MonoBehaviour
             nextTimeToFire = Time.time + 1f / fireRate;
             Shoot();
             OnShoot?.Invoke();
+
+            // EVENTO AGREGADO
+            EventManager.TriggerEvent(GameEvents.WEAPON_FIRED, new WeaponEventData
+            {
+                weaponName = weaponName,
+                ammoRemaining = currentAmmo
+            });
         }
     }
 
@@ -41,12 +48,20 @@ public abstract class WeaponBase : MonoBehaviour
         gameObject.SetActive(active);
     }
 
-    public virtual void AddAmmo(int ammoAmmount)
+    public virtual void AddAmmo(int ammoAmount)
     {
-        currentAmmo += ammoAmmount;
+        currentAmmo += ammoAmount;
         if (currentAmmo > MaxAmmo)
         {
             currentAmmo = MaxAmmo;
         }
+
+        // EVENTO AGREGADO
+        EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
+        {
+            weaponType = weaponName,
+            amount = ammoAmount,
+            totalAmmo = currentAmmo
+        });
     }
 }

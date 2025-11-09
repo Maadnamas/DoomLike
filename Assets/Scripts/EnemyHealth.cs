@@ -14,13 +14,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         IsDead = false;
     }
 
-    /// <summary>
-    /// Recibe daño desde un raycast u otra fuente.
-    /// </summary>
-    /// <param name="amount">Cantidad de daño recibido.</param>
-    /// <param name="hitPoint">Punto donde impactó el raycast.</param>
-    /// <param name="hitNormal">Dirección normal del impacto.</param>
-    /// <returns>True si el enemigo murió.</returns>
     public bool TakeDamage(float amount, Vector3 hitPoint, Vector3 hitNormal)
     {
         if (IsDead) return false;
@@ -42,8 +35,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         IsDead = true;
         Debug.Log($"{gameObject.name} ha muerto.");
 
-        //  Acá podrías agregar efectos visuales o de sonido:
-        // Instantiate(deathEffectPrefab, hitPoint, Quaternion.LookRotation(hitNormal));
+        // EVENTO AGREGADO
+        EventManager.TriggerEvent(GameEvents.ENEMY_DIED, new EnemyDeathEventData
+        {
+            enemyName = gameObject.name,
+            position = transform.position
+        });
 
         Destroy(gameObject);
     }
