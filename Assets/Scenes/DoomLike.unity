@@ -5724,7 +5724,7 @@ GameObject:
   - component: {fileID: 378502091}
   - component: {fileID: 378502090}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5931,7 +5931,7 @@ MonoBehaviour:
   range: 30
   hitMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 959
   impactForce: 50
   impactLife: 5
   tracerDuration: 0.03
@@ -16848,7 +16848,7 @@ MonoBehaviour:
   range: 100
   hitMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 959
   impactLife: 5
 --- !u!1 &820047488
 GameObject:
@@ -21831,10 +21831,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1375346874}
+  - component: {fileID: 1375346875}
   - component: {fileID: 1375346873}
   - component: {fileID: 1375346872}
   - component: {fileID: 1375346871}
-  - component: {fileID: 1375346875}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -21941,8 +21941,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77317c142109c0c4a8bbf96f317e402c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ammoText: {fileID: 1839930549}
+  healthBar: {fileID: 1079309376}
+  ammoPanel: {fileID: 1839930548}
   weaponManager: {fileID: 1166875190}
-  ammo: {fileID: 1839930549}
 --- !u!1 &1375590641
 GameObject:
   m_ObjectHideFlags: 0

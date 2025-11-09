@@ -43,11 +43,6 @@ public class WeaponManager : MonoBehaviour
         {
             weapons[currentIndex].TryShoot();
         }
-
-        if (currentIndex != 0)
-        {
-            currentweaponammo = weapons[currentIndex].currentAmmo;
-        }
     }
 
     void SelectWeapon(int index)
@@ -60,6 +55,7 @@ public class WeaponManager : MonoBehaviour
         StartCoroutine(ChangeWeaponUI(index));
 
         currentIndex = index;
+        currentweaponammo = weapons[currentIndex].currentAmmo;
 
         if (weaponUIAnimator)
         {
@@ -71,14 +67,20 @@ public class WeaponManager : MonoBehaviour
         {
             if (weaponUIAnimator)
                 weaponUIAnimator.SetTrigger("Shoot");
+
+            // Disparar evento de munición cambiada
+            TriggerAmmoChangedEvent();
         };
 
-        // EVENTO AGREGADO
+        // EVENTO DE CAMBIO DE ARMA
         EventManager.TriggerEvent(GameEvents.WEAPON_SWITCHED, new WeaponSwitchEventData
         {
             weaponName = weapons[currentIndex].weaponName,
             ammoCount = weapons[currentIndex].currentAmmo
         });
+
+        // EVENTO DE ACTUALIZACIÓN DE MUNICIÓN
+        TriggerAmmoChangedEvent();
 
         Debug.Log($"arma actual: {weapons[index].weaponName}");
     }
@@ -115,8 +117,45 @@ public class WeaponManager : MonoBehaviour
         if (weapons[ammoType].currentAmmo < weapons[ammoType].MaxAmmo)
         {
             weapons[ammoType].AddAmmo(ammoAmount);
+
+            // Actualizar munición actual si es el arma equipada
+            if (ammoType == currentIndex)
+            {
+                currentweaponammo = weapons[ammoType].currentAmmo;
+            }
+
+            // Disparar evento de recarga
+            EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
+            {
+                weaponType = weapons[ammoType].weaponName,
+                amount = ammoAmount,
+                totalAmmo = weapons[ammoType].currentAmmo
+            });
+
+            // Disparar evento de cambio de munición
+            TriggerAmmoChangedEvent();
+
             return true;
         }
         else return false;
+    }
+
+    private void TriggerAmmoChangedEvent()
+    {
+        // Disparar evento general de cambio de munición
+        EventManager.TriggerEvent(GameEvents.AMMO_CHANGED, new AmmoEventData
+        {
+            weaponType = weapons[currentIndex].weaponName,
+            amount = 0, // No específico para este evento
+            totalAmmo = weapons[currentIndex].currentAmmo
+        });
+
+        // Disparar evento específico para UI
+        EventManager.TriggerEvent(GameEvents.UI_UPDATE_AMMO, new AmmoEventData
+        {
+            weaponType = weapons[currentIndex].weaponName,
+            amount = 0,
+            totalAmmo = weapons[currentIndex].currentAmmo
+        });
     }
 }

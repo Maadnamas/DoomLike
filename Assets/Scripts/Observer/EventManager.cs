@@ -14,7 +14,7 @@ public class EventManager : MonoBehaviour
         if (_instance == null)
         {
             _instance = this;
-            eventDictionary = new Dictionary<string, Action<object>>();
+            eventDictionary = new Dictionary<string, Action<object>>(); // INICIALIZAR ANTES DE CUALQUIER USO
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -25,6 +25,12 @@ public class EventManager : MonoBehaviour
 
     public static void StartListening(string eventName, Action<object> listener)
     {
+        if (_instance == null)
+        {
+            Debug.LogWarning("EventManager no está inicializado. No se puede suscribir a: " + eventName);
+            return;
+        }
+
         if (Instance.eventDictionary.TryGetValue(eventName, out Action<object> thisEvent))
         {
             thisEvent += listener;
@@ -32,7 +38,7 @@ public class EventManager : MonoBehaviour
         }
         else
         {
-            thisEvent += listener;
+            thisEvent = listener;
             Instance.eventDictionary.Add(eventName, thisEvent);
         }
     }
@@ -40,6 +46,7 @@ public class EventManager : MonoBehaviour
     public static void StopListening(string eventName, Action<object> listener)
     {
         if (_instance == null) return;
+
         if (Instance.eventDictionary.TryGetValue(eventName, out Action<object> thisEvent))
         {
             thisEvent -= listener;
@@ -49,6 +56,8 @@ public class EventManager : MonoBehaviour
 
     public static void TriggerEvent(string eventName, object eventParam)
     {
+        if (_instance == null) return;
+
         if (Instance.eventDictionary.TryGetValue(eventName, out Action<object> thisEvent))
         {
             thisEvent?.Invoke(eventParam);

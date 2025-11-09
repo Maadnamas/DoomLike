@@ -23,14 +23,19 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         if (currentHealth <= 0f)
         {
-            Die(hitPoint, hitNormal);
+            Die();
             return true;
         }
 
         return false;
     }
 
-    private void Die(Vector3 hitPoint, Vector3 hitNormal)
+    public void Heal(float amount)
+    {
+
+    }
+
+    public void Die()
     {
         IsDead = true;
         Debug.Log($"{gameObject.name} ha muerto.");
