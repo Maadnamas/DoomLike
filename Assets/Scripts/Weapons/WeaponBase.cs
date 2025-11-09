@@ -32,7 +32,6 @@ public abstract class WeaponBase : MonoBehaviour
             Shoot();
             OnShoot?.Invoke();
 
-            // EVENTO AGREGADO
             EventManager.TriggerEvent(GameEvents.WEAPON_FIRED, new WeaponEventData
             {
                 weaponName = weaponName,
@@ -56,7 +55,6 @@ public abstract class WeaponBase : MonoBehaviour
             currentAmmo = MaxAmmo;
         }
 
-        // EVENTO AGREGADO
         EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
         {
             weaponType = weaponName,
