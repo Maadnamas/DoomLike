@@ -41,7 +41,7 @@ public class HUDManager : MonoBehaviour
 
     private IEnumerator SubscribeWithDelay()
     {
-        // Esperar hasta que EventManager esté inicializado
+        // Esperar hasta que EventManager estï¿½ inicializado
         while (EventManager.Instance == null)
         {
             yield return null;
