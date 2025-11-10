@@ -37,9 +37,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FallOff: 1
-    - _distancia: 879.3
+    - _FallOff: 1.05
+    - _FogDensity: 1
+    - _FogEnd: 0
+    - _FogStart: 0
+    - _distancia: 827.07
     - _si_o_no: 0.95
     m_Colors:
-    - _colorniebla: {r: 1, g: 0.8632076, b: 0.8632076, a: 0.78039217}
+    - _colorniebla: {r: 1, g: 0.8698231, b: 0.8627451, a: 0.78039217}
   m_BuildTextureStacks: []
