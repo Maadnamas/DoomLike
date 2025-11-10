@@ -14,7 +14,7 @@ public class HUDManager : MonoBehaviour
     [Header("Referencias Managers")]
     [SerializeField] private WeaponManager weaponManager;
 
-    private int currentWeaponIndex = -1;
+    //private int currentWeaponIndex = -1;
     private bool isWeaponZeroEquipped = false;
 
     void OnEnable()
