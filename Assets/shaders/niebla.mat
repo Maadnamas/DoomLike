@@ -37,12 +37,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FallOff: 0.73
+    - _FallOff: 1.06
     - _FogDensity: 323.4
     - _FogEnd: 0
     - _FogStart: 0
     - _distancia: 884.34
-    - _si_o_no: 0.925
+    - _maxdistance: 0
+    - _si_o_no: 0.912
     m_Colors:
     - _colorniebla: {r: 0.6509434, g: 0.26713246, b: 0.26713246, a: 1}
   m_BuildTextureStacks: []
