@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: niebla
-  m_Shader: {fileID: -6465566751694194690, guid: ae5c79a0bd96f204c97c5ad2cc1493e5, type: 3}
+  m_Name: Dithering
+  m_Shader: {fileID: -6465566751694194690, guid: c50ee15ebb9f5774e88aecae4c52bcdc, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -37,12 +37,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FallOff: 1
-    - _FogDensity: 138.1
-    - _FogEnd: 0
-    - _FogStart: 0
-    - _distancia: 658.5
-    - _si_o_no: 0
+    - _Color_Dithering: 0
+    - _Dither_Amount: -5.09
+    - _Dither_Spread: 0.3
+    - _Light_Color: 0.68
+    - _Shadow_Color: -0.08
     m_Colors:
-    - _colorniebla: {r: 0.122641504, g: 0, b: 0, a: 1}
+    - _Light_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _Shadow_Color: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
