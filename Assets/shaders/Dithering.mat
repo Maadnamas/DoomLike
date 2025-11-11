@@ -38,11 +38,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _Color_Dithering: 0
-    - _Dither_Amount: -5.09
-    - _Dither_Spread: 0.3
+    - _Dither_Amount: 0.08
+    - _Dither_Spread: 0.4
     - _Light_Color: 0.68
     - _Shadow_Color: -0.08
     m_Colors:
     - _Light_Color: {r: 0, g: 0, b: 0, a: 0}
-    - _Shadow_Color: {r: 1, g: 0, b: 0, a: 0}
+    - _Shadow_Color: {r: 0.3773585, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
