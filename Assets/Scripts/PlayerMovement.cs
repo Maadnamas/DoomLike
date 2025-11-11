@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float runSpeed = 8f;
 
-    [Header("Rotaci�n con Mouse")]
+    [Header("Rotación con Mouse")]
     public float mouseSensitivity = 2f;
 
     [Header("Gravedad y Salto")]
@@ -25,6 +25,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
 
+    // 🔹 NUEVO: bandera global para pausar el control del jugador
+    public static bool isControlEnabled = true;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -36,6 +39,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // 🔹 Si el control está deshabilitado, no mover ni rotar
+        if (!isControlEnabled)
+            return;
+
         CheckGround();
         Movimiento();
         RotacionMouse();
@@ -69,9 +76,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && velocity.y < 0)
             velocity.y = -5f;
 
-
         velocity.y += gravity * Time.deltaTime;
-
         controller.Move(velocity * Time.deltaTime);
     }
 

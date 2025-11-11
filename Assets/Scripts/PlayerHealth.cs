@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,6 +33,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             currentHealth = currentHealth,
             maxHealth = maxHealth
         });
+
+        // ðŸ”¥ Nuevo: disparar evento de inicio del juego
+        EventManager.TriggerEvent(GameEvents.GAME_START, null);
     }
 
     void Update()
@@ -44,7 +47,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             Heal(15);
     }
 
-    // Implementación de IDamageable
+    // ImplementaciÃ³n de IDamageable
     public bool TakeDamage(float amount, Vector3 hitPoint, Vector3 hitNormal)
     {
         CalculateDamage(Mathf.RoundToInt(amount));
@@ -70,7 +73,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             maxHealth = maxHealth
         });
 
-        // EVENTO DE DAÑO (para otros sistemas)
+        // EVENTO DE DAÃ‘O (para otros sistemas)
         EventManager.TriggerEvent(GameEvents.PLAYER_DAMAGED, new DamageEventData
         {
             damageAmount = amount,
@@ -89,6 +92,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         EventManager.TriggerEvent(GameEvents.PLAYER_DIED, null);
         Debug.Log("te moriste wachin");
+
+        // ðŸ”¥ Nuevo: Disparar evento de Game Over para el ScreenManager
+        EventManager.TriggerEvent(GameEvents.GAME_OVER, null);
     }
 
     public void Heal(float amount)
@@ -97,7 +103,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         currentHealth += (int)amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        // CORRECCIÓN: Usar DamageEventData sin healAmount o crear uno específico
+        // CORRECCIÃ“N: Usar DamageEventData sin healAmount o crear uno especÃ­fico
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_HEALTH, new DamageEventData
         {
             currentHealth = currentHealth,

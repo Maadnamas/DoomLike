@@ -1,4 +1,4 @@
-public static class GameEvents
+﻿public static class GameEvents
 {
     // Sistema de armas
     public const string WEAPON_FIRED = "WEAPON_FIRED";
@@ -20,4 +20,9 @@ public static class GameEvents
     // UI
     public const string UI_UPDATE_HEALTH = "UI_UPDATE_HEALTH";
     public const string UI_UPDATE_AMMO = "UI_UPDATE_AMMO";
+
+    // 🔥 NUEVOS EVENTOS para ScreenManager
+    public const string GAME_START = "GAME_START";
+    public const string GAME_OVER = "GAME_OVER";
+    public const string GAME_VICTORY = "GAME_VICTORY";
 }
