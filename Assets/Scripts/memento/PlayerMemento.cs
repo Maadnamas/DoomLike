@@ -13,6 +13,9 @@ public class PlayerMemento
     public List<WeaponData> weapons = new List<WeaponData>();
     public int equippedWeaponIndex;
 
+ 
+    public Dictionary<string, object> additionalData = new Dictionary<string, object>();
+
     [System.Serializable]
     public class WeaponData
     {
@@ -30,5 +33,20 @@ public class PlayerMemento
         health = hp;
         weapons = weaponList;
         equippedWeaponIndex = equippedIndex;
+    }
+
+    public void SetAdditionalData(string key, object value)
+    {
+        if (additionalData.ContainsKey(key))
+            additionalData[key] = value;
+        else
+            additionalData.Add(key, value);
+    }
+
+    public T GetAdditionalData<T>(string key, T defaultValue = default(T))
+    {
+        if (additionalData.ContainsKey(key) && additionalData[key] is T)
+            return (T)additionalData[key];
+        return defaultValue;
     }
 }

@@ -1,18 +1,30 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class GameMemento
 {
-    public Vector3 playerPosition;
-    public int playerHealth;
-    public int playerAmmo;
-    public string currentLevel;
+    public Dictionary<string, object> gameData = new Dictionary<string, object>();
 
-    public GameMemento(Vector3 pos, int hp, int ammo, string level)
+    public GameMemento() { }
+
+    public GameMemento(Dictionary<string, object> data)
     {
-        playerPosition = pos;
-        playerHealth = hp;
-        playerAmmo = ammo;
-        currentLevel = level;
+        gameData = data;
+    }
+
+    public void SetValue(string key, object value)
+    {
+        if (gameData.ContainsKey(key))
+            gameData[key] = value;
+        else
+            gameData.Add(key, value);
+    }
+
+    public T GetValue<T>(string key, T defaultValue = default(T))
+    {
+        if (gameData.ContainsKey(key) && gameData[key] is T)
+            return (T)gameData[key];
+        return defaultValue;
     }
 }
