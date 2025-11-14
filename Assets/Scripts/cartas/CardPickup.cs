@@ -1,28 +1,16 @@
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
-public class CardPickup : MonoBehaviour
+public class CardPickup : MonoBehaviour, ICollectable
 {
     public CardData cardToGive;
-
-    [Header("Rotación")]
-    [Tooltip("Velocidad de rotación en grados por segundo.")]
+    public Renderer cardRenderer;
     public float rotationSpeed = 60f;
 
-    private SpriteRenderer spriteRenderer;
-
-    private void Awake()
+    void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+        ApplyCardTexture();
 
-    private void Start()
-    {
-        if (cardToGive != null && spriteRenderer != null)
-        {
-            spriteRenderer.sprite = cardToGive.image;
-        }
-
+        
         if (CardCollectionManager.Instance != null &&
             CardCollectionManager.Instance.HasCard(cardToGive.cardID))
         {
@@ -30,17 +18,40 @@ public class CardPickup : MonoBehaviour
         }
     }
 
-    private void Update()
+    void ApplyCardTexture()
+    {
+        if (cardRenderer != null && cardToGive != null && cardToGive.cardTexture != null)
+        {
+            
+            Material uniqueMaterial = cardRenderer.material; 
+
+            
+            uniqueMaterial.SetTexture("_Base_Texture", cardToGive.cardTexture);
+
+        }
+        else
+        {
+            Debug.LogWarning("CardPickup: Faltan referencias para aplicar textura");
+        }
+    }
+
+    void Update()
     {
         transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void Collect()
     {
-        if (other.CompareTag("Player"))
+        if (CardCollectionManager.Instance != null)
         {
             CardCollectionManager.Instance.AddCard(cardToGive);
             gameObject.SetActive(false);
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+            Collect();
     }
 }

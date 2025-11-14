@@ -4,6 +4,6 @@ using UnityEngine;
 public class CardData : ScriptableObject
 {
     public string cardID;
-    public Sprite image;
+    public Texture2D cardTexture;
     public bool isFoil;
 }

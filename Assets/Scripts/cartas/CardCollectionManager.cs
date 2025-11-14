@@ -7,15 +7,12 @@ public class CardCollectionManager : MonoBehaviour
 {
     public static CardCollectionManager Instance;
 
-    [Header("Todas las cartas disponibles en el juego (ScriptableObjects)")]
     public List<CardData> allCards = new List<CardData>();
-
-    [Header("Progreso guardado")]
     public List<CardSaveData> ownedCards = new List<CardSaveData>();
 
-    private string savePath;
+    string savePath;
 
-    private void Awake()
+    void Awake()
     {
         if (Instance == null)
         {
@@ -24,10 +21,7 @@ public class CardCollectionManager : MonoBehaviour
             savePath = Path.Combine(Application.persistentDataPath, "cardsave.json");
             LoadCollection();
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        else Destroy(gameObject);
     }
 
     public void AddCard(CardData card)
@@ -47,9 +41,9 @@ public class CardCollectionManager : MonoBehaviour
         SaveCollection();
     }
 
-    public bool HasCard(string cardID)
+    public bool HasCard(string id)
     {
-        return ownedCards.Any(c => c.cardID == cardID && c.owned);
+        return ownedCards.Any(c => c.cardID == id && c.owned);
     }
 
     public void SaveCollection()
@@ -67,31 +61,21 @@ public class CardCollectionManager : MonoBehaviour
             var wrapper = JsonUtility.FromJson<CardSaveWrapper>(json);
             ownedCards = wrapper.cards;
         }
-        else
-        {
-            ownedCards = new List<CardSaveData>();
-        }
-
-
+        else ownedCards = new List<CardSaveData>();
     }
 
-    private void Update()
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.F10))
-        {
             DeleteCollection();
-        }
     }
-
 
     public void DeleteCollection()
     {
         ownedCards.Clear();
 
         if (File.Exists(savePath))
-        {
             File.Delete(savePath);
-        }
 
         Debug.Log("datos de cartas borrados correctamente.");
     }
