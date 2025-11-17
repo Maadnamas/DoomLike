@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,21 +11,27 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private int currentHealth;
 
     [Header("efectofeles")]
-    public AudioClip hurtSound;
-    public AudioClip deathSound;
     public GameObject bloodEffect;
     public Image healthBar;
     public float flashDuration = 0.1f;
-    public Color flashColor = new Color(1, 0, 0, 0.25f);
+    [SerializeField] private Material dithering;
+    [SerializeField] Color flashColor = new Color(1, 0, 0, 0.25f);
+    [SerializeField] Color healcolor = new Color(1, 0, 0, 0);
 
-    private AudioSource audioSource;
+    [Header("Sonidos")]
+    public AudioClip hurtSound;
+    public AudioClip deathSound;
+    public AudioClip powerUPmusic;
+
+
     private ScreenFlash screenFlash;
     private bool isDead;
+    private bool Healing;
+    private bool powered;
 
     void Start()
     {
         currentHealth = maxHealth;
-        audioSource = GetComponent<AudioSource>();
         screenFlash = FindObjectOfType<ScreenFlash>();
 
         // Disparar evento inicial de salud
@@ -50,8 +57,14 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     // Implementación de IDamageable
     public bool TakeDamage(float amount, Vector3 hitPoint, Vector3 hitNormal)
     {
-        CalculateDamage(Mathf.RoundToInt(amount));
+        if (!powered)
+        {
+            CalculateDamage(Mathf.RoundToInt(amount));
+            return !isDead;
+        }
+
         return !isDead;
+
     }
 
     public void CalculateDamage(int amount)
@@ -61,7 +74,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        if (hurtSound) audioSource.PlayOneShot(hurtSound);
+        if (hurtSound) AudioManager.PlaySFX2D(hurtSound);
         if (bloodEffect) Instantiate(bloodEffect, transform.position, Quaternion.identity);
         if (screenFlash) screenFlash.Flash(flashColor, flashDuration);
 
@@ -88,7 +101,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void Die()
     {
         isDead = true;
-        if (deathSound) audioSource.PlayOneShot(deathSound);
+        if (deathSound) AudioManager.PlaySFX2D(deathSound);
 
         EventManager.TriggerEvent(GameEvents.PLAYER_DIED, null);
         Debug.Log("te moriste wachin");
@@ -102,6 +115,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (isDead) return;
         currentHealth += (int)amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        if (screenFlash) screenFlash.Flash(healcolor, flashDuration);
 
         // CORRECCIÓN: Usar DamageEventData sin healAmount o crear uno específico
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_HEALTH, new DamageEventData
@@ -132,5 +146,27 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             currentHealth = currentHealth,
             maxHealth = maxHealth
         });
+    }
+
+
+    public void ActivatePowerUp(float duration)
+    {
+        StopAllCoroutines();
+        StartCoroutine(PowerRoutine(duration));
+    }
+    System.Collections.IEnumerator PowerRoutine(float duration)
+    {
+        powered = true;
+        AudioManager.PlaySFX2D(powerUPmusic);
+
+        if (dithering != null)
+            dithering.SetFloat("_Color_Dithering", 1f);
+
+        yield return new WaitForSeconds(duration);
+
+        powered = false;
+
+        if (dithering != null)
+            dithering.SetFloat("_Color_Dithering", 0f);
     }
 }

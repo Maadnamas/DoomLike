@@ -5,6 +5,7 @@
     public const string WEAPON_SWITCHED = "WEAPON_SWITCHED";
     public const string AMMO_PICKED_UP = "AMMO_PICKED_UP";
     public const string AMMO_CHANGED = "AMMO_CHANGED";
+    public const string PLAYERZOOM = "PLAYER_ZOOM";
 
     // Sistema de vida
     public const string PLAYER_DAMAGED = "PLAYER_DAMAGED";

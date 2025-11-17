@@ -9,18 +9,19 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected Transform muzzlePoint;
     [SerializeField] protected float damage = 10f;
     [SerializeField] protected float fireRate = 5f;
-    [SerializeField] protected AudioSource audioSource;
     [SerializeField] protected AudioClip shootSound;
     [SerializeField] protected Camera fpsCamera;
     [SerializeField] public int MaxAmmo;
     public int currentAmmo;
     public System.Action OnShoot;
+    protected Coroutine zoomCoroutine;
+    protected float defaultFOV;
 
     protected float nextTimeToFire;
 
     protected virtual void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
+        defaultFOV = fpsCamera.fieldOfView;
         currentAmmo = MaxAmmo;
     }
 
@@ -39,6 +40,11 @@ public abstract class WeaponBase : MonoBehaviour
             });
         }
     }
+
+    public virtual void TryAim() { }
+
+
+    public virtual void StopAim() { }
 
     protected abstract void Shoot();
 

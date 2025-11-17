@@ -30,9 +30,9 @@ public class hand : WeaponBase
     protected override void Shoot()
     {
         // reproducir sonido de golpe si está disponible
-        if (audioSource != null && shootSound != null)
+        if (shootSound != null)
         {
-            audioSource.PlayOneShot(shootSound);
+            AudioManager.PlaySFX2D(shootSound);
         }
 
         // activar animación local de la mano (el Animator que tengas en escena)

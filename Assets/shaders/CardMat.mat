@@ -29,7 +29,7 @@ Material:
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -37,7 +37,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Base_Texture:
-        m_Texture: {fileID: 2800000, guid: 7267e845722cd684faed5b822888afa8, type: 3}
+        m_Texture: {fileID: 2800000, guid: e7e7c52ac9d0fb943a1760e1af94a4f0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Heightmap:

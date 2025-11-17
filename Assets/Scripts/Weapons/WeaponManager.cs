@@ -43,6 +43,14 @@ public class WeaponManager : MonoBehaviour
         {
             weapons[currentIndex].TryShoot();
         }
+        if (Input.GetButtonDown("Fire2"))
+        {
+            weapons[currentIndex].TryAim();
+        }
+        if (Input.GetButtonUp("Fire2"))
+        {
+            weapons[currentIndex].StopAim();
+        }
     }
 
     void SelectWeapon(int index)

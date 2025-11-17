@@ -19,7 +19,7 @@ public class Pistol : WeaponBase
     {
         // Efectos
         if (muzzleFlash != null) muzzleFlash.Play();
-        if (audioSource && shootSound) audioSource.PlayOneShot(shootSound);
+        if (shootSound) AudioManager.PlaySFX2D(shootSound);
 
         Vector3 origin = fpsCamera.transform.position;
         Vector3 dir = fpsCamera.transform.forward;

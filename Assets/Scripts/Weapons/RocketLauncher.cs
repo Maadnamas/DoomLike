@@ -8,8 +8,8 @@ public class RocketLauncher : WeaponBase
 
     protected override void Shoot()
     {
-        if (audioSource && shootSound)
-            audioSource.PlayOneShot(shootSound);
+        if (shootSound)
+            AudioManager.PlaySFX2D(shootSound);
 
         if (rocketFactory && muzzlePoint)
         {

@@ -3,21 +3,26 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class RocketProjectile : MonoBehaviour
 {
-    [Header("Rocket Settings")]
     [SerializeField] float speed = 50f;
     [SerializeField] float spiralAmplitude = 0.2f;
     [SerializeField] float spiralFrequency = 10f;
     [SerializeField] float lifeTime = 5f;
 
-    [Header("Explosion Settings")]
     [SerializeField] float explosionRadius = 5f;
     [SerializeField] float explosionDamage = 50f;
     [SerializeField] GameObject explosionEffect;
 
-    private Rigidbody rb;
-    private Vector3 startPosition;
-    private float spawnTime;
-    private RocketFactory factory;
+    Rigidbody rb;
+    Vector3 startPosition;
+    float spawnTime;
+    RocketFactory factory;
+
+    Transform owner;
+
+    public void SetOwner(Transform o)
+    {
+        owner = o;
+    }
 
     void Awake()
     {
@@ -38,7 +43,7 @@ public class RocketProjectile : MonoBehaviour
         Vector3 spiralOffset = transform.right * Mathf.Sin(time * spiralFrequency) * spiralAmplitude
                              + transform.up * Mathf.Cos(time * spiralFrequency) * spiralAmplitude;
 
-        Vector3 moveDir = (transform.forward * speed + spiralOffset * speed * 0.1f);
+        Vector3 moveDir = transform.forward * speed + spiralOffset * speed * 0.1f;
         rb.velocity = moveDir;
 
         if (Time.time - spawnTime > lifeTime)
@@ -60,11 +65,19 @@ public class RocketProjectile : MonoBehaviour
         }
 
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius);
+
         foreach (Collider hit in hits)
         {
             var damageable = hit.GetComponent<IDamageable>();
             if (damageable != null)
-                damageable.TakeDamage(explosionDamage, transform.position, Vector3.up);
+            {
+                float dist = Vector3.Distance(hit.transform.position, transform.position);
+                float t = Mathf.Clamp01(1f - dist / explosionRadius);
+                float finalDamage = explosionDamage * t;
+
+                if (finalDamage > 0.01f)
+                    damageable.TakeDamage(finalDamage, transform.position, Vector3.up);
+            }
 
             if (hit.attachedRigidbody)
                 hit.attachedRigidbody.AddExplosionForce(500f, transform.position, explosionRadius);

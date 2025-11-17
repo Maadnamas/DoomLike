@@ -77,7 +77,7 @@ MonoBehaviour:
   spiralAmplitude: 1
   spiralFrequency: 10
   lifeTime: 5
-  explosionRadius: 5
+  explosionRadius: 7
   explosionDamage: 50
   explosionEffect: {fileID: 6164605212099315340, guid: 88faffedb8bc50f4a8067f72fafdc8e6, type: 3}
 --- !u!1 &8880962698411841850
