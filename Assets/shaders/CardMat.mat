@@ -72,6 +72,7 @@ Material:
     - _Holo_Noise_Scale: 21
     - _Holo_Offset: 0.368
     - _Holo_Rotation_Scroll_Speed: 10.7
+    - _IsFoil: 0
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 1.65

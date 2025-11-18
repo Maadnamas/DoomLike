@@ -4,6 +4,7 @@ public class CardPickup : MonoBehaviour, ICollectable
 {
     public CardData cardToGive;
     public Renderer cardRenderer;
+    public Renderer backrender;
     public float rotationSpeed = 60f;
 
     void Start()
@@ -22,11 +23,22 @@ public class CardPickup : MonoBehaviour, ICollectable
     {
         if (cardRenderer != null && cardToGive != null && cardToGive.cardTexture != null)
         {
-            
-            Material uniqueMaterial = cardRenderer.material; 
 
-            
+            Material uniqueMaterial = cardRenderer.material;
+            Material backmat = backrender.material;
+
+
             uniqueMaterial.SetTexture("_Base_Texture", cardToGive.cardTexture);
+            if (cardToGive.isFoil)
+            {
+                uniqueMaterial.SetFloat("_IsFoil", 1);
+                backmat.SetFloat("_IsFoil", 1);
+            }
+            else
+            {
+                uniqueMaterial.SetFloat("_IsFoil", 0);
+                backmat.SetFloat("_IsFoil", 0);
+            }
 
         }
         else
