@@ -22,7 +22,7 @@ public class RocketPool : MonoBehaviour
     public GameObject GetRocket(Vector3 position, Quaternion rotation)
     {
         GameObject rocket;
-        if (pool.Count > 0 && !pool.Peek().activeInHierarchy)
+        if (pool.Count > 0)
         {
             rocket = pool.Dequeue();
         }
@@ -34,6 +34,11 @@ public class RocketPool : MonoBehaviour
         rocket.transform.position = position;
         rocket.transform.rotation = rotation;
         rocket.SetActive(true);
+
+        RocketProjectile rocketProj = rocket.GetComponent<RocketProjectile>();
+        if (rocketProj != null)
+            rocketProj.ResetProjectile();
+
         return rocket;
     }
 

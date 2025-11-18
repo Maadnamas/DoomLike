@@ -13,9 +13,9 @@ public class RocketProjectile : MonoBehaviour
     [SerializeField] GameObject explosionEffect;
 
     Rigidbody rb;
-    Vector3 startPosition;
     float spawnTime;
     RocketFactory factory;
+    float spiralTime;
 
     Transform owner;
 
@@ -32,16 +32,19 @@ public class RocketProjectile : MonoBehaviour
 
     public void ResetProjectile()
     {
-        startPosition = transform.position;
         spawnTime = Time.time;
-        rb.velocity = transform.forward * speed;
+        spiralTime = 0f;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     void FixedUpdate()
     {
-        float time = Time.time - spawnTime;
-        Vector3 spiralOffset = transform.right * Mathf.Sin(time * spiralFrequency) * spiralAmplitude
-                             + transform.up * Mathf.Cos(time * spiralFrequency) * spiralAmplitude;
+        if (!gameObject.activeInHierarchy) return;
+
+        spiralTime += Time.fixedDeltaTime;
+        Vector3 spiralOffset = transform.right * Mathf.Sin(spiralTime * spiralFrequency) * spiralAmplitude
+                             + transform.up * Mathf.Cos(spiralTime * spiralFrequency) * spiralAmplitude;
 
         Vector3 moveDir = transform.forward * speed + spiralOffset * speed * 0.1f;
         rb.velocity = moveDir;
@@ -84,6 +87,7 @@ public class RocketProjectile : MonoBehaviour
         }
 
         rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
         factory.RecycleRocket(gameObject);
     }
 }
