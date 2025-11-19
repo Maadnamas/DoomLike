@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EructoSystemm : MonoBehaviour
+public class EructoSystemm : AbilityBase
 {
     [Header("eructo setins")]
     public GameObject burpSmokePrefab;      
@@ -27,7 +27,7 @@ public class EructoSystemm : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    void Update()
+    public override void ActionExecution()
     {
         burpTimer -= Time.deltaTime;
 

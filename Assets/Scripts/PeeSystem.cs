@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PeeSystem : MonoBehaviour
+public class PeeSystem : AbilityBase
 {
     [Header("Ajustes Generales")]
     [SerializeField] private ParticleSystem peeParticles; // Asignar el sistema de partículas desde el inspector
@@ -22,12 +22,14 @@ public class PeeSystem : MonoBehaviour
             peeParticles.Stop();
     }
 
-    void Update()
+    public override void ActionExecution()
     {
         HandleInput();
         RegeneratePee();
         UpdateParticleEmission();
     }
+
+    
 
     void HandleInput()
     {

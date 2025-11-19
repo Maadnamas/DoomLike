@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class WeaponManager : MonoBehaviour
+public class WeaponManager : MonoBehaviour, IAmmo
 {
     [Header("Weapons")]
     public WeaponBase[] weapons;

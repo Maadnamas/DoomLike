@@ -12,7 +12,7 @@ public class PowerUP : CollectableObject
 
     protected override void TryCollect(Collider other)
     {
-        PlayerHealth p = other.GetComponentInChildren<PlayerHealth>();
+        IPowerable p = other.GetComponentInChildren<IPowerable>();
 
         if (p != null)
         {

@@ -27,7 +27,7 @@ public class AmmoBox : CollectableObject
 
     protected override void TryCollect(Collider other)
     {
-        var pj = other.GetComponentInChildren<WeaponManager>();
+        var pj = other.GetComponentInChildren<IAmmo>();
 
         if (pj != null && pj.ReloadAmmo((int)m_AmmoType, m_AmmoCount))
             Collect();
