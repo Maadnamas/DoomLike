@@ -49,16 +49,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ChangeAmount: -1.02
-    - _NoiseSize: 1.66
-    - _NormalsStrenght: -0.26
+    - _ChangeAmount: 0.38
+    - _NoiseSize: 6.38
+    - _NormalsStrenght: 5.7
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Roughness: 0
     m_Colors:
-    - _ColorEmissive: {r: 0.09433961, g: 0, b: 0, a: 0}
-    - _TilingTexture1: {r: 200, g: 400, b: 0, a: 0}
-    - _TilingTexture2: {r: 400, g: 200, b: 0, a: 0}
+    - _ColorEmissive: {r: 0.084905684, g: 0, b: 0, a: 0}
+    - _TilingTexture1: {r: 700, g: 200, b: 0, a: 0}
+    - _TilingTexture2: {r: 200, g: 200, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &3752375661307303454
 MonoBehaviour:
