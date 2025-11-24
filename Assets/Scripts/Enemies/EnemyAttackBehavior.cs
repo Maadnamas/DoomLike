@@ -5,6 +5,12 @@ public class EnemyAttackBehavior : IEnemyBehavior
     private float attackCooldown = 1.5f;
     private float lastAttackTime;
 
+    public void OnEnter(EnemyAI enemy)
+    {
+        enemy.GetAnimator().SetWalking(false);
+        enemy.GetAnimator().SetIdle(true);
+    }
+
     public void Execute(EnemyAI enemy)
     {
         if (enemy.player == null) return;
@@ -23,5 +29,10 @@ public class EnemyAttackBehavior : IEnemyBehavior
             lastAttackTime = Time.time;
             Debug.Log(enemy.name + " atacó al jugador");
         }
+    }
+
+    public void OnExit(EnemyAI enemy)
+    {
+        enemy.GetAnimator().SetIdle(false);
     }
 }

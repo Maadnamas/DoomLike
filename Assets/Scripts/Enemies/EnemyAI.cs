@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyHealth))]
+[RequireComponent(typeof(EnemyAnimator))]
 public class EnemyAI : MonoBehaviour
 {
     [Header("Flyweight Data")]
@@ -8,17 +9,23 @@ public class EnemyAI : MonoBehaviour
     [Header("Patrulla")]
     public Transform[] patrolPoints;
 
+    [Header("Configuración de Patrulla")]
+    public float patrolPointTolerance = 0.5f;
+    public float idleWaitTime = 2f;
+
     public Transform player { get; private set; }
     public float MoveSpeed => enemyData.moveSpeed;
     public float StopDistance => enemyData.stopDistance;
     public float DetectionRange => enemyData.detectionRange;
 
     private EnemyHealth enemyHealth;
+    private IEnemyAnimator enemyAnimator;
     private IEnemyBehavior currentBehavior;
 
     void Start()
     {
         enemyHealth = GetComponent<EnemyHealth>();
+        enemyAnimator = GetComponent<EnemyAnimator>();
 
         if (enemyData == null)
             enemyData = ScriptableObject.CreateInstance<EnemyData>();
@@ -33,9 +40,9 @@ public class EnemyAI : MonoBehaviour
         enemyHealth.Initialize(enemyData.maxHealth);
 
         if (patrolPoints != null && patrolPoints.Length > 0)
-            currentBehavior = new EnemyPatrolBehavior();
+            SetBehavior(new EnemyPatrolBehavior());
         else
-            currentBehavior = new EnemyIdleBehavior();
+            SetBehavior(new EnemyIdleBehavior());
     }
 
     void Update()
@@ -46,6 +53,13 @@ public class EnemyAI : MonoBehaviour
 
     public void SetBehavior(IEnemyBehavior newBehavior)
     {
+        currentBehavior?.OnExit(this);
         currentBehavior = newBehavior;
+        currentBehavior?.OnEnter(this);
+    }
+
+    public IEnemyAnimator GetAnimator()
+    {
+        return enemyAnimator;
     }
 }

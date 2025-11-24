@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class EnemyChaseBehavior : IEnemyBehavior
 {
+    public void OnEnter(EnemyAI enemy)
+    {
+        enemy.GetAnimator().SetWalking(true);
+        enemy.GetAnimator().SetIdle(false);
+    }
+
     public void Execute(EnemyAI enemy)
     {
         if (enemy.player == null) return;
@@ -22,5 +28,10 @@ public class EnemyChaseBehavior : IEnemyBehavior
             enemy.transform.position += dir * enemy.MoveSpeed * Time.deltaTime;
         else
             enemy.SetBehavior(new EnemyAttackBehavior());
+    }
+
+    public void OnExit(EnemyAI enemy)
+    {
+        enemy.GetAnimator().SetWalking(false);
     }
 }
