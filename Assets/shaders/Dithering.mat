@@ -39,7 +39,7 @@ Material:
     m_Floats:
     - _Color_Dithering: 0
     - _Dither_Amount: 0.08
-    - _Dither_Spread: 0.4
+    - _Dither_Spread: 0.3
     - _Light_Color: 0.68
     - _Shadow_Color: -0.08
     m_Colors:
