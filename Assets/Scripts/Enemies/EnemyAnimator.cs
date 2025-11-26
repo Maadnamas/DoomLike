@@ -20,6 +20,16 @@ public class EnemyAnimator : MonoBehaviour, IEnemyAnimator
         animator.SetBool("IsIdle", idle);
     }
 
+    public void SetRunning(bool running)
+    {
+        animator.SetBool("IsRunning", running);
+    }
+
+    public void PlayAttack()
+    {
+        animator.SetTrigger("Attack");
+    }
+
     public void PlayHit()
     {
         animator.SetTrigger("Hit");

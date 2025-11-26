@@ -15,8 +15,10 @@ public class EnemyAI : MonoBehaviour
 
     public Transform player { get; private set; }
     public float MoveSpeed => enemyData.moveSpeed;
+    public float RunSpeed => enemyData.runSpeed;
     public float StopDistance => enemyData.stopDistance;
     public float DetectionRange => enemyData.detectionRange;
+    public float AttackRange => enemyData.attackRange;
 
     private EnemyHealth enemyHealth;
     private IEnemyAnimator enemyAnimator;

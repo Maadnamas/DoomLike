@@ -4,7 +4,8 @@ public class EnemyChaseBehavior : IEnemyBehavior
 {
     public void OnEnter(EnemyAI enemy)
     {
-        enemy.GetAnimator().SetWalking(true);
+        enemy.GetAnimator().SetRunning(true);
+        enemy.GetAnimator().SetWalking(false);
         enemy.GetAnimator().SetIdle(false);
     }
 
@@ -24,14 +25,16 @@ public class EnemyChaseBehavior : IEnemyBehavior
         dir.y = 0f;
         enemy.transform.rotation = Quaternion.LookRotation(dir);
 
+        float currentSpeed = enemy.enemyData.runSpeed;
+
         if (distance > enemy.StopDistance)
-            enemy.transform.position += dir * enemy.MoveSpeed * Time.deltaTime;
+            enemy.transform.position += dir * currentSpeed * Time.deltaTime;
         else
             enemy.SetBehavior(new EnemyAttackBehavior());
     }
 
     public void OnExit(EnemyAI enemy)
     {
-        enemy.GetAnimator().SetWalking(false);
+        enemy.GetAnimator().SetRunning(false);
     }
 }
