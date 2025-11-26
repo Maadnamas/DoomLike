@@ -4,4 +4,7 @@ public interface IEnemyAnimator
 {
     void SetWalking(bool walking);
     void SetIdle(bool idle);
+
+    void PlayHit();
+    void PlayDeath();
 }

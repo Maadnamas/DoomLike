@@ -19,4 +19,14 @@ public class EnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         animator.SetBool("IsIdle", idle);
     }
+
+    public void PlayHit()
+    {
+        animator.SetTrigger("Hit");
+    }
+
+    public void PlayDeath()
+    {
+        animator.SetTrigger("Death");
+    }
 }
