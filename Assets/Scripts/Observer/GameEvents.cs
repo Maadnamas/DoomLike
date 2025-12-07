@@ -8,6 +8,7 @@
     public const string PLAYERZOOM = "PLAYER_ZOOM";
 
     // Sistema de vida
+    public const string UI_UPDATE_MEDKITS = "UI_UPDATE_MEDKITS";
     public const string PLAYER_DAMAGED = "PLAYER_DAMAGED";
     public const string PLAYER_HEALED = "PLAYER_HEALED";
     public const string PLAYER_DIED = "PLAYER_DIED";

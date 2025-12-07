@@ -16,6 +16,7 @@ public class EventManager : MonoBehaviour
             _instance = this;
             eventDictionary = new Dictionary<string, Action<object>>(); // INICIALIZAR ANTES DE CUALQUIER USO
             DontDestroyOnLoad(gameObject);
+            eventDictionary.Add(GameEvents.UI_UPDATE_MEDKITS, null);
         }
         else
         {
