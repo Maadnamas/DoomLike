@@ -155,6 +155,7 @@ MonoBehaviour:
   sceneToLoad: Menu
   minimumWaitSeconds: 5
   fadeDuration: 0.5
+  skipKey: 32
   sceneLoader: {fileID: 169535539}
   fadeController: {fileID: 1539508193}
 --- !u!4 &57298008

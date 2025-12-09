@@ -5,15 +5,21 @@ using UnityEngine.SceneManagement;
 public class AsyncSceneLoader : MonoBehaviour, ISceneLoader
 {
     [SerializeField] private float defaultFadeDuration = 0.5f;
+    private bool skipRequested = false;
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
     }
 
+    public void ForceSkip()
+    {
+        skipRequested = true;
+    }
+
     public IEnumerator LoadScene(string sceneName, float minimumWaitSeconds, IFade fade, float fadeDuration)
     {
-
+        skipRequested = false;
 
         if (fade == null)
             fade = GetComponent<IFade>();
@@ -24,7 +30,7 @@ public class AsyncSceneLoader : MonoBehaviour, ISceneLoader
         op.allowSceneActivation = false;
 
         float timer = 0f;
-        while (timer < minimumWaitSeconds)
+        while (timer < minimumWaitSeconds && !skipRequested)
         {
             timer += Time.unscaledDeltaTime;
             yield return null;
