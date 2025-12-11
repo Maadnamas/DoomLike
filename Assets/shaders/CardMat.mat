@@ -24,7 +24,8 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: 0ea1e0b09e2c31049bc8b7e8fe5dc090, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _USE_COLOR_RAMP
   m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
@@ -45,7 +46,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Holo_Color_Ramp:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 523560324af1a7942930d90649401aeb, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Holo_Mask:
@@ -67,18 +68,18 @@ Material:
     m_Ints: []
     m_Floats:
     - _Heightmap_Strenght: 0.1
-    - _Holo_Anim_Speed: 0.278
-    - _Holo_Density: 3.8
-    - _Holo_Noise_Scale: 21
-    - _Holo_Offset: 0.368
-    - _Holo_Rotation_Scroll_Speed: 10.7
-    - _IsFoil: 0
+    - _Holo_Anim_Speed: 0.114
+    - _Holo_Density: 2.01
+    - _Holo_Noise_Scale: 22
+    - _Holo_Offset: 0.302
+    - _Holo_Rotation_Scroll_Speed: 16.2
+    - _IsFoil: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 1.65
-    - _USE_COLOR_RAMP: 0
+    - _USE_COLOR_RAMP: 1
     m_Colors:
     - _Base_Color: {r: 1, g: 1, b: 1, a: 0}
-    - _Holo_Color: {r: 0.16981131, g: 0.05206479, b: 0.05206479, a: 0}
-    - _Holo_Direction: {r: 0.64, g: 1.92, b: 0, a: 0}
+    - _Holo_Color: {r: 0.09301448, g: 1, b: 0, a: 0}
+    - _Holo_Direction: {r: 0.1, g: 0.31, b: 0, a: 0}
   m_BuildTextureStacks: []
