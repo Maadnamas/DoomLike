@@ -173,6 +173,7 @@ GameObject:
   - component: {fileID: 6392819402490323445}
   - component: {fileID: 321512158035423930}
   - component: {fileID: 1905516946533020177}
+  - component: {fileID: 5864449702755643604}
   m_Layer: 0
   m_Name: Enemigo
   m_TagString: Untagged
@@ -189,7 +190,7 @@ Transform:
   m_GameObject: {fileID: 1654491158500805206}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.307}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -218,7 +219,7 @@ CapsuleCollider:
   m_Radius: 0.4983437
   m_Height: 1.9746792
   m_Direction: 1
-  m_Center: {x: 0.0008710623, y: 0.92862046, z: 0.5373641}
+  m_Center: {x: 0, y: 0.915, z: 0}
 --- !u!54 &6927930607122275773
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -271,11 +272,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyData: {fileID: 11400000, guid: e532beeefb8c3384593408f09c319e74, type: 2}
+  headTransform: {fileID: 0}
   patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  visionMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  obstacleDetectionRange: 4
+  maxSlopeAngle: 30
   patrolPointTolerance: 2
   idleWaitTime: 2
 --- !u!114 &321512158035423930
@@ -303,6 +316,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 8608041110749300481}
+--- !u!143 &5864449702755643604
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654491158500805206}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.915, z: 0}
 --- !u!1 &1829634527225657696
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,7 +434,7 @@ Transform:
   m_GameObject: {fileID: 2258690270430564343}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.251}
+  m_LocalPosition: {x: 0, y: 0, z: -0.359}
   m_LocalScale: {x: 1.2387, y: 1.2387, z: 1.2387}
   m_ConstrainProportionsScale: 0
   m_Children:

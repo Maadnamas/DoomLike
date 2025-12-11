@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   moveSpeed: 3
+  runSpeed: 6
   damage: 10
-  detectionRange: 15
-  stopDistance: 2
+  detectionRange: 30
+  stopDistance: 3
+  fieldOfView: 40
+  proximityDetectionRadius: 11
+  attackCooldown: 1.5
+  attackRange: 3
   enemyType: Default

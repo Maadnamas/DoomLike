@@ -2,39 +2,84 @@ using UnityEngine;
 
 public class EnemyChaseBehavior : IEnemyBehavior
 {
+    private bool isSearching = false;
+
     public void OnEnter(EnemyAI enemy)
     {
         enemy.GetAnimator().SetRunning(true);
         enemy.GetAnimator().SetWalking(false);
         enemy.GetAnimator().SetIdle(false);
+        isSearching = false;
     }
 
     public void Execute(EnemyAI enemy)
     {
-        if (enemy.player == null) return;
-
-        float distance = Vector3.Distance(enemy.transform.position, enemy.player.position);
-
-        if (distance > enemy.DetectionRange * 1.5f)
+        if (enemy.player == null)
         {
             enemy.SetBehavior(new EnemyPatrolBehavior());
             return;
         }
 
-        Vector3 dir = (enemy.player.position - enemy.transform.position).normalized;
-        dir.y = 0f;
-        enemy.transform.rotation = Quaternion.LookRotation(dir);
+        Vector3 targetPos = enemy.player.position;
+        bool canSee = enemy.CanSeePlayer();
 
-        float currentSpeed = enemy.enemyData.runSpeed;
-
-        if (distance > enemy.StopDistance)
-            enemy.transform.position += dir * currentSpeed * Time.deltaTime;
+        if (canSee)
+        {
+            isSearching = false;
+            targetPos = enemy.player.position;
+        }
         else
+        {
+            if (enemy.LastKnownPlayerPos.HasValue)
+            {
+                if (!enemy.IsPositionReachable(enemy.LastKnownPlayerPos.Value))
+                {
+                    enemy.LastKnownPlayerPos = null;
+                    enemy.SetBehavior(new EnemyPatrolBehavior());
+                    return;
+                }
+
+                isSearching = true;
+                targetPos = enemy.LastKnownPlayerPos.Value;
+            }
+            else
+            {
+                enemy.SetBehavior(new EnemyPatrolBehavior());
+                return;
+            }
+        }
+
+        float distance = Vector3.Distance(enemy.transform.position, targetPos);
+
+        if (isSearching && distance <= enemy.StopDistance)
+        {
+            enemy.LastKnownPlayerPos = null;
+            enemy.SetBehavior(new EnemyPatrolBehavior());
+            return;
+        }
+
+        if (!isSearching && distance <= enemy.StopDistance)
+        {
             enemy.SetBehavior(new EnemyAttackBehavior());
+            return;
+        }
+
+        float rotationSpeed = canSee ? 15f : 10f;
+
+        if (canSee)
+            enemy.RotateTowards(enemy.player.position, true, rotationSpeed);
+        else
+            enemy.RotateTowards(targetPos, false, rotationSpeed);
+
+        float speed = canSee ? enemy.RunSpeed : enemy.MoveSpeed;
+
+        enemy.MoveTo(targetPos, speed);
     }
 
     public void OnExit(EnemyAI enemy)
     {
         enemy.GetAnimator().SetRunning(false);
+        if (enemy.headTransform != null)
+            enemy.headTransform.localRotation = Quaternion.identity;
     }
 }

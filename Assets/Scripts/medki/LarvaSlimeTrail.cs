@@ -16,7 +16,7 @@ public class LarvaSlimeTrail : MonoBehaviour
     [Header("Fade Out")]
     [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
     [SerializeField] private bool useDissolveEffect = true;
-    [SerializeField] private float dissolveSpeed = 0.2f;
+    //[SerializeField] private float dissolveSpeed = 0.2f;
 
     [Header("Raycast")]
     [SerializeField] private float raycastDistance = 1f;

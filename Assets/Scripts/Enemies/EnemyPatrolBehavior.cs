@@ -16,11 +16,18 @@ public class EnemyPatrolBehavior : IEnemyBehavior
 
     public void Execute(EnemyAI enemy)
     {
-        if (enemy.patrolPoints == null || enemy.patrolPoints.Length == 0)
+        if (enemy.CanSeePlayer())
+        {
+            enemy.SetBehavior(new EnemyChaseBehavior());
             return;
+        }
+
+        if (enemy.patrolPoints == null || enemy.patrolPoints.Length == 0) return;
 
         if (isWaiting)
         {
+            enemy.RotateTowards(enemy.transform.position + enemy.transform.forward, false, 5f);
+
             waitTimer += Time.deltaTime;
             if (waitTimer >= enemy.idleWaitTime)
             {
@@ -30,23 +37,14 @@ public class EnemyPatrolBehavior : IEnemyBehavior
                 enemy.GetAnimator().SetWalking(true);
                 enemy.GetAnimator().SetIdle(false);
             }
-            else
-            {
-                if (enemy.player != null && Vector3.Distance(enemy.transform.position, enemy.player.position) <= enemy.DetectionRange)
-                    enemy.SetBehavior(new EnemyChaseBehavior());
-                return;
-            }
+            return;
         }
 
-        if (currentPoint < 0 || currentPoint >= enemy.patrolPoints.Length)
-            currentPoint = GetRandomPatrolPoint(enemy.patrolPoints.Length);
-
         Transform target = enemy.patrolPoints[currentPoint];
-        Vector3 dir = (target.position - enemy.transform.position).normalized;
-        enemy.transform.position += dir * enemy.MoveSpeed * Time.deltaTime;
-        enemy.transform.rotation = Quaternion.LookRotation(dir);
 
-        float distance = Vector3.Distance(enemy.transform.position, target.position);
+        Vector3 enemyPosHorizontal = new Vector3(enemy.transform.position.x, 0, enemy.transform.position.z);
+        Vector3 targetPosHorizontal = new Vector3(target.position.x, 0, target.position.z);
+        float distance = Vector3.Distance(enemyPosHorizontal, targetPosHorizontal);
 
         if (distance < enemy.patrolPointTolerance)
         {
@@ -54,10 +52,10 @@ public class EnemyPatrolBehavior : IEnemyBehavior
             waitTimer = 0f;
             enemy.GetAnimator().SetWalking(false);
             enemy.GetAnimator().SetIdle(true);
+            return;
         }
 
-        if (enemy.player != null && Vector3.Distance(enemy.transform.position, enemy.player.position) <= enemy.DetectionRange)
-            enemy.SetBehavior(new EnemyChaseBehavior());
+        enemy.MoveTo(target.position, enemy.MoveSpeed);
     }
 
     public void OnExit(EnemyAI enemy)
@@ -69,13 +67,8 @@ public class EnemyPatrolBehavior : IEnemyBehavior
     private int GetRandomPatrolPoint(int length)
     {
         if (length <= 1) return 0;
-
         int newPoint;
-        do
-        {
-            newPoint = Random.Range(0, length);
-        } while (newPoint == currentPoint && length > 1);
-
+        do { newPoint = Random.Range(0, length); } while (newPoint == currentPoint);
         return newPoint;
     }
 }

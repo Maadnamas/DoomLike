@@ -8,11 +8,16 @@ public class EnemyData : ScriptableObject
     public float moveSpeed = 3f;
     public float runSpeed = 6f;
     public float damage = 10f;
+
+    [Header("Rango y Detección")]
     public float detectionRange = 15f;
     public float stopDistance = 2f;
-    public string enemyType = "Default";
+    [Range(0, 360)] public float fieldOfView = 90f;
+    public float proximityDetectionRadius = 3f;
 
     [Header("Attack Settings")]
     public float attackCooldown = 1.5f;
     public float attackRange = 2.5f;
+
+    public string enemyType = "Default";
 }

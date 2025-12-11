@@ -14,6 +14,8 @@ public class EnemyAttackBehavior : IEnemyBehavior
         enemy.GetAnimator().SetWalking(false);
         enemy.GetAnimator().SetIdle(true);
 
+        enemy.StopMovement();
+
         lastAttackTime = Time.time - enemy.enemyData.attackCooldown;
 
         if (enemy.player != null)
@@ -36,7 +38,10 @@ public class EnemyAttackBehavior : IEnemyBehavior
             return;
         }
 
-        enemy.transform.LookAt(enemy.player);
+        if (!isAttacking)
+        {
+            enemy.RotateTowards(enemy.player.position, true, 5f);
+        }
 
         if (isAttacking)
         {
