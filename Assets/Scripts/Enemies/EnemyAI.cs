@@ -25,6 +25,9 @@ public class EnemyAI : MonoBehaviour
     public float patrolPointTolerance = 1.0f;
     public float idleWaitTime = 2f;
 
+    [Header("Configuración de Comportamiento")]
+    public float loseInterestWaitTime = 4f;
+
     public Transform player { get; private set; }
     public Vector3? LastKnownPlayerPos { get; set; }
     public float MoveSpeed => enemyData.moveSpeed;
@@ -156,9 +159,11 @@ public class EnemyAI : MonoBehaviour
         Vector3 origin = transform.position + Vector3.up * 0.5f;
 
         bool hitFront = Physics.Raycast(origin, transform.forward, obstacleDetectionRange, obstacleMask);
-        bool terrainSafe = IsTerrainSafe(transform.forward, speed);
+        bool terrainSafeFront = IsTerrainSafe(transform.forward, speed);
 
-        if (hitFront || !terrainSafe)
+        bool terrainSafeDesired = IsTerrainSafe(desiredDir, speed);
+
+        if (hitFront || !terrainSafeFront || !terrainSafeDesired)
         {
             Vector3 rightDir = Vector3.Cross(Vector3.up, transform.forward);
             finalDir = (transform.forward + rightDir * Time.deltaTime * 2f).normalized;
@@ -176,7 +181,7 @@ public class EnemyAI : MonoBehaviour
         characterController.Move(Vector3.zero);
     }
 
-    private bool IsTerrainSafe(Vector3 direction, float speed)
+    public bool IsTerrainSafe(Vector3 direction, float speed)
     {
         Vector3 futurePos = transform.position + (direction * speed * Time.deltaTime * 20f);
 
@@ -220,15 +225,12 @@ public class EnemyAI : MonoBehaviour
     {
         if (enemyData == null) return;
 
-        
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, enemyData.proximityDetectionRadius);
 
-        
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, enemyData.detectionRange);
 
-        
         Vector3 forward = transform.forward * enemyData.detectionRange;
         Vector3 leftRay = Quaternion.Euler(0, -enemyData.fieldOfView / 2, 0) * forward;
         Vector3 rightRay = Quaternion.Euler(0, enemyData.fieldOfView / 2, 0) * forward;

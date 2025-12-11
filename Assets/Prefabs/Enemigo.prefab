@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyData: {fileID: 11400000, guid: e532beeefb8c3384593408f09c319e74, type: 2}
-  headTransform: {fileID: 0}
+  headTransform: {fileID: 2959137723541045500}
   patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -287,10 +287,11 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 4096
-  obstacleDetectionRange: 4
-  maxSlopeAngle: 30
+  obstacleDetectionRange: 4.5
+  maxSlopeAngle: 60
   patrolPointTolerance: 2
   idleWaitTime: 2
+  loseInterestWaitTime: 4
 --- !u!114 &321512158035423930
 MonoBehaviour:
   m_ObjectHideFlags: 0
