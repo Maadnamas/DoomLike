@@ -6,6 +6,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public bool IsDead { get; private set; }
     private float maxHealth;
 
+    [Header("Efectos")]
+    [SerializeField] private ParticleSystem hitVFXPrefab;
+
     private IEnemyAnimator enemyAnimator;
     private CharacterController characterController;
     private Collider col;
@@ -35,13 +38,23 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (IsDead) return false;
 
         currentHealth -= amount;
-        enemyAnimator?.PlayHit();
+
+        if (hitVFXPrefab != null)
+        {
+ 
+            ParticleSystem effect = Instantiate(hitVFXPrefab, transform.position + Vector3.up * 2f, transform.rotation);
+            Destroy(effect.gameObject, effect.main.duration);
+        }
+
+
 
         if (currentHealth <= 0f)
         {
             Die();
             return true;
         }
+
+        enemyAnimator?.PlayHit();
 
         return false;
     }
