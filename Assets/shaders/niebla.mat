@@ -45,5 +45,5 @@ Material:
     - _maxdistance: 0
     - _si_o_no: 0.912
     m_Colors:
-    - _colorniebla: {r: 0.36862746, g: 0.57912016, b: 0.8, a: 1}
+    - _colorniebla: {r: 0.6509804, g: 0.26666668, b: 0.26666668, a: 1}
   m_BuildTextureStacks: []

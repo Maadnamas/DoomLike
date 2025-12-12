@@ -8,6 +8,10 @@ public class EnemyAnimator : MonoBehaviour, IEnemyAnimator
     {
         if (animator == null)
             animator = GetComponent<Animator>();
+
+        // Forzar desactivación de movimiento por animación
+        if (animator != null)
+            animator.applyRootMotion = false;
     }
 
     public void SetWalking(bool walking)

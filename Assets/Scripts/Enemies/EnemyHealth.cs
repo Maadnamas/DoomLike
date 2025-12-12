@@ -7,10 +7,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private float maxHealth;
 
     private IEnemyAnimator enemyAnimator;
+    private CharacterController characterController;
+    private Collider col;
+    private Rigidbody rb;
 
     private void Awake()
     {
         enemyAnimator = GetComponent<IEnemyAnimator>();
+        characterController = GetComponent<CharacterController>();
+        col = GetComponent<Collider>();
+        rb = GetComponent<Rigidbody>();
     }
 
     public void Initialize(float maxHealthValue)
@@ -18,6 +24,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         maxHealth = maxHealthValue;
         currentHealth = maxHealth;
         IsDead = false;
+
+        if (characterController != null) characterController.enabled = true;
+        if (col != null) col.enabled = true;
+        if (rb != null) rb.isKinematic = true;
     }
 
     public bool TakeDamage(float amount, Vector3 hitPoint, Vector3 hitNormal)
@@ -25,7 +35,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (IsDead) return false;
 
         currentHealth -= amount;
-
         enemyAnimator?.PlayHit();
 
         if (currentHealth <= 0f)
@@ -45,8 +54,22 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         IsDead = true;
 
-        enemyAnimator?.PlayDeath();
+        EnemyAI enemyAI = GetComponent<EnemyAI>();
+        if (enemyAI != null && enemyAI.player != null)
+        {
+            Collider[] playerColliders = enemyAI.player.GetComponentsInChildren<Collider>();
 
+            foreach (Collider pCol in playerColliders)
+            {
+                if (characterController != null)
+                    Physics.IgnoreCollision(characterController, pCol, true);
+
+                if (col != null && col != characterController)
+                    Physics.IgnoreCollision(col, pCol, true);
+            }
+        }
+
+        enemyAnimator?.PlayDeath();
         StartCoroutine(DeathSequence());
     }
 
@@ -54,11 +77,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         yield return new WaitForSeconds(15f);
 
+        if (characterController != null) characterController.enabled = false;
+        if (col != null) col.enabled = false;
+        if (rb != null) rb.isKinematic = true;
+
         float duration = 5f;
         float elapsed = 0f;
 
         Vector3 startPos = transform.position;
-        Vector3 endPos = startPos + Vector3.down * 1f;
+        Vector3 endPos = startPos + Vector3.down * 2f;
 
         while (elapsed < duration)
         {
@@ -66,6 +93,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             elapsed += Time.deltaTime;
             yield return null;
         }
+
         transform.position = endPos;
         Destroy(gameObject);
     }
