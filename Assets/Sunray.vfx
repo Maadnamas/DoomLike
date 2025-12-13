@@ -1220,7 +1220,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":14.210000038146973,"y":272.70001220703127,"z":1.0}'
+      m_SerializableObject: '{"x":0.8999999761581421,"y":194.5,"z":1.0}'
     m_Space: 2147483647
   m_Property:
     name: A
@@ -1356,7 +1356,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"x":43.70000076293945,"y":416.5,"z":1.0}'
+      m_SerializableObject: '{"x":49.099998474121097,"y":591.2999877929688,"z":1.0}'
     m_Space: 2147483647
   m_Property:
     name: B
@@ -1649,7 +1649,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEditor.VFX.TArcCircle, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"circle":{"transform":{"position":{"x":0.0,"y":0.0,"z":0.0},"angles":{"x":90.0,"y":0.0,"z":0.0},"scale":{"x":80.0,"y":80.0,"z":1.0}},"radius":0.9638432264328003},"arc":6.2831854820251469}'
+      m_SerializableObject: '{"circle":{"transform":{"position":{"x":0.0,"y":125.66844177246094,"z":0.0},"angles":{"x":90.0,"y":0.0,"z":0.0},"scale":{"x":80.0,"y":80.0,"z":1.0}},"radius":0.9846513867378235},"arc":6.275184154510498}'
     m_Space: 0
   m_Property:
     name: arcCircle

@@ -38,7 +38,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Brightness: 1
-    - _Color_Amount: 20
+    - _Color_Amount: 64
     - _Dither_Amount: 0.05
     - _Dither_Spread: 0.58
     m_Colors: []

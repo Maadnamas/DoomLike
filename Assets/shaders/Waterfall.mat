@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2905152521332509913
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 7
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -50,17 +37,31 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _CellSizes: 13.53
-    - _FoamBrightness: 2
-    - _FoamStrenght: 2
+    - _CellSizes: 251.75
+    - _FoamBrightness: 0.27
+    - _FoamStrenght: 28.43
+    - _Metallic: 0.548
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Smoothness: 13.21
-    - _VertexDisplacementAmmount: 0
-    - _WaterDisplacement: 2.4
-    - _WaterIntensity: 4.57
+    - _Smoothness: 1.13
+    - _VertexDisplacementAmmount: 0.2
+    - _WaterDisplacement: 1.71
+    - _WaterIntensity: 8.01
     m_Colors:
-    - _Darkness: {r: 0.78, g: 2, b: 0, a: 0}
-    - _WaterColor: {r: 0.6933962, g: 0.92665565, b: 1, a: 0}
-    - _WaterSpeed: {r: 0, g: 0.5, b: 0, a: 0}
+    - _Darkness: {r: 0.39, g: 0.84, b: 0, a: 0}
+    - _WaterColor: {r: 0.7688679, g: 1, b: 0.9927771, a: 0}
+    - _WaterSpeed: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
+--- !u!114 &7936435054516330399
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
