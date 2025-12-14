@@ -44,8 +44,9 @@ public class BossSpikeAttackBehavior : IBossBehavior
     {
         Debug.Log("Boss: Iniciando ataque de pinchos");
 
-        // Animación de preparación (puedes agregar un trigger especial si tienes)
-        boss.GetAnimator().PlayAttack();
+        // IMPORTANTE: PlaySpikeAttack() activa el trigger "ataque2" (ataque de pinchos)
+        boss.GetAnimator().PlaySpikeAttack();
+        Debug.Log("Boss: Trigger 'ataque2' activado");
 
         yield return new WaitForSeconds(0.5f);
 

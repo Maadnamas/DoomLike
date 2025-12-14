@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(BossHealth))]
-[RequireComponent(typeof(EnemyAnimator))]
+[RequireComponent(typeof(BossAnimator))]  // Cambiado a BossAnimator
 [RequireComponent(typeof(CharacterController))]
 public class BossAI : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class BossAI : MonoBehaviour
     public float DetectionRange => bossData.detectionRange;
 
     private BossHealth bossHealth;
-    private IEnemyAnimator bossAnimator;
+    private BossAnimator bossAnimator;  // Cambiado a BossAnimator
     private IBossBehavior currentBehavior;
     private CharacterController characterController;
     private Vector3 currentVelocity;
@@ -29,7 +29,7 @@ public class BossAI : MonoBehaviour
     void Start()
     {
         bossHealth = GetComponent<BossHealth>();
-        bossAnimator = GetComponent<EnemyAnimator>();
+        bossAnimator = GetComponent<BossAnimator>();  // Cambiado a BossAnimator
         characterController = GetComponent<CharacterController>();
 
         if (characterController == null)
@@ -111,7 +111,7 @@ public class BossAI : MonoBehaviour
         currentBehavior?.OnEnter(this);
     }
 
-    public IEnemyAnimator GetAnimator() => bossAnimator;
+    public BossAnimator GetAnimator() => bossAnimator;  // Cambiado tipo de retorno
 
     public float GetDistanceToPlayer()
     {
