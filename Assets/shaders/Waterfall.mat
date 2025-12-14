@@ -37,19 +37,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _CellSizes: 251.75
+    - _CellSizes: 360.31
     - _FoamBrightness: 0.27
     - _FoamStrenght: 28.43
-    - _Metallic: 0.548
+    - _Metallic: 0.562
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Smoothness: 1.13
-    - _VertexDisplacementAmmount: 0.2
-    - _WaterDisplacement: 1.71
-    - _WaterIntensity: 8.01
+    - _Smoothness: 0.182
+    - _Transparency: 1.32
+    - _VertexDisplacementAmmount: 0.75
+    - _WaterDisplacement: 1
+    - _WaterIntensity: 3.51
     m_Colors:
     - _Darkness: {r: 0.39, g: 0.84, b: 0, a: 0}
-    - _WaterColor: {r: 0.7688679, g: 1, b: 0.9927771, a: 0}
+    - _WaterColor: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 1}
     - _WaterSpeed: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &7936435054516330399

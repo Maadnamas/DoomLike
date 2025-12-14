@@ -6,7 +6,6 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
 
     [Header("Nombres de Parámetros del Animator")]
     [SerializeField] private string walkParameter = "camina";
-    [SerializeField] private string runParameter = "corre"; // Por si tienes animación de correr
     [SerializeField] private string meleeAttackTrigger = "ataque1";
     [SerializeField] private string spikeAttackTrigger = "ataque2";
     [SerializeField] private string hitTrigger = "hit";
@@ -33,7 +32,6 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
         if (animator != null)
         {
             animator.SetBool(walkParameter, !value);
-            animator.SetBool(runParameter, false);
         }
     }
 
@@ -43,26 +41,11 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
         {
             animator.SetBool(walkParameter, value);
 
-            // Si está caminando, no está corriendo
-            if (value)
-            {
-                animator.SetBool(runParameter, false);
-            }
         }
     }
 
     public void SetRunning(bool value)
     {
-        if (animator != null)
-        {
-            animator.SetBool(runParameter, value);
-
-            // Si está corriendo, también está "caminando" (en movimiento)
-            if (value)
-            {
-                animator.SetBool(walkParameter, true);
-            }
-        }
     }
 
     public void PlayAttack()

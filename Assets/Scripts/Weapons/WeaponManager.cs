@@ -256,15 +256,16 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
         if (currentIndex >= weapons.Length || weapons[currentIndex] == null)
         {
-            for (int i = 0; i < weapons.Length; i++)
-            {
-                if (weapons[i] != null)
-                {
-                    SelectWeapon(i);
-                    break;
-                }
+           for (int i = 0; i < weapons.Length; i++)
+          {
+               if (weapons[i] != null)
+               {
+                   TrySelectWeapon(i);
+                   break;
+              }
             }
         }
+
 
         Debug.Log($"Arma añadida: {newWeapon.weaponName}");
         return true;
@@ -310,27 +311,31 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
     public bool ReloadAmmo(int ammoType, int ammoAmount)
     {
-        if (ammoType < 0 || ammoType >= weapons.Length || weapons[ammoType] == null)
-            return false;
-
-        if (weapons[ammoType].currentAmmo < weapons[ammoType].MaxAmmo)
+        for (int i = 0; i < weapons.Length; i++)
         {
-            weapons[ammoType].AddAmmo(ammoAmount);
-
-            if (ammoType == currentIndex)
+            if (weapons[i] != null && weapons[i].weaponID == ammoType)
             {
-                currentweaponammo = weapons[ammoType].currentAmmo;
+                if (weapons[i].currentAmmo < weapons[i].MaxAmmo)
+                {
+                    weapons[i].AddAmmo(ammoAmount);
+
+                    if (i == currentIndex)
+                    {
+                        currentweaponammo = weapons[i].currentAmmo;
+                    }
+
+                    EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
+                    {
+                        weaponType = weapons[i].weaponName,
+                        amount = ammoAmount,
+                        totalAmmo = weapons[i].currentAmmo
+                    });
+
+                    TriggerAmmoChangedEvent();
+                    return true;
+                }
+                return false;
             }
-
-            EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
-            {
-                weaponType = weapons[ammoType].weaponName,
-                amount = ammoAmount,
-                totalAmmo = weapons[ammoType].currentAmmo
-            });
-
-            TriggerAmmoChangedEvent();
-            return true;
         }
         return false;
     }
