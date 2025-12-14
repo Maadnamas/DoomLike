@@ -19,10 +19,30 @@ public class BossData : ScriptableObject
     [Header("Ataque de Pinchos")]
     public GameObject spikePrefab;
     public GameObject spikeWarningPrefab; // Partículas de aviso
-    public int numberOfSpikes = 8; // Cantidad de pinchos alrededor
-    public float spikeRadius = 5f; // Radio donde aparecen los pinchos
-    public float spikeWarningTime = 1f; // Tiempo que muestran las partículas antes de salir
+
+    [Tooltip("Cantidad de pinchos que aparecen")]
+    public int numberOfSpikes = 12; // Aumentado para más caos
+
+    [Tooltip("Radio máximo donde pueden aparecer los pinchos (desde el centro del boss)")]
+    public float spikeRadius = 8f; // Radio del área de spawn
+
+    [Tooltip("Radio mínimo donde pueden aparecer (para no spawnear encima del boss)")]
+    [Range(0f, 10f)]
+    public float spikeMinRadius = 2f; // Nuevo: radio mínimo
+
+    [Tooltip("Tiempo que muestran las partículas antes de que salga el pincho")]
+    public float spikeWarningTime = 1f;
+
     public float spikeDamage = 15f;
     public float spikeAttackCooldown = 8f;
-    public float spikeAttackMinDistance = 6f; // Distancia mínima del jugador para usar este ataque
+
+    [Tooltip("Distancia mínima del jugador para preferir este ataque")]
+    public float spikeAttackMinDistance = 6f;
+
+    [Header("Configuración Avanzada de Pinchos")]
+    [Tooltip("Si está activado, los pinchos pueden aparecer cerca unos de otros")]
+    public bool allowOverlappingSpikes = false;
+
+    [Tooltip("Distancia mínima entre pinchos (si overlapping está desactivado)")]
+    public float minDistanceBetweenSpikes = 1.5f;
 }

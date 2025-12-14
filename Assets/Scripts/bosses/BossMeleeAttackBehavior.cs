@@ -3,7 +3,7 @@ using UnityEngine;
 public class BossMeleeAttackBehavior : IBossBehavior
 {
     private bool isAttacking = false;
-    private float attackDelay = 0.8f;
+    private float attackDelay = 0.4f;
     private float attackTimer = 0f;
     private IDamageable playerDamageable;
 

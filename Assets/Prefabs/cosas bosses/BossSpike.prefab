@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3840874100590220604}
   - component: {fileID: 6478298082086222387}
   - component: {fileID: 7409784590087186124}
-  - component: {fileID: 5845753103341890600}
   m_Layer: 12
   m_Name: Plain_Rock_Group7 (1)
   m_TagString: Untagged
@@ -84,28 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &5845753103341890600
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3890964515927444891}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8949167646350785380, guid: 337d6088b4b88d24aa96025f0072db16, type: 3}
 --- !u!1 &5526593311542686830
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,8 +110,8 @@ Transform:
   m_GameObject: {fileID: 5526593311542686830}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.02049, y: 5.6316314, z: 29.31471}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 11.02049, y: 5.2186, z: 29.31471}
+  m_LocalScale: {x: 2.317, y: 2.317, z: 2.317}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3840874100590220604}

@@ -12,18 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de597e053cc70a84a99236c9366a4afc, type: 3}
   m_Name: popol
   m_EditorClassIdentifier: 
-  maxHealth: 500
+  maxHealth: 750
   moveSpeed: 10
   damage: 30
   detectionRange: 30
-  stopDistance: 4
-  meleeAttackCooldown: 1
-  meleeAttackRange: 7
+  stopDistance: 2
+  meleeAttackCooldown: 0.3
+  meleeAttackRange: 4
   spikePrefab: {fileID: 5526593311542686830, guid: 30fd97aaa019aa944914f36200f8c08a, type: 3}
   spikeWarningPrefab: {fileID: 3379506822958358695, guid: 3012685f1e03ba84ea7bbe5dca2d39b7, type: 3}
-  numberOfSpikes: 30
-  spikeRadius: 5
+  numberOfSpikes: 60
+  spikeRadius: 40
+  spikeMinRadius: 2
   spikeWarningTime: 1
   spikeDamage: 15
-  spikeAttackCooldown: 8
+  spikeAttackCooldown: 3
   spikeAttackMinDistance: 6
+  allowOverlappingSpikes: 0
+  minDistanceBetweenSpikes: 1.5

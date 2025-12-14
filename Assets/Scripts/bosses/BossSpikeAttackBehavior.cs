@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BossSpikeAttackBehavior : IBossBehavior
 {
@@ -44,14 +45,14 @@ public class BossSpikeAttackBehavior : IBossBehavior
     {
         Debug.Log("Boss: Iniciando ataque de pinchos");
 
-        // IMPORTANTE: PlaySpikeAttack() activa el trigger "ataque2" (ataque de pinchos)
+        // Activar animación de ataque de pinchos
         boss.GetAnimator().PlaySpikeAttack();
         Debug.Log("Boss: Trigger 'ataque2' activado");
 
         yield return new WaitForSeconds(0.5f);
 
-        // Calcular posiciones de los pinchos alrededor del boss
-        Vector3[] spikePositions = CalculateSpikePositions(boss);
+        // Calcular posiciones RANDOM de los pinchos + UNO en la posición del jugador
+        Vector3[] spikePositions = CalculateRandomSpikePositionsWithPlayerTarget(boss);
 
         // Mostrar avisos (partículas) donde van a salir los pinchos
         GameObject[] warnings = new GameObject[spikePositions.Length];
@@ -88,12 +89,15 @@ public class BossSpikeAttackBehavior : IBossBehavior
                 BossSpike spikeScript = spike.GetComponent<BossSpike>();
                 if (spikeScript != null)
                 {
-                    spikeScript.Initialize(boss.bossData.spikeDamage);
+                    bool isPlayerSpike = (i == 0); // El primer pincho es el que apunta al jugador
+                    float extraDownOffset = isPlayerSpike ? 3f : 0f; // 3 unidades más abajo para el pincho del jugador
+
+                    spikeScript.Initialize(boss.bossData.spikeDamage, isPlayerSpike, extraDownOffset);
                 }
             }
         }
 
-        Debug.Log("Boss: Pinchos spawneados");
+        Debug.Log("Boss: Pinchos spawneados (incluyendo uno en la posición del jugador)");
 
         // Actualizar timer de ataque
         boss.lastSpikeAttackTime = Time.time;
@@ -105,31 +109,95 @@ public class BossSpikeAttackBehavior : IBossBehavior
         boss.SetBehavior(new BossChaseBehavior());
     }
 
-    private Vector3[] CalculateSpikePositions(BossAI boss)
+    private Vector3[] CalculateRandomSpikePositionsWithPlayerTarget(BossAI boss)
     {
-        Vector3[] positions = new Vector3[boss.bossData.numberOfSpikes];
-        float angleStep = 360f / boss.bossData.numberOfSpikes;
+        List<Vector3> positions = new List<Vector3>();
+        Vector3 bossCenter = boss.transform.position;
+        float radius = boss.bossData.spikeRadius;
+        int numberOfSpikes = boss.bossData.numberOfSpikes;
 
-        for (int i = 0; i < boss.bossData.numberOfSpikes; i++)
+        // IMPORTANTE: Primero agregar la posición del jugador
+        if (boss.player != null)
         {
-            float angle = i * angleStep * Mathf.Deg2Rad;
-            float x = boss.transform.position.x + boss.bossData.spikeRadius * Mathf.Cos(angle);
-            float z = boss.transform.position.z + boss.bossData.spikeRadius * Mathf.Sin(angle);
+            Vector3 playerPosition = GetGroundPosition(boss.player.position);
+            positions.Add(playerPosition);
+            Debug.Log("Pincho objetivo: Spawneando en posición del jugador");
+        }
 
-            // Hacer raycast para encontrar el suelo
-            RaycastHit hit;
-            Vector3 rayOrigin = new Vector3(x, boss.transform.position.y + 5f, z);
+        // Ahora generar el resto de pinchos aleatorios
+        float minDistanceBetweenSpikes = radius * 0.3f;
+        int remainingSpikes = numberOfSpikes - 1; // -1 porque ya agregamos el del jugador
+        int attempts = 0;
+        int maxAttempts = remainingSpikes * 10;
 
-            if (Physics.Raycast(rayOrigin, Vector3.down, out hit, 10f))
+        while (positions.Count < numberOfSpikes && attempts < maxAttempts)
+        {
+            attempts++;
+
+            // Generar posición aleatoria dentro del círculo
+            Vector3 randomPosition = GetRandomPositionInCircle(bossCenter, radius);
+
+            // Verificar que no esté muy cerca de otros pinchos
+            bool tooClose = false;
+            foreach (Vector3 existingPos in positions)
             {
-                positions[i] = hit.point;
+                float distance = Vector3.Distance(randomPosition, existingPos);
+                if (distance < minDistanceBetweenSpikes)
+                {
+                    tooClose = true;
+                    break;
+                }
             }
-            else
+
+            // Si no está muy cerca, agregar la posición
+            if (!tooClose)
             {
-                positions[i] = new Vector3(x, boss.transform.position.y, z);
+                Vector3 groundPosition = GetGroundPosition(randomPosition);
+                positions.Add(groundPosition);
             }
         }
 
-        return positions;
+        // Si no se pudieron generar suficientes posiciones, rellenar las faltantes
+        while (positions.Count < numberOfSpikes)
+        {
+            Vector3 randomPosition = GetRandomPositionInCircle(bossCenter, radius);
+            Vector3 groundPosition = GetGroundPosition(randomPosition);
+            positions.Add(groundPosition);
+        }
+
+        Debug.Log($"Generadas {positions.Count} posiciones de pinchos (1 en jugador + {positions.Count - 1} aleatorias)");
+        return positions.ToArray();
+    }
+
+    // Encuentra la posición del suelo usando raycast
+    private Vector3 GetGroundPosition(Vector3 position)
+    {
+        RaycastHit hit;
+        Vector3 rayOrigin = position + Vector3.up * 5f;
+
+        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, 10f))
+        {
+            return hit.point;
+        }
+        else
+        {
+            // Si no hay suelo, usar la posición Y original
+            return position;
+        }
+    }
+
+    // Genera una posición aleatoria dentro de un círculo
+    private Vector3 GetRandomPositionInCircle(Vector3 center, float radius)
+    {
+        // Usar distribución uniforme dentro del círculo
+        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+
+        // Para distribución más uniforme, usar raíz cuadrada
+        float distance = Mathf.Sqrt(Random.Range(0f, 1f)) * radius;
+
+        float x = center.x + distance * Mathf.Cos(angle);
+        float z = center.z + distance * Mathf.Sin(angle);
+
+        return new Vector3(x, center.y, z);
     }
 }
