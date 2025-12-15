@@ -28,14 +28,7 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private float bounceHeight = 50f;
     [SerializeField] private float bounceDuration = 0.2f;
     [SerializeField] private float counterDuration = 1.5f;
-    [SerializeField] private float initialOffScreenOffset = 1000f;
-
-    [Header("Sprites de Ranking")]
-    [SerializeField] private Sprite rankSSprite;
-    [SerializeField] private Sprite rankASprite;
-    [SerializeField] private Sprite rankBSprite;
-    [SerializeField] private Sprite rankCSprite;
-    [SerializeField] private Sprite rankDSprite;
+    [SerializeField] private float initialOffScreenOffset = 2200f;
 
     [Header("Fade")]
     [SerializeField] private CanvasGroup fadeCanvasGroup;
@@ -185,7 +178,9 @@ public class ScreenManager : MonoBehaviour
         enemiesAnimationCoroutine = StartCoroutine(CountUp(enemiesKilledText, EnemiesKilled, counterDuration));
         yield return enemiesAnimationCoroutine;
 
-        // Aquí NO se ejecuta el Debug. Se llama a UpdateRankImage para que lo imprima
+        string finalRank = CalculateRank(Score);
+        Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
+
         UpdateRankImage(Score);
         yield return StartCoroutine(AnimateRankAppearance());
 
@@ -282,20 +277,15 @@ public class ScreenManager : MonoBehaviour
         SceneSetup.RankData[] ranks = SceneSetup.Instance.Ranks;
 
         Sprite bestRankSprite = null;
-        string finalRankName = "D"; // Por defecto es D
 
         foreach (var rankData in ranks)
         {
             if (score >= rankData.RequiredScore)
             {
                 bestRankSprite = rankData.RankSprite;
-                finalRankName = rankData.RankName; // Capturar el nombre
                 break;
             }
         }
-
-        // ¡DEBUG LOG MOVIDO AQUÍ! Se ejecuta siempre antes de mostrar la imagen.
-        Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRankName}");
 
         if (rankImage != null && bestRankSprite != null)
         {
@@ -380,19 +370,16 @@ public class ScreenManager : MonoBehaviour
                     return;
                 }
             }
-            // Si las animaciones están corriendo
             else if (scoreAnimationCoroutine != null || enemiesAnimationCoroutine != null || (rankImage != null && rankImage.gameObject.activeSelf))
             {
                 skipAnimationRequested = true;
 
-                // Forzar fin del conteo de Score
                 if (scoreAnimationCoroutine != null)
                 {
                     StopCoroutine(scoreAnimationCoroutine);
                     scoreText.text = Score.ToString();
                     scoreAnimationCoroutine = null;
                 }
-                // Forzar fin del conteo de Enemies
                 if (enemiesAnimationCoroutine != null)
                 {
                     StopCoroutine(enemiesAnimationCoroutine);
@@ -400,10 +387,9 @@ public class ScreenManager : MonoBehaviour
                     enemiesAnimationCoroutine = null;
                 }
 
-                // Si aún no está visible, forzar la aparición de la imagen del ranking
                 if (rankImage != null && !rankImage.gameObject.activeSelf)
                 {
-                    UpdateRankImage(Score); // Llama al método que hace el cálculo y el Debug.Log
+                    UpdateRankImage(Score);
                     rankImage.gameObject.SetActive(true);
                     rankImage.transform.localScale = Vector3.one;
                 }
