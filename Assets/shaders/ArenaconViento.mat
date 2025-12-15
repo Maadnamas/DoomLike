@@ -50,14 +50,14 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Scale: 0.54
-    - _Sharpness: 28.91
+    - _Sharpness: 40
     - _WindAmount: 57.97
     - _WindSize: 0.22
     - _WindSpeed: 0.6
     m_Colors:
     - _TextureOffset: {r: 0, g: 0, b: 0, a: 0}
     - _TextureTiling: {r: 1, g: 1, b: 0, a: 0}
-    - _WindColor: {r: 1, g: 0.6933962, b: 0.94462526, a: 0}
+    - _WindColor: {r: 1, g: 0.6933962, b: 0.94462526, a: 0.9843137}
   m_BuildTextureStacks: []
 --- !u!114 &6998948366247787968
 MonoBehaviour:
