@@ -103,18 +103,37 @@ public class PlayerMovement : MonoBehaviour
     // guardar
     public PlayerMemento SaveState(PlayerHealth health, WeaponManager weaponManager)
     {
+        // 🔹 NUEVO: Validar parámetros
+        if (health == null)
+        {
+            Debug.LogError("PlayerHealth es null en SaveState");
+            return null;
+        }
+
+        if (weaponManager == null)
+        {
+            Debug.LogError("WeaponManager es null en SaveState");
+            return null;
+        }
+
         string sceneName = SceneManager.GetActiveScene().name;
 
-        // Obtener info de armas
+        // 🔹 NUEVO: Validar array de armas
         List<PlayerMemento.WeaponData> weaponList = new List<PlayerMemento.WeaponData>();
-        foreach (var weapon in weaponManager.weapons)
+        if (weaponManager.weapons != null)
         {
-            var data = new PlayerMemento.WeaponData
+            foreach (var weapon in weaponManager.weapons)
             {
-                weaponID = weapon.weaponID,
-                currentAmmo = weapon.currentAmmo
-            };
-            weaponList.Add(data);
+                if (weapon != null) // Validar cada arma
+                {
+                    var data = new PlayerMemento.WeaponData
+                    {
+                        weaponID = weapon.weaponID,
+                        currentAmmo = weapon.currentAmmo
+                    };
+                    weaponList.Add(data);
+                }
+            }
         }
 
         // Crear snapshot
@@ -131,7 +150,28 @@ public class PlayerMovement : MonoBehaviour
 
     public void LoadState(PlayerMemento memento, PlayerHealth health, WeaponManager weaponManager)
     {
+        // 🔹 NUEVO: Validar memento
+        if (memento == null)
+        {
+            Debug.LogError("Memento es null en LoadState");
+            return;
+        }
+
+        if (health == null)
+        {
+            Debug.LogError("PlayerHealth es null en LoadState");
+            return;
+        }
+
+        if (weaponManager == null)
+        {
+            Debug.LogError("WeaponManager es null en LoadState");
+            return;
+        }
+
         CharacterController controller = GetComponent<CharacterController>();
+        if (controller == null) return;
+
         if (controller.enabled) controller.enabled = false;
 
         transform.position = memento.position;
@@ -139,7 +179,9 @@ public class PlayerMovement : MonoBehaviour
 
         // Restaurar rotación vertical (cámara)
         xRotation = memento.cameraPitch;
-        if (Camera.main)
+        if (playerCamera != null)
+            playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        else if (Camera.main)
             Camera.main.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
         controller.enabled = true;
@@ -148,9 +190,15 @@ public class PlayerMovement : MonoBehaviour
         health.SetCurrentHealth(memento.health);
 
         // Restaurar armas y munición
-        for (int i = 0; i < weaponManager.weapons.Length && i < memento.weapons.Count; i++)
+        if (weaponManager.weapons != null && memento.weapons != null)
         {
-            weaponManager.weapons[i].currentAmmo = memento.weapons[i].currentAmmo;
+            for (int i = 0; i < weaponManager.weapons.Length && i < memento.weapons.Count; i++)
+            {
+                if (weaponManager.weapons[i] != null)
+                {
+                    weaponManager.weapons[i].currentAmmo = memento.weapons[i].currentAmmo;
+                }
+            }
         }
 
         weaponManager.currentIndex = memento.equippedWeaponIndex;

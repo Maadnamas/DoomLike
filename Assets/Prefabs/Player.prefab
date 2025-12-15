@@ -370,8 +370,8 @@ MonoBehaviour:
   - {fileID: 0}
   currentIndex: 0
   currentweaponammo: 0
-  playerCamera: {fileID: 0}
-  defaultMuzzlePoint: {fileID: 0}
+  playerCamera: {fileID: 8824047581245345506}
+  defaultMuzzlePoint: {fileID: 6666178357504446199}
   weaponImage: {fileID: 0}
   weaponUIAnimator: {fileID: 0}
   transitionSpeed: 1500
