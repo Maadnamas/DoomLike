@@ -92,6 +92,11 @@ public class BossHealth : MonoBehaviour, IDamageable
 
         currentHealth -= amount;
         currentHealth = Mathf.Max(currentHealth, 0);
+        EventManager.TriggerEvent(GameEvents.ENEMY_DAMAGED, new EnemyDamagedEventData
+        {
+            damageTaken = amount,
+            hitPoint = hitPoint
+        });
 
         // Notificar cambio de salud
         OnBossHealthChanged?.Invoke(currentHealth, maxHealth);
@@ -130,6 +135,11 @@ public class BossHealth : MonoBehaviour, IDamageable
         OnBossDied?.Invoke();
 
         Debug.Log("¡Boss derrotado!");
+        EventManager.TriggerEvent(GameEvents.BOSS_DIED, new BossDeathEventData
+        {
+            bossName = gameObject.name,
+            position = transform.position,
+        });
 
         if (useRagdoll)
         {

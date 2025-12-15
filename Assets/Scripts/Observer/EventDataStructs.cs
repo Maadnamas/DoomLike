@@ -55,3 +55,10 @@ public struct CardEventData
     public string cardID;
     public bool isFoil;
 }
+
+public struct BossDeathEventData
+{
+    public string bossName;
+    public Vector3 position;
+    public int scoreOverride;
+}

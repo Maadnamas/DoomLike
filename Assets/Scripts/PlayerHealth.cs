@@ -32,38 +32,34 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
     private bool isDead;
     private bool Healing;
     private bool powered;
+    public static bool gameIsOver = false;
 
     void Start()
     {
         currentHealth = maxHealth;
         screenFlash = FindObjectOfType<ScreenFlash>();
 
-        // Disparar evento inicial de salud
+        PlayerHealth.gameIsOver = false;
+
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_HEALTH, new DamageEventData
         {
             currentHealth = currentHealth,
             maxHealth = maxHealth
         });
 
-        // Disparar evento inicial de medkits
         UpdateMedkitUI();
 
-        // Disparar evento de inicio del juego
         EventManager.TriggerEvent(GameEvents.GAME_START, null);
     }
 
     void Update()
     {
-        // Teclas de prueba
         if (Input.GetKeyDown(KeyCode.J))
             TakeDamage(20, Vector3.zero, Vector3.zero);
 
-        // Usar medkit con la tecla H
         if (Input.GetKeyDown(KeyCode.H))
             UseMedkit();
     }
-
-    // ==================== SISTEMA DE MEDKITS ====================
 
     public bool AddMedkit()
     {
@@ -82,7 +78,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
 
     public bool UseMedkit()
     {
-        // Verificar si tenemos medkits y no estamos con vida máxima
         if (currentMedkits <= 0)
         {
             Debug.Log("No tienes medkits!");
@@ -100,7 +95,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
             return false;
         }
 
-        // Usar el medkit
         currentMedkits--;
         Heal(healAmountPerMedkit);
 
@@ -127,7 +121,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
 
     private void UpdateMedkitUI()
     {
-        // Disparar evento para actualizar UI de medkits
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_MEDKITS, new MedkitEventData
         {
             currentMedkits = currentMedkits,
@@ -135,11 +128,10 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
         });
     }
 
-    // ==================== SISTEMA DE DAÑO Y CURACIÓN ====================
-
-    // Implementación de IDamageable
     public bool TakeDamage(float amount, Vector3 hitPoint, Vector3 hitNormal)
     {
+        if (gameIsOver) return false;
+
         if (!powered)
         {
             CalculateDamage(Mathf.RoundToInt(amount));
@@ -151,7 +143,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
 
     public void CalculateDamage(int amount)
     {
-        if (isDead) return;
+        if (isDead || gameIsOver) return;
 
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
@@ -160,7 +152,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
         if (bloodEffect) Instantiate(bloodEffect, transform.position, Quaternion.identity);
         if (screenFlash) screenFlash.Flash(flashColor, flashDuration);
 
-        // EVENTO ACTUALIZADO - usar UI_UPDATE_HEALTH
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_HEALTH, new DamageEventData
         {
             damageAmount = amount,
@@ -168,7 +159,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
             maxHealth = maxHealth
         });
 
-        // EVENTO DE DAÑO (para otros sistemas)
         EventManager.TriggerEvent(GameEvents.PLAYER_DAMAGED, new DamageEventData
         {
             damageAmount = amount,
@@ -183,12 +173,14 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
     public void Die()
     {
         isDead = true;
+        PlayerHealth.gameIsOver = true;
         if (deathSound) AudioManager.PlaySFX2D(deathSound);
+
+        ScreenManager.SetPlayerControl(false);
 
         EventManager.TriggerEvent(GameEvents.PLAYER_DIED, null);
         Debug.Log("te moriste wachin");
 
-        // Disparar evento de Game Over para el ScreenManager
         EventManager.TriggerEvent(GameEvents.GAME_OVER, null);
     }
 
@@ -201,14 +193,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
 
         if (screenFlash) screenFlash.Flash(healcolor, flashDuration);
 
-        // Actualizar UI de salud
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_HEALTH, new DamageEventData
         {
             currentHealth = currentHealth,
             maxHealth = maxHealth
         });
 
-        // EVENTO DE CURA (para otros sistemas)
         EventManager.TriggerEvent(GameEvents.PLAYER_HEALED, new HealEventData
         {
             healAmount = (int)amount,
@@ -231,8 +221,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
             maxHealth = maxHealth
         });
     }
-
-    // ==================== SISTEMA DE POWER-UP ====================
 
     public void ActivatePowerUp(float duration)
     {

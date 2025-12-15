@@ -13,6 +13,7 @@
 
     public const string ENEMY_DIED = "ENEMY_DIED";
     public const string ENEMY_DAMAGED = "ENEMY_DAMAGED";
+    public const string BOSS_DIED = "BOSS_DIED";
 
     public const string CARD_COLLECTED = "CARD_COLLECTED";
 
