@@ -39,14 +39,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         currentHealth -= amount;
 
+        EventManager.TriggerEvent(GameEvents.ENEMY_DAMAGED, new EnemyDamagedEventData
+        {
+            damageTaken = amount,
+            hitPoint = hitPoint
+        });
+
         if (hitVFXPrefab != null)
         {
- 
             ParticleSystem effect = Instantiate(hitVFXPrefab, transform.position + Vector3.up * 2f, transform.rotation);
             Destroy(effect.gameObject, effect.main.duration);
         }
-
-
 
         if (currentHealth <= 0f)
         {
@@ -66,6 +69,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (IsDead) return;
 
         IsDead = true;
+        ScreenManager.EnemiesKilled++;
+        EventManager.TriggerEvent(GameEvents.ENEMY_DIED, new EnemyDeathEventData
+        {
+            enemyName = gameObject.name,
+            position = transform.position
+        });
 
         EnemyAI enemyAI = GetComponent<EnemyAI>();
         if (enemyAI != null && enemyAI.player != null)

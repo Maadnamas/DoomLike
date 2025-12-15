@@ -11,7 +11,6 @@ public class CardPickup : MonoBehaviour, ICollectable
     {
         ApplyCardTexture();
 
-        
         if (CardCollectionManager.Instance != null &&
             CardCollectionManager.Instance.HasCard(cardToGive.cardID))
         {
@@ -23,10 +22,8 @@ public class CardPickup : MonoBehaviour, ICollectable
     {
         if (cardRenderer != null && cardToGive != null && cardToGive.cardTexture != null)
         {
-
             Material uniqueMaterial = cardRenderer.material;
             Material backmat = backrender.material;
-
 
             uniqueMaterial.SetTexture("_Base_Texture", cardToGive.cardTexture);
             if (cardToGive.isFoil)
@@ -39,7 +36,6 @@ public class CardPickup : MonoBehaviour, ICollectable
                 uniqueMaterial.SetFloat("_IsFoil", 0);
                 backmat.SetFloat("_IsFoil", 0);
             }
-
         }
         else
         {
@@ -57,6 +53,13 @@ public class CardPickup : MonoBehaviour, ICollectable
         if (CardCollectionManager.Instance != null)
         {
             CardCollectionManager.Instance.AddCard(cardToGive);
+
+            EventManager.TriggerEvent(GameEvents.CARD_COLLECTED, new CardEventData
+            {
+                cardID = cardToGive.cardID,
+                isFoil = cardToGive.isFoil
+            });
+
             gameObject.SetActive(false);
         }
     }

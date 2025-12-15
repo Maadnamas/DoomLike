@@ -4,13 +4,11 @@ using TMPro;
 
 public class MedkitUIManager : MonoBehaviour
 {
-    [Header("Referencias UI")]
     [SerializeField] private TextMeshProUGUI medkitCountText;
     [SerializeField] private Image[] medkitIcons;
     [SerializeField] private Color fullColor = Color.white;
     [SerializeField] private Color emptyColor = new Color(1, 1, 1, 0.3f);
 
-    [Header("Referencias Player")]
     [SerializeField] private PlayerHealth playerHealth;
 
     private bool isSubscribed = false;

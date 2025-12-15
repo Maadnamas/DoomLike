@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public struct WeaponEventData
 {
     public string weaponName;
@@ -31,8 +32,26 @@ public struct HealEventData
     public int currentHealth;
 }
 
+public struct MedkitEventData
+{
+    public int currentMedkits;
+    public int maxMedkits;
+}
+
 public struct EnemyDeathEventData
 {
     public string enemyName;
     public Vector3 position;
+}
+
+public struct EnemyDamagedEventData
+{
+    public float damageTaken;
+    public Vector3 hitPoint;
+}
+
+public struct CardEventData
+{
+    public string cardID;
+    public bool isFoil;
 }

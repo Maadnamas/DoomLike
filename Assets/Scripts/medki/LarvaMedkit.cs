@@ -2,20 +2,17 @@ using UnityEngine;
 
 public class LarvaMedkit : MonoBehaviour, ICollectable
 {
-    [Header("Configuración Animación Larva")]
     [SerializeField] private Transform larvaModel;
     [SerializeField] private float squashSpeed = 6f;
     [SerializeField] private float squashAmount = 0.3f;
     [SerializeField] private float stretchAmount = 0.2f;
 
-    [Header("Movimiento Waypoints")]
     [SerializeField] private Transform[] waypoints;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float waypointReachDistance = 1.5f;
     [SerializeField] private bool randomOrder = true;
     [SerializeField] private float rotationSpeed = 5f;
 
-    [Header("Física y Alineación al Suelo")]
     [SerializeField] private float groundCheckDistance = 1.5f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundAlignSpeed = 5f;
@@ -23,7 +20,6 @@ public class LarvaMedkit : MonoBehaviour, ICollectable
     [SerializeField] private float maxSlopeAngle = 50f;
     [SerializeField] private float slopeSpeedMultiplier = 1.5f;
 
-    [Header("Efectos")]
     [SerializeField] private GameObject collectEffect;
     [SerializeField] private AudioClip collectSound;
 
@@ -98,8 +94,6 @@ public class LarvaMedkit : MonoBehaviour, ICollectable
         RaycastHit hit;
         Vector3 rayStart = transform.position + Vector3.up * 0.5f;
         Vector3 rayDirection = Vector3.down;
-
-        Debug.DrawRay(rayStart, rayDirection * groundCheckDistance, Color.red);
 
         if (Physics.Raycast(rayStart, rayDirection, out hit, groundCheckDistance, groundLayer))
         {
@@ -278,50 +272,5 @@ public class LarvaMedkit : MonoBehaviour, ICollectable
         }
 
         Destroy(gameObject);
-    }
-
-    void OnDrawGizmos()
-    {
-        if (waypoints == null || waypoints.Length == 0)
-            return;
-
-        Gizmos.color = Color.green;
-
-        for (int i = 0; i < waypoints.Length; i++)
-        {
-            if (waypoints[i] != null)
-            {
-                Gizmos.DrawWireSphere(waypoints[i].position, 0.3f);
-
-                if (i < waypoints.Length - 1 && waypoints[i + 1] != null)
-                {
-                    Gizmos.DrawLine(waypoints[i].position, waypoints[i + 1].position);
-                }
-            }
-        }
-
-        if (waypoints.Length > 1 && waypoints[0] != null && waypoints[waypoints.Length - 1] != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(waypoints[waypoints.Length - 1].position, waypoints[0].position);
-        }
-
-        if (Application.isPlaying)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawRay(transform.position, groundNormal * 1f);
-
-            Gizmos.color = isGrounded ? Color.green : Color.red;
-            Gizmos.DrawWireSphere(transform.position, 0.2f);
-
-            if (targetWaypoint != null)
-            {
-                Gizmos.color = Color.magenta;
-                Gizmos.DrawLine(transform.position, targetWaypoint.position);
-
-                Gizmos.color = Color.blue;
-                Gizmos.DrawRay(transform.position, transform.forward * 2f);
-            }
-        }
     }
 }
