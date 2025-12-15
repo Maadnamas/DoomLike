@@ -9,13 +9,9 @@ public class BobbingEffect : MonoBehaviour
     public CharacterController playerController;
 
     [Header("Configuración Bobbing - Cámara")]
-    [Tooltip("velocidad del bobbing (frecuencia) mientras camina")]
     public float walkBobbingSpeed = 7f;
-    [Tooltip("velocidad del bobbing (frecuencia) mientras corre")]
     public float runBobbingSpeed = 10f;
-    [Tooltip("amplitud del bobbing")]
     public float bobbingAmount = 0.06f;
-    [Tooltip("suavizado al interpolar la posición/rotación")]
     public float bobbingSmoothness = 8f;
     public bool enableTilt = true;
     public float tiltAmount = 1.5f;
@@ -29,7 +25,6 @@ public class BobbingEffect : MonoBehaviour
     [Header("Debug")]
     public bool showDebug = false;
 
-    // privados
     private Vector3 cameraOriginalPos;
     private Vector2 imageOriginalPos;
     private Quaternion cameraOriginalRot;
@@ -39,7 +34,6 @@ public class BobbingEffect : MonoBehaviour
 
     void Start()
     {
-        // asignar cámara si no se puso en inspector
         if (cameraTransform == null)
         {
             Camera c = Camera.main;
@@ -50,19 +44,16 @@ public class BobbingEffect : MonoBehaviour
             if (c != null) cameraTransform = c.transform;
         }
 
-        // asignar playerController si no está
         if (playerController == null)
         {
             playerController = GetComponentInParent<CharacterController>();
         }
 
-        // buscar imagen si corresponde
         if (targetImage == null && applyToImage)
         {
             targetImage = GetComponentInChildren<Image>();
         }
 
-        // guardar posiciones/rotaciones originales
         if (cameraTransform != null)
         {
             cameraOriginalPos = cameraTransform.localPosition;
@@ -79,17 +70,23 @@ public class BobbingEffect : MonoBehaviour
 
     void Update()
     {
+        if (!PlayerMovement.isControlEnabled)
+        {
+            timer = 0f;
+            imageTimer = 0f;
+            ResetToOriginalPositions();
+            return;
+        }
+
         ApplyBobbing();
     }
 
     bool IsMoving()
     {
-        // Detectar movimiento horizontal basado en input, no en velocity del controller
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         Vector3 inputVector = new Vector3(horizontal, 0f, vertical);
 
-        // Si el jugador está en el aire, no hacer bobbing
         if (playerController != null && !playerController.isGrounded)
             return false;
 
@@ -102,16 +99,13 @@ public class BobbingEffect : MonoBehaviour
 
         if (!moving)
         {
-            // reset suave hacia originales
-            timer = 0f; // reiniciamos el timer para que al empezar de nuevo arranque consistente
+            timer = 0f;
             ResetToOriginalPositions();
             return;
         }
 
-        // elegir velocidad
         float currentBobbingSpeed = Input.GetKey(KeyCode.LeftShift) ? runBobbingSpeed : walkBobbingSpeed;
 
-        // avanzar timer (no lo lerpeamos, eso rompe la onda)
         timer += Time.deltaTime * currentBobbingSpeed;
 
         float waveSlice = Mathf.Sin(timer);
@@ -153,12 +147,10 @@ public class BobbingEffect : MonoBehaviour
         Vector2 imageTargetPos;
         float imageTilt = 0f;
 
-        // usar la velocidad del jugador para ajustar la velocidad de bobbing
         float currentBobbingSpeed = Input.GetKey(KeyCode.LeftShift) ? runBobbingSpeed : walkBobbingSpeed;
 
         if (independentImageBobbing)
         {
-            // el timer de la imagen corre al mismo ritmo que el jugador
             imageTimer += Time.deltaTime * currentBobbingSpeed;
             float w = Mathf.Sin(imageTimer);
             float ih = Mathf.Cos(imageTimer * 0.5f) * bobbingAmount * 0.5f * imageBobbingMultiplier;
@@ -169,7 +161,6 @@ public class BobbingEffect : MonoBehaviour
         }
         else
         {
-            // sincronizado con el movimiento de la cámara (usa el mismo timer)
             imageTargetPos = imageOriginalPos + new Vector2(
                 horizontalBob * imageBobbingMultiplier,
                 verticalBob * imageBobbingMultiplier

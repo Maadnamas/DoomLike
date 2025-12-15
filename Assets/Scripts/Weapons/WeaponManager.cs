@@ -23,6 +23,8 @@ public class WeaponManager : MonoBehaviour, IAmmo
     private Vector2 originalPos;
     private bool isTransitioning;
 
+    private Coroutine cameraZoomCoroutine;
+
     void Start()
     {
         if (weaponImage)
@@ -71,13 +73,13 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
     void Update()
     {
-        // Cambiar armas (solo si existe)
+        if (!PlayerMovement.isControlEnabled) return;
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) TrySelectWeapon(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) TrySelectWeapon(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) TrySelectWeapon(2);
         if (Input.GetKeyDown(KeyCode.Alpha4)) TrySelectWeapon(3);
 
-        // Disparar/aim solo si hay arma
         if (currentIndex < weapons.Length && weapons[currentIndex] != null)
         {
             if (Input.GetButton("Fire1"))
@@ -86,11 +88,17 @@ public class WeaponManager : MonoBehaviour, IAmmo
             }
             if (Input.GetButtonDown("Fire2"))
             {
+                if (cameraZoomCoroutine != null) StopCoroutine(cameraZoomCoroutine);
                 weapons[currentIndex].TryAim();
             }
             if (Input.GetButtonUp("Fire2"))
             {
                 weapons[currentIndex].StopAim();
+                if (weapons[currentIndex] is SniperRifle sniper)
+                {
+                    // USANDO EL NUEVO GETTER PARA EL FOV OBJETIVO
+                    cameraZoomCoroutine = StartCoroutine(CameraZoomOutRoutine(sniper.ZoomSpeed, weapons[currentIndex].DefaultFOVValue));
+                }
             }
         }
     }
@@ -111,6 +119,17 @@ public class WeaponManager : MonoBehaviour, IAmmo
     {
         if (index < 0 || index >= weapons.Length || isTransitioning) return;
         if (weapons[index] == null) return;
+
+        if (currentIndex < weapons.Length && weapons[currentIndex] != null)
+        {
+            weapons[currentIndex].StopAim();
+
+            if (weapons[currentIndex] is SniperRifle sniper && playerCamera != null && playerCamera.fieldOfView != weapons[currentIndex].DefaultFOVValue)
+            {
+                // USANDO EL NUEVO GETTER PARA EL FOV OBJETIVO
+                cameraZoomCoroutine = StartCoroutine(CameraZoomOutRoutine(sniper.ZoomSpeed, weapons[currentIndex].DefaultFOVValue));
+            }
+        }
 
         for (int i = 0; i < weapons.Length; i++)
         {
@@ -149,6 +168,29 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
         Debug.Log($"Arma actual: {weapons[index].weaponName}");
     }
+
+    IEnumerator CameraZoomOutRoutine(float speed, float targetFOV)
+    {
+        if (playerCamera == null) yield break;
+
+        float startFOV = playerCamera.fieldOfView;
+
+        if (Mathf.Approximately(startFOV, targetFOV)) yield break;
+
+        float startTime = Time.time;
+        float duration = Mathf.Abs(targetFOV - startFOV) / speed;
+
+        while (Time.time - startTime < duration)
+        {
+            float t = (Time.time - startTime) / duration;
+            playerCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, t);
+            yield return null;
+        }
+
+        playerCamera.fieldOfView = targetFOV;
+        cameraZoomCoroutine = null;
+    }
+
 
     IEnumerator ChangeWeaponUI(int newIndex)
     {
@@ -256,13 +298,13 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
         if (currentIndex >= weapons.Length || weapons[currentIndex] == null)
         {
-           for (int i = 0; i < weapons.Length; i++)
-          {
-               if (weapons[i] != null)
-               {
-                   TrySelectWeapon(i);
-                   break;
-              }
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                if (weapons[i] != null)
+                {
+                    TrySelectWeapon(i);
+                    break;
+                }
             }
         }
 
@@ -297,7 +339,6 @@ public class WeaponManager : MonoBehaviour, IAmmo
             }
         }
 
-        // ordena
         System.Array.Sort(weapons, (a, b) =>
         {
             if (a == null && b == null) return 0;

@@ -22,6 +22,7 @@ public abstract class WeaponBase : MonoBehaviour
     public System.Action OnShoot;
     protected Coroutine zoomCoroutine;
     protected float defaultFOV;
+    public float DefaultFOVValue => defaultFOV;
 
     protected float nextTimeToFire;
 

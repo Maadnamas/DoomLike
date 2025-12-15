@@ -117,6 +117,7 @@ private void OnBossDied(object data)
         if (data is BossDeathEventData bossData)
         {
             int score = (bossData.scoreOverride > 0) ? bossData.scoreOverride : pointsPerBossKill;
+            ScreenManager.EnemiesKilled++;
             AddScore(score);
         }
     }

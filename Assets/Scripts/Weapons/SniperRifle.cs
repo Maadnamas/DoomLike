@@ -17,15 +17,25 @@ public class SniperRifle : WeaponBase
     private GameObject mainUI;
     private GameObject sniperUI;
     private Vector3 originalPosition;
+
+    public float ZoomSpeed => zoomSpeed;
+
     protected override void Awake()
     {
         base.Awake();
-        originalPosition = handCanvas.transform.position;
+
+        if (fpsCamera != null && defaultFOV == 0)
+        {
+            defaultFOV = fpsCamera.fieldOfView;
+        }
+
+        originalPosition = handCanvas.transform.localPosition;
         sniperUI = UI.GetComponentsInChildren<Transform>(includeInactive: true)
                          .FirstOrDefault(t => t.CompareTag("SniperUI"))?.gameObject;
         mainUI = UI.GetComponentsInChildren<Transform>(includeInactive: true)
                  .FirstOrDefault(t => t.CompareTag("MainUI"))?.gameObject;
     }
+
     protected override void Shoot()
     {
         if (muzzleFlash != null) muzzleFlash.Play();
@@ -54,23 +64,28 @@ public class SniperRifle : WeaponBase
     {
         if (zoomCoroutine != null)
             StopCoroutine(zoomCoroutine);
+
         if (mainUI != null) mainUI.SetActive(false);
-        handCanvas.transform.position = new Vector3(originalPosition.x, -Screen.height * 2, originalPosition.z);
+
+        handCanvas.transform.localPosition = new Vector3(originalPosition.x, originalPosition.y - Screen.height * 2, originalPosition.z);
+
         if (sniperUI != null) sniperUI.SetActive(true);
         else Debug.LogWarning("No se pudo encontrar SniperUI");
 
-            zoomCoroutine = StartCoroutine(ZoomRoutine(zoomAmount));
+        zoomCoroutine = StartCoroutine(ZoomRoutine(zoomAmount));
     }
 
     public override void StopAim()
     {
         if (zoomCoroutine != null)
+        {
             StopCoroutine(zoomCoroutine);
-        if (mainUI != null) mainUI.SetActive(true);
-        handCanvas.transform.localPosition = Vector3.zero;
-        if (sniperUI != null) sniperUI.SetActive(false);
+            zoomCoroutine = null;
+        }
 
-        zoomCoroutine = StartCoroutine(ZoomRoutine(defaultFOV));
+        if (mainUI != null) mainUI.SetActive(true);
+        handCanvas.transform.localPosition = originalPosition;
+        if (sniperUI != null) sniperUI.SetActive(false);
     }
 
     private System.Collections.IEnumerator ZoomRoutine(float targetFOV)
@@ -79,12 +94,16 @@ public class SniperRifle : WeaponBase
         float startTime = Time.time;
         float duration = Mathf.Abs(targetFOV - startFOV) / zoomSpeed;
 
-        
+        if (duration < 0.001f)
+        {
+            if (fpsCamera != null)
+                fpsCamera.fieldOfView = targetFOV;
+            yield break;
+        }
 
         while (Time.time - startTime < duration)
         {
             float t = (Time.time - startTime) / duration;
-            fpsCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, t);
 
             if (fpsCamera != null)
                 fpsCamera.fieldOfView = Mathf.Lerp(startFOV, targetFOV, t);
@@ -92,9 +111,7 @@ public class SniperRifle : WeaponBase
             yield return null;
         }
 
-        fpsCamera.fieldOfView = targetFOV;
         if (fpsCamera != null)
             fpsCamera.fieldOfView = targetFOV;
     }
 }
-

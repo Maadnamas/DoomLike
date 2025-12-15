@@ -13,34 +13,21 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private GameObject hudGroup;
     [SerializeField] private GameObject victoryGroup;
     [SerializeField] private GameObject defeatGroup;
+    [SerializeField] private ScreenAnimations screenAnimations; // NUEVO: Referencia al script de animaciones
 
-    [Header("Pantalla de Victoria")]
-    [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private TextMeshProUGUI enemiesKilledText;
+    [Header("Pantalla de Victoria (Solo para Actualizar Datos)")]
     [SerializeField] private Image rankImage;
+    [SerializeField] private Image rankImageLarva;
 
     [SerializeField] private Button continueButton;
     [SerializeField] private Button menuButton;
     [SerializeField] private string menuSceneName = "MainMenuScene";
-
-    [Header("Configuración de Animación de Victoria")]
-    [SerializeField] private float fallDuration = 0.5f;
-    [SerializeField] private float bounceHeight = 50f;
-    [SerializeField] private float bounceDuration = 0.2f;
-    [SerializeField] private float counterDuration = 1.5f;
-    [SerializeField] private float initialOffScreenOffset = 2200f;
 
     [Header("Fade")]
     [SerializeField] private CanvasGroup fadeCanvasGroup;
     [SerializeField] private float fadeDuration = 1f;
 
     private bool waitingForRestart = false;
-    private Vector3 initialVictoryPanelPosition;
-    private bool skipAnimationRequested = false;
-
-    private Coroutine scoreAnimationCoroutine;
-    private Coroutine enemiesAnimationCoroutine;
-
 
     private void OnEnable()
     {
@@ -79,17 +66,11 @@ public class ScreenManager : MonoBehaviour
         if (fadeCanvasGroup != null)
             fadeCanvasGroup.alpha = 0f;
 
-        if (victoryGroup != null)
-        {
-            RectTransform victoryRect = victoryGroup.GetComponent<RectTransform>();
-            if (victoryRect != null)
-            {
-                initialVictoryPanelPosition = victoryRect.localPosition;
-            }
-        }
-
         if (rankImage != null)
             rankImage.gameObject.SetActive(false);
+
+        if (rankImageLarva != null)
+            rankImageLarva.gameObject.SetActive(false);
 
         PlayerHealth.gameIsOver = false;
         ScreenManager.SetPlayerControl(true);
@@ -146,6 +127,12 @@ public class ScreenManager : MonoBehaviour
 
     private IEnumerator SwitchScreenAndAnimateVictory(GameObject targetScreen, bool pauseGame = false)
     {
+        if (screenAnimations == null)
+        {
+            Debug.LogError("ScreenAnimations no está asignado.");
+            yield break;
+        }
+
         if (fadeCanvasGroup != null)
             yield return StartCoroutine(Fade(1f));
 
@@ -153,36 +140,14 @@ public class ScreenManager : MonoBehaviour
         defeatGroup.SetActive(false);
         targetScreen.SetActive(true);
 
-        if (scoreText != null) scoreText.text = "0";
-        if (enemiesKilledText != null) enemiesKilledText.text = "0";
-        if (rankImage != null) rankImage.gameObject.SetActive(false);
-
-        RectTransform rectToAnimate = targetScreen.GetComponent<RectTransform>();
-
-        if (rectToAnimate != null)
-        {
-            rectToAnimate.localPosition = initialVictoryPanelPosition + Vector3.up * initialOffScreenOffset;
-        }
-
-        if (fadeCanvasGroup != null)
-            yield return StartCoroutine(Fade(0f));
-
-        if (rectToAnimate != null)
-            yield return StartCoroutine(AnimateVictoryPanelFall(rectToAnimate));
-
-        skipAnimationRequested = false;
-
-        scoreAnimationCoroutine = StartCoroutine(CountUp(scoreText, Score, counterDuration));
-        yield return scoreAnimationCoroutine;
-
-        enemiesAnimationCoroutine = StartCoroutine(CountUp(enemiesKilledText, EnemiesKilled, counterDuration));
-        yield return enemiesAnimationCoroutine;
-
+        // Determinar rank y actualizar sprites ANTES de iniciar animaciones
         string finalRank = CalculateRank(Score);
         Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
 
-        UpdateRankImage(Score);
-        yield return StartCoroutine(AnimateRankAppearance());
+        UpdateRankImages(Score);
+
+        // Delegar la secuencia de caída, conteo y aparición de imágenes al nuevo script
+        yield return StartCoroutine(screenAnimations.StartVictorySequence(Score, EnemiesKilled));
 
         if (pauseGame)
         {
@@ -190,107 +155,39 @@ public class ScreenManager : MonoBehaviour
         }
     }
 
-    private IEnumerator AnimateVictoryPanelFall(RectTransform rectToAnimate)
+    private void UpdateRankImages(int score)
     {
-        Vector3 startPos = rectToAnimate.localPosition;
-        Vector3 targetPos = initialVictoryPanelPosition;
-
-        float time = 0f;
-        while (time < fallDuration)
-        {
-            time += Time.unscaledDeltaTime;
-            float t = time / fallDuration;
-            rectToAnimate.localPosition = Vector3.Lerp(startPos, targetPos, t);
-            yield return null;
-        }
-        rectToAnimate.localPosition = targetPos;
-
-        Vector3 bounceUpPos = targetPos + Vector3.up * bounceHeight;
-        time = 0f;
-        while (time < bounceDuration)
-        {
-            time += Time.unscaledDeltaTime;
-            float t = time / bounceDuration;
-            rectToAnimate.localPosition = Vector3.Lerp(targetPos, bounceUpPos, t);
-            yield return null;
-        }
-        rectToAnimate.localPosition = bounceUpPos;
-
-        time = 0f;
-        while (time < bounceDuration)
-        {
-            time += Time.unscaledDeltaTime;
-            float t = time / bounceDuration;
-            rectToAnimate.localPosition = Vector3.Lerp(bounceUpPos, targetPos, t);
-            yield return null;
-        }
-        rectToAnimate.localPosition = targetPos;
-    }
-
-    private IEnumerator CountUp(TextMeshProUGUI text, int targetValue, float duration)
-    {
-        float startTime = Time.unscaledTime;
-        float endTime = startTime + duration;
-        int startValue = 0;
-
-        while (Time.unscaledTime < endTime && !skipAnimationRequested)
-        {
-            float elapsed = Time.unscaledTime - startTime;
-            float t = elapsed / duration;
-            int currentValue = Mathf.RoundToInt(Mathf.Lerp(startValue, targetValue, t));
-            text.text = currentValue.ToString();
-            yield return null;
-        }
-
-        text.text = targetValue.ToString();
-        skipAnimationRequested = false;
-    }
-
-    private IEnumerator AnimateRankAppearance()
-    {
-        rankImage.gameObject.SetActive(true);
-        rankImage.transform.localScale = Vector3.zero;
-
-        float time = 0f;
-        float popDuration = 0.2f;
-        Vector3 targetScale = Vector3.one;
-
-        while (time < popDuration && !skipAnimationRequested)
-        {
-            time += Time.unscaledDeltaTime;
-            rankImage.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, time / popDuration);
-            yield return null;
-        }
-
-        rankImage.transform.localScale = targetScale;
-        skipAnimationRequested = false;
-    }
-
-    private void UpdateRankImage(int score)
-    {
-        if (SceneSetup.Instance == null)
-        {
-            Debug.LogError("SceneSetup.Instance es NULL.");
-            return;
-        }
+        if (SceneSetup.Instance == null || screenAnimations == null) return;
 
         SceneSetup.RankData[] ranks = SceneSetup.Instance.Ranks;
 
         Sprite bestRankSprite = null;
+        Sprite bestLarvaSprite = null;
+        bool shouldJump = false;
 
         foreach (var rankData in ranks)
         {
             if (score >= rankData.RequiredScore)
             {
                 bestRankSprite = rankData.RankSprite;
+                bestLarvaSprite = rankData.LarvaSprite;
+                shouldJump = rankData.LarvaJumpRank;
                 break;
             }
         }
 
+        // Asignar sprites a las imágenes
         if (rankImage != null && bestRankSprite != null)
         {
             rankImage.sprite = bestRankSprite;
         }
+        if (rankImageLarva != null && bestLarvaSprite != null)
+        {
+            rankImageLarva.sprite = bestLarvaSprite;
+        }
+
+        // Comunicar el estado de salto a ScreenAnimations
+        screenAnimations.SetLarvaJumpState(shouldJump);
     }
 
     private string CalculateRank(int score)
@@ -370,31 +267,13 @@ public class ScreenManager : MonoBehaviour
                     return;
                 }
             }
-            else if (scoreAnimationCoroutine != null || enemiesAnimationCoroutine != null || (rankImage != null && rankImage.gameObject.activeSelf))
+            // Delegar la lógica de salteo al nuevo script
+            else if (screenAnimations != null && screenAnimations.IsAnimationPlaying())
             {
-                skipAnimationRequested = true;
+                screenAnimations.RequestSkip();
 
-                if (scoreAnimationCoroutine != null)
-                {
-                    StopCoroutine(scoreAnimationCoroutine);
-                    scoreText.text = Score.ToString();
-                    scoreAnimationCoroutine = null;
-                }
-                if (enemiesAnimationCoroutine != null)
-                {
-                    StopCoroutine(enemiesAnimationCoroutine);
-                    enemiesKilledText.text = EnemiesKilled.ToString();
-                    enemiesAnimationCoroutine = null;
-                }
-
-                if (rankImage != null && !rankImage.gameObject.activeSelf)
-                {
-                    UpdateRankImage(Score);
-                    rankImage.gameObject.SetActive(true);
-                    rankImage.transform.localScale = Vector3.one;
-                }
-
-                skipAnimationRequested = false;
+                // Forzar los estados finales que RequestSkip no puede manejar automáticamente
+                UpdateRankImages(Score); // Asegura que los sprites y la configuración de salto estén correctos
             }
         }
     }
