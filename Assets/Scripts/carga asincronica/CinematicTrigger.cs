@@ -8,90 +8,158 @@ public class CinematicTrigger : MonoBehaviour
 {
     [Header("Configuración de Video")]
     [SerializeField] private VideoPlayer videoPlayer;
-    [SerializeField] private RawImage videoOutputImage; // La imagen en el Canvas donde se ve el video
+    [SerializeField] private RawImage videoOutputImage;
     [SerializeField] private VideoClip videoToPlay;
 
     [Header("Configuración de Movimiento")]
     [SerializeField] private GameObject playerObject;
-    [SerializeField] private Transform teleportDestination; // Arrastra aquí un objeto vacío donde quieras que aparezca el player
+    [SerializeField] private Transform teleportDestination;
 
     [Header("Eventos")]
-    [Tooltip("Cosas que pasan al INICIO (ej: desactivar movimiento del player, pausar música)")]
     public UnityEvent OnCinematicStart;
-
-    [Tooltip("Cosas que pasan al FINAL (ej: reactivar movimiento, abrir puertas, guardar partida)")]
     public UnityEvent OnCinematicEnd;
 
-    private bool hasPlayed = false; // Para asegurar que solo pase una vez
+    private bool hasPlayed = false;
+    private bool isCinematicPlaying = false;
+    private Coroutine cinematicSequenceCoroutine;
 
     private void Start()
     {
-        // Asegurarnos de que la imagen del video esté apagada al inicio
         if (videoOutputImage != null)
             videoOutputImage.enabled = false;
 
-        // Suscribirse al evento de fin de video
         if (videoPlayer != null)
             videoPlayer.loopPointReached += OnVideoFinished;
     }
 
+    private void OnEnable()
+    {
+        // CORRECCIÓN: Iniciar la suscripción con espera
+        StartCoroutine(SubscribeWithDelay());
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
+    }
+
+    // NUEVO: Coroutine para asegurar que el EventManager esté listo antes de suscribir
+    private IEnumerator SubscribeWithDelay()
+    {
+        while (EventManager.Instance == null)
+        {
+            yield return null;
+        }
+
+        EventManager.StartListening(GameEvents.GAME_PAUSED, OnGamePaused);
+        EventManager.StartListening(GameEvents.GAME_RESUMED, OnGameResumed);
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        if (EventManager.Instance == null) return;
+
+        EventManager.StopListening(GameEvents.GAME_PAUSED, OnGamePaused);
+        EventManager.StopListening(GameEvents.GAME_RESUMED, OnGameResumed);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        // Verificamos si es el player y si no se ha reproducido ya
         if (other.CompareTag("Player") && !hasPlayed)
         {
             hasPlayed = true;
-            StartCoroutine(PlayCinematicSequence());
+            cinematicSequenceCoroutine = StartCoroutine(PlayCinematicSequence());
+        }
+    }
+
+    private void Update()
+    {
+        if (isCinematicPlaying && Input.GetKeyDown(KeyCode.Space))
+        {
+            SkipCinematic();
+        }
+    }
+
+    private void SkipCinematic()
+    {
+        if (isCinematicPlaying)
+        {
+            if (videoPlayer != null)
+            {
+                videoPlayer.Stop();
+            }
+
+            if (cinematicSequenceCoroutine != null)
+            {
+                StopCoroutine(cinematicSequenceCoroutine);
+            }
+
+            cinematicSequenceCoroutine = StartCoroutine(FinishSequence());
         }
     }
 
     private IEnumerator PlayCinematicSequence()
     {
-        // 1. Disparar eventos de inicio (ej: quitar control al player)
+        isCinematicPlaying = true;
+        ScreenManager.isCinematicActive = true;
+
+        if (ScreenManager.Instance != null)
+        {
+            ScreenManager.Instance.ToggleHUD(false);
+            ScreenManager.Instance.EnginePause();
+        }
+
         OnCinematicStart.Invoke();
 
-        // 2. Preparar visuales
         if (videoPlayer != null && videoToPlay != null)
         {
             videoPlayer.clip = videoToPlay;
             videoPlayer.Prepare();
 
-            // Esperar a que el video esté listo para evitar pantallazos negros
             while (!videoPlayer.isPrepared)
             {
                 yield return null;
             }
 
-            // 3. Mostrar imagen y reproducir
             if (videoOutputImage != null) videoOutputImage.enabled = true;
             videoPlayer.Play();
         }
         else
         {
             Debug.LogError("Falta asignar el VideoPlayer o el VideoClip en el inspector.");
-            OnVideoFinished(videoPlayer); // Forzar finalización si hay error
+            OnVideoFinished(videoPlayer);
         }
     }
 
-    // Este método se llama automáticamente cuando el video termina
     private void OnVideoFinished(VideoPlayer vp)
     {
-        StartCoroutine(FinishSequence());
+        if (isCinematicPlaying)
+        {
+            cinematicSequenceCoroutine = StartCoroutine(FinishSequence());
+        }
     }
 
     private IEnumerator FinishSequence()
     {
-        // Ocultar la pantalla de video
+        isCinematicPlaying = false;
+        ScreenManager.isCinematicActive = false;
+
         if (videoOutputImage != null)
             videoOutputImage.enabled = false;
 
-        // 4. Teletransportar al Player
         TeleportPlayer();
 
-        // Pequeña espera para asegurar que las físicas se asienten (opcional)
+        if (ScreenManager.Instance != null)
+        {
+            if (!ScreenManager.Instance.IsGamePaused())
+            {
+                ScreenManager.Instance.EngineResume();
+                ScreenManager.Instance.ToggleHUD(true);
+            }
+        }
+
         yield return new WaitForSeconds(0.1f);
 
-        // 5. Disparar eventos finales (ej: devolver control, activar boss, etc.)
         OnCinematicEnd.Invoke();
     }
 
@@ -99,23 +167,50 @@ public class CinematicTrigger : MonoBehaviour
     {
         if (playerObject == null || teleportDestination == null) return;
 
-        // NOTA IMPORTANTE: Si usas CharacterController, debes desactivarlo antes de moverlo
         CharacterController cc = playerObject.GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
 
-        // Mover el objeto
         playerObject.transform.position = teleportDestination.position;
         playerObject.transform.rotation = teleportDestination.rotation;
 
-        // Reactivar CharacterController
         if (cc != null) cc.enabled = true;
 
         Debug.Log("Player teletransportado a: " + teleportDestination.name);
+    }
+
+    // --- MANEJO DE PAUSA DEL VIDEO POR EVENTO ---
+    private void OnGamePaused(object data)
+    {
+        // Si el jugador pone pausa y la cinemática está activa, pausamos el video
+        if (isCinematicPlaying && videoPlayer != null)
+        {
+            videoPlayer.Pause();
+
+            if (cinematicSequenceCoroutine != null)
+            {
+                StopCoroutine(cinematicSequenceCoroutine);
+            }
+        }
+    }
+
+    private void OnGameResumed(object data)
+    {
+        // Si el jugador quita la pausa y el video estaba en cinemática
+        if (isCinematicPlaying && videoPlayer != null)
+        {
+            videoPlayer.Play();
+
+            // Reiniciamos el coroutine para que la lógica de espera continúe
+            cinematicSequenceCoroutine = StartCoroutine(PlayCinematicSequence());
+        }
     }
 
     private void OnDestroy()
     {
         if (videoPlayer != null)
             videoPlayer.loopPointReached -= OnVideoFinished;
+
+        // Asegurarse de desuscribir correctamente al destruir el objeto
+        UnsubscribeFromEvents();
     }
 }

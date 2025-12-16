@@ -154,4 +154,7 @@ public class EnemyChaseBehavior : IEnemyBehavior
         if (enemy.headTransform != null)
             enemy.headTransform.localRotation = Quaternion.identity;
     }
+
+    // MÉTODO AGREGADO/CORREGIDO PARA ACCESO EXTERNO
+    public bool IsStuckWatching() => isStuckWatching;
 }

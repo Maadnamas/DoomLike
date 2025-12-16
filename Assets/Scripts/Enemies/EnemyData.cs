@@ -20,4 +20,9 @@ public class EnemyData : ScriptableObject
     public float attackRange = 2.5f;
 
     public string enemyType = "Default";
+
+    [Header("Sonidos")]
+    public AudioClip walkSound;
+    public AudioClip deathSound;
+    public AudioClip hitSound;
 }

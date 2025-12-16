@@ -53,7 +53,7 @@ MonoBehaviour:
   fpsCamera: {fileID: 0}
   damage: 10
   fireRate: 1
-  shootSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 252fb1541119e0b49a3dca1a2a93bc90, type: 3}
   MaxAmmo: 5
   currentAmmo: 0
   rocketFactory: {fileID: 0}

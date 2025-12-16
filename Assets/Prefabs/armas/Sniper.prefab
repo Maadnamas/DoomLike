@@ -46,16 +46,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Sniper
   weaponID: 3
+  assignedSlot: 3
   weaponSprite: {fileID: 21300000, guid: f2ad2241f6894ab4d95ba67e7304da94, type: 3}
+  weaponIcon: {fileID: 21300000, guid: bd5facc2e3d3e9f418b8f2a86a57ea24, type: 3}
   muzzlePoint: {fileID: 0}
   fpsCamera: {fileID: 0}
   damage: 55
   fireRate: 1
-  shootSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 0f2b00e378ec400498164f40196f4d0c, type: 3}
   MaxAmmo: 20
   currentAmmo: 0
   muzzleFlash: {fileID: 0}
-  impactPrefab: {fileID: 3369565760624055697, guid: afb51fd23e676334f82cce689b0eeace, type: 3}
+  impactPrefab: {fileID: 0}
   range: 100
   hitMask:
     serializedVersion: 2

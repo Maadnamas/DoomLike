@@ -27,4 +27,7 @@
     public const string GAME_START = "GAME_START";
     public const string GAME_OVER = "GAME_OVER";
     public const string GAME_VICTORY = "GAME_VICTORY";
+
+    public const string GAME_PAUSED = "GAME_PAUSED";
+    public const string GAME_RESUMED = "GAME_RESUMED";
 }

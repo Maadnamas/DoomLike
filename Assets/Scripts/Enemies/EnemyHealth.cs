@@ -10,16 +10,20 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private ParticleSystem hitVFXPrefab;
 
     private IEnemyAnimator enemyAnimator;
+    private EnemyAI enemyAI;
     private CharacterController characterController;
     private Collider col;
     private Rigidbody rb;
+    // private AudioSource audioSource; // ELIMINADO
 
     private void Awake()
     {
         enemyAnimator = GetComponent<IEnemyAnimator>();
+        enemyAI = GetComponent<EnemyAI>();
         characterController = GetComponent<CharacterController>();
         col = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
+        // audioSource = GetComponent<AudioSource>(); // ELIMINADO
     }
 
     public void Initialize(float maxHealthValue)
@@ -51,6 +55,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             Destroy(effect.gameObject, effect.main.duration);
         }
 
+        // --- USO DE AUDIOMANAGER 3D PARA SONIDO DE DAÑO ---
+        if (enemyAI != null && enemyAI.enemyData.hitSound != null)
+        {
+            AudioManager.PlaySFX3D(enemyAI.enemyData.hitSound, transform.position);
+        }
+
         if (currentHealth <= 0f)
         {
             Die();
@@ -76,10 +86,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             position = transform.position
         });
 
-        EnemyAI enemyAI = GetComponent<EnemyAI>();
-        if (enemyAI != null && enemyAI.player != null)
+        // --- USO DE AUDIOMANAGER 3D PARA SONIDO DE MUERTE ---
+        if (enemyAI != null && enemyAI.enemyData.deathSound != null)
         {
-            Collider[] playerColliders = enemyAI.player.GetComponentsInChildren<Collider>();
+            AudioManager.PlaySFX3D(enemyAI.enemyData.deathSound, transform.position);
+        }
+
+        EnemyAI enemyAIComponent = GetComponent<EnemyAI>();
+        if (enemyAIComponent != null && enemyAIComponent.player != null)
+        {
+            Collider[] playerColliders = enemyAIComponent.player.GetComponentsInChildren<Collider>();
 
             foreach (Collider pCol in playerColliders)
             {

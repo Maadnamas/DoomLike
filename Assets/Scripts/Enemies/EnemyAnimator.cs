@@ -3,30 +3,43 @@ using UnityEngine;
 public class EnemyAnimator : MonoBehaviour, IEnemyAnimator
 {
     [SerializeField] private Animator animator;
+    private AudioSource audioSource;
 
     private void Awake()
     {
         if (animator == null)
             animator = GetComponent<Animator>();
 
-        // Forzar desactivación de movimiento por animación
         if (animator != null)
             animator.applyRootMotion = false;
+
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    private void StopWalkSound()
+    {
+        if (audioSource != null && audioSource.isPlaying && audioSource.loop)
+        {
+            audioSource.Stop();
+        }
     }
 
     public void SetWalking(bool walking)
     {
         animator.SetBool("IsWalking", walking);
+        if (!walking) StopWalkSound();
     }
 
     public void SetIdle(bool idle)
     {
         animator.SetBool("IsIdle", idle);
+        if (idle) StopWalkSound();
     }
 
     public void SetRunning(bool running)
     {
         animator.SetBool("IsRunning", running);
+        if (!running) StopWalkSound();
     }
 
     public void PlayAttack()
@@ -42,5 +55,6 @@ public class EnemyAnimator : MonoBehaviour, IEnemyAnimator
     public void PlayDeath()
     {
         animator.SetTrigger("Death");
+        StopWalkSound();
     }
 }

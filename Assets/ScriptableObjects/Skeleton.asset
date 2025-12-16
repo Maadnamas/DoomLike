@@ -23,3 +23,6 @@ MonoBehaviour:
   attackCooldown: 1.5
   attackRange: 3
   enemyType: Default
+  walkSound: {fileID: 8300000, guid: 5c826a223dfc4bc4ea2adb4e440f98db, type: 3}
+  deathSound: {fileID: 8300000, guid: 9e4924b5330b3c74b8c8f46d34ffe2db, type: 3}
+  hitSound: {fileID: 8300000, guid: 92bb3d0ae0e96934886add0bfaa9281a, type: 3}

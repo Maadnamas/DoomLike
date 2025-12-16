@@ -114,7 +114,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1245995286694624228}
+  - {fileID: 4262195227691597236}
   - {fileID: 7239284828342658625}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -223.665, z: 0}
@@ -154,7 +154,7 @@ MonoBehaviour:
   rotationSpeed: 50
   floatAmplitude: 0.25
   floatSpeed: 2
-  collectSound: {fileID: 0}
+  collectSound: {fileID: 8300000, guid: 9a588f075c6ed624f8071cc07d8536e4, type: 3}
   m_AmmoType: 1
   m_AmmoCount: 50
 --- !u!1001 &4372118408847776351
@@ -250,7 +250,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebaaaffe975e95d4d8dcf3235f7d8d5f, type: 3}
---- !u!4 &1245995286694624228 stripped
+--- !u!4 &4262195227691597236 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ebaaaffe975e95d4d8dcf3235f7d8d5f, type: 3}
   m_PrefabInstance: {fileID: 4372118408847776351}

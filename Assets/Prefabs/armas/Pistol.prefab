@@ -46,12 +46,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Pistol
   weaponID: 1
+  assignedSlot: 1
   weaponSprite: {fileID: 21300000, guid: 591a6421d4d89414a895b79ff4d367b3, type: 3}
+  weaponIcon: {fileID: 21300000, guid: d2d8399cdd3118449ae6cea2fab65df3, type: 3}
   muzzlePoint: {fileID: 0}
   fpsCamera: {fileID: 0}
   damage: 30
   fireRate: 2
-  shootSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 0f2b00e378ec400498164f40196f4d0c, type: 3}
   MaxAmmo: 50
   currentAmmo: 0
   muzzleFlash: {fileID: 0}

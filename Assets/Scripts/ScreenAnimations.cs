@@ -30,6 +30,14 @@ public class ScreenAnimations : MonoBehaviour
     [SerializeField] private float rankRotationSpeed = 3f;
     [SerializeField] private float rankRotationMaxAngle = 10f;
 
+    [Header("Audio de Conteo y Aparición")]
+    [SerializeField] private AudioClip countIncrementSound;
+    [SerializeField] private AudioClip countEndSound;
+    [SerializeField] private AudioClip rankAppearSound;
+    [SerializeField] private AudioClip larvaAppearSound;
+
+    private AudioSource countAudioSource;
+
     private Vector3 initialVictoryPanelPosition;
     private Vector3 initialLarvaPosition;
     private bool shouldLarvaJump = false;
@@ -52,6 +60,11 @@ public class ScreenAnimations : MonoBehaviour
         {
             initialLarvaPosition = rankImageLarva.rectTransform.localPosition;
         }
+
+        countAudioSource = gameObject.AddComponent<AudioSource>();
+        countAudioSource.spatialBlend = 0f;
+        countAudioSource.loop = true;
+        countAudioSource.playOnAwake = false;
     }
 
     public void RequestSkip()
@@ -67,6 +80,11 @@ public class ScreenAnimations : MonoBehaviour
             enemiesAnimationCoroutine = null;
         }
 
+        if (countAudioSource.isPlaying)
+        {
+            countAudioSource.Stop();
+        }
+
         if (scoreText != null)
         {
             scoreText.text = ScreenManager.Score.ToString();
@@ -76,23 +94,31 @@ public class ScreenAnimations : MonoBehaviour
             enemiesKilledText.text = ScreenManager.EnemiesKilled.ToString();
         }
 
-        // --- ACTIVACIÓN FORZADA DE RANKING PRINCIPAL Y ROTACIÓN ---
         if (rankImage != null)
         {
             rankImage.gameObject.SetActive(true);
             rankImage.transform.localScale = Vector3.one;
-            // Iniciar la rotación inmediatamente al saltear si no está ya activa
+
+            if (rankAppearSound != null)
+            {
+                AudioManager.PlaySFX2D(rankAppearSound);
+            }
+
             if (rankRotationCoroutine == null)
             {
                 rankRotationCoroutine = StartCoroutine(RotateRankImage());
             }
         }
-        // --------------------------------------------------------
 
         if (rankImageLarva != null)
         {
             rankImageLarva.gameObject.SetActive(true);
             rankImageLarva.rectTransform.localPosition = initialLarvaPosition;
+
+            if (shouldLarvaJump && larvaAppearSound != null)
+            {
+                AudioManager.PlaySFX2D(larvaAppearSound);
+            }
         }
 
         if (shouldLarvaJump && larvaJumpCoroutine == null)
@@ -113,10 +139,6 @@ public class ScreenAnimations : MonoBehaviour
         return scoreAnimationCoroutine != null || enemiesAnimationCoroutine != null;
     }
 
-    // ------------------------------------------
-    // MÉTODOS PÚBLICOS DE INICIO DE ANIMACIÓN
-    // ------------------------------------------
-
     public IEnumerator StartVictorySequence(int score, int enemiesKilled)
     {
         if (rankRotationCoroutine != null) StopCoroutine(rankRotationCoroutine);
@@ -127,7 +149,6 @@ public class ScreenAnimations : MonoBehaviour
         if (rankImage != null) rankImage.gameObject.SetActive(false);
         if (rankImageLarva != null) rankImageLarva.gameObject.SetActive(false);
 
-        // Resetear la rotación para que inicie desde cero
         if (rankImage != null) rankImage.rectTransform.localRotation = Quaternion.identity;
 
         skipAnimationRequested = false;
@@ -144,8 +165,9 @@ public class ScreenAnimations : MonoBehaviour
         enemiesAnimationCoroutine = StartCoroutine(CountUp(enemiesKilledText, enemiesKilled, counterDuration));
         yield return enemiesAnimationCoroutine;
 
-        StartCoroutine(AnimateRankAppearance());
-        rankRotationCoroutine = StartCoroutine(RotateRankImage()); // La rotación se inicia inmediatamente con el pop-in
+        yield return StartCoroutine(AnimateRankAppearance());
+
+        rankRotationCoroutine = StartCoroutine(RotateRankImage());
 
         yield return new WaitForSecondsRealtime(rankPopDuration);
 
@@ -156,10 +178,6 @@ public class ScreenAnimations : MonoBehaviour
             larvaJumpCoroutine = StartCoroutine(JumpRoutine());
         }
     }
-
-    // ------------------------------------------
-    // COROUTINES PRIVADOS
-    // ------------------------------------------
 
     private IEnumerator AnimateVictoryPanelFall()
     {
@@ -205,6 +223,12 @@ public class ScreenAnimations : MonoBehaviour
         float endTime = startTime + duration;
         int startValue = 0;
 
+        if (countIncrementSound != null && !countAudioSource.isPlaying)
+        {
+            countAudioSource.clip = countIncrementSound;
+            countAudioSource.Play();
+        }
+
         while (Time.unscaledTime < endTime && !skipAnimationRequested)
         {
             float elapsed = Time.unscaledTime - startTime;
@@ -215,6 +239,15 @@ public class ScreenAnimations : MonoBehaviour
         }
 
         text.text = targetValue.ToString();
+
+        if (countAudioSource.isPlaying)
+        {
+            countAudioSource.Stop();
+        }
+        if (countEndSound != null)
+        {
+            AudioManager.PlaySFX2D(countEndSound);
+        }
     }
 
     private IEnumerator AnimateRankAppearance()
@@ -223,6 +256,11 @@ public class ScreenAnimations : MonoBehaviour
 
         rankImage.gameObject.SetActive(true);
         rankImage.transform.localScale = Vector3.zero;
+
+        if (rankAppearSound != null)
+        {
+            AudioManager.PlaySFX2D(rankAppearSound);
+        }
 
         float time = 0f;
         Vector3 targetScale = Vector3.one;
@@ -247,7 +285,6 @@ public class ScreenAnimations : MonoBehaviour
         while (true)
         {
             time += Time.unscaledDeltaTime * rankRotationSpeed;
-            // La rotación se aplica al eje Z (rotación lateral)
             float angle = Mathf.Sin(time) * rankRotationMaxAngle;
             rect.localRotation = Quaternion.Euler(0f, 0f, angle);
             yield return null;
@@ -260,6 +297,11 @@ public class ScreenAnimations : MonoBehaviour
 
         rankImageLarva.gameObject.SetActive(true);
         RectTransform rect = rankImageLarva.rectTransform;
+
+        if (shouldLarvaJump && larvaAppearSound != null)
+        {
+            AudioManager.PlaySFX2D(larvaAppearSound);
+        }
 
         Vector3 startPos = initialLarvaPosition + Vector3.down * Screen.height;
         Vector3 targetPos = initialLarvaPosition;

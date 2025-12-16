@@ -3,9 +3,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class ScreenManager : MonoBehaviour
 {
+    public static ScreenManager Instance { get; private set; }
+
+    public static bool isCinematicActive = false;
     public static int Score = 0;
     public static int EnemiesKilled = 0;
 
@@ -13,6 +17,7 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private GameObject hudGroup;
     [SerializeField] private GameObject victoryGroup;
     [SerializeField] private GameObject defeatGroup;
+    [SerializeField] private GameObject pauseGroup;
     [SerializeField] private ScreenAnimations screenAnimations;
 
     [Header("Pantalla de Victoria (Solo para Actualizar Datos)")]
@@ -27,7 +32,30 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private CanvasGroup fadeCanvasGroup;
     [SerializeField] private float fadeDuration = 1f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip victoryMusic;
+    private AudioSource victoryAudioSource;
+
     private bool waitingForRestart = false;
+    private bool isPaused = false;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            isCinematicActive = false;
+        }
+
+        victoryAudioSource = gameObject.AddComponent<AudioSource>();
+        victoryAudioSource.spatialBlend = 0f;
+        victoryAudioSource.loop = false;
+        victoryAudioSource.playOnAwake = false;
+    }
 
     private void OnEnable()
     {
@@ -72,8 +100,14 @@ public class ScreenManager : MonoBehaviour
         if (rankImageLarva != null)
             rankImageLarva.gameObject.SetActive(false);
 
+        if (pauseGroup != null)
+            pauseGroup.SetActive(false);
+
+        Time.timeScale = 1f;
+        isPaused = false;
         PlayerHealth.gameIsOver = false;
         ScreenManager.SetPlayerControl(true);
+        AudioListener.pause = false;
     }
 
     private void OnGameStart(object data)
@@ -86,6 +120,14 @@ public class ScreenManager : MonoBehaviour
     private void OnGameVictory(object data)
     {
         PlayerHealth.gameIsOver = true;
+
+        SceneSetup.StopBackgroundMusic();
+        if (victoryMusic != null)
+        {
+            victoryAudioSource.clip = victoryMusic;
+            victoryAudioSource.Play();
+        }
+
         StartCoroutine(SwitchScreenAndAnimateVictory(victoryGroup, pauseGame: true));
         ScreenManager.SetPlayerControl(false);
     }
@@ -93,25 +135,93 @@ public class ScreenManager : MonoBehaviour
     private void OnGameOver(object data)
     {
         PlayerHealth.gameIsOver = true;
+
+        SceneSetup.StopBackgroundMusic();
+
         StartCoroutine(SwitchScreen(defeatGroup, pauseGame: true));
         ScreenManager.SetPlayerControl(false);
     }
 
+    public bool IsGamePaused()
+    {
+        return isPaused;
+    }
+
+    public void EnginePause()
+    {
+        Time.timeScale = 0f;
+        ScreenManager.SetPlayerControl(false);
+    }
+
+    public void EngineResume()
+    {
+        Time.timeScale = 1f;
+        ScreenManager.SetPlayerControl(true);
+    }
+
+    public void OnPauseGame()
+    {
+        if (PlayerHealth.gameIsOver || isPaused) return;
+
+        isPaused = true;
+        EnginePause();
+
+        SceneSetup.PauseBackgroundMusic();
+
+        if (hudGroup != null) hudGroup.SetActive(false);
+        if (pauseGroup != null) pauseGroup.SetActive(true);
+
+        EventManager.TriggerEvent(GameEvents.GAME_PAUSED, null);
+    }
+
+    public void OnResumeGame()
+    {
+        if (!isPaused) return;
+
+        isPaused = false;
+
+        if (!isCinematicActive)
+        {
+            EngineResume();
+        }
+
+        SceneSetup.ResumeBackgroundMusic();
+
+        if (pauseGroup != null) pauseGroup.SetActive(false);
+
+        if (hudGroup != null)
+        {
+            hudGroup.SetActive(!isCinematicActive);
+        }
+
+        EventManager.TriggerEvent(GameEvents.GAME_RESUMED, null);
+    }
+
+    public void ToggleHUD(bool active)
+    {
+        if (hudGroup != null)
+            hudGroup.SetActive(active);
+    }
+
     private void ShowHUD()
     {
-        hudGroup.SetActive(true);
+        ToggleHUD(true);
         victoryGroup.SetActive(false);
         defeatGroup.SetActive(false);
+        if (pauseGroup != null) pauseGroup.SetActive(false);
     }
 
     private IEnumerator SwitchScreen(GameObject targetScreen, bool pauseGame = false)
     {
+        if (isPaused) OnResumeGame();
+
         if (fadeCanvasGroup != null)
             yield return StartCoroutine(Fade(1f));
 
-        hudGroup.SetActive(false);
+        ToggleHUD(false);
         victoryGroup.SetActive(false);
         defeatGroup.SetActive(false);
+        if (pauseGroup != null) pauseGroup.SetActive(false);
 
         targetScreen.SetActive(true);
 
@@ -120,7 +230,7 @@ public class ScreenManager : MonoBehaviour
 
         if (pauseGame)
         {
-            Time.timeScale = 0f;
+            EnginePause();
             waitingForRestart = true;
         }
     }
@@ -136,8 +246,9 @@ public class ScreenManager : MonoBehaviour
         if (fadeCanvasGroup != null)
             yield return StartCoroutine(Fade(1f));
 
-        hudGroup.SetActive(false);
+        ToggleHUD(false);
         defeatGroup.SetActive(false);
+        if (pauseGroup != null) pauseGroup.SetActive(false);
         targetScreen.SetActive(true);
 
         string finalRank = CalculateRank(Score);
@@ -149,7 +260,8 @@ public class ScreenManager : MonoBehaviour
 
         if (pauseGame)
         {
-            Time.timeScale = 0f;
+            EnginePause();
+            waitingForRestart = true;
         }
     }
 
@@ -207,35 +319,33 @@ public class ScreenManager : MonoBehaviour
 
     public void OnContinueButtonPressed()
     {
+        StopVictoryMusic();
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
         StartCoroutine(LoadSceneWithFade(nextSceneIndex));
     }
 
     public void OnMenuButtonPressed()
     {
+        StopVictoryMusic();
         StartCoroutine(LoadSceneWithFade(menuSceneName));
     }
 
     private IEnumerator LoadSceneWithFade(string sceneName)
     {
-        Time.timeScale = 1f;
-        ScreenManager.SetPlayerControl(true);
-        PlayerHealth.gameIsOver = false;
-
         if (fadeCanvasGroup != null)
             yield return StartCoroutine(Fade(1f));
+
+        EngineResume();
 
         SceneManager.LoadScene(sceneName);
     }
 
     private IEnumerator LoadSceneWithFade(int sceneIndex)
     {
-        Time.timeScale = 1f;
-        ScreenManager.SetPlayerControl(true);
-        PlayerHealth.gameIsOver = false;
-
         if (fadeCanvasGroup != null)
             yield return StartCoroutine(Fade(1f));
+
+        EngineResume();
 
         if (sceneIndex < SceneManager.sceneCountInBuildSettings)
         {
@@ -248,41 +358,55 @@ public class ScreenManager : MonoBehaviour
         }
     }
 
+    private void StopVictoryMusic()
+    {
+        if (victoryAudioSource != null && victoryAudioSource.isPlaying)
+        {
+            victoryAudioSource.Stop();
+        }
+    }
+
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape) && !PlayerHealth.gameIsOver && !waitingForRestart)
+        {
+            if (isPaused)
+            {
+                OnResumeGame();
+            }
+            else
+            {
+                OnPauseGame();
+            }
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
+            // Caso: Juego pausado por Victoria/Derrota
             if (Time.timeScale == 0f)
             {
-                if (waitingForRestart)
+                // Solo permitimos SALTEAR la animación si la pantalla de victoria está activa,
+                // la animación está en curso, Y el clic NO está sobre un elemento de UI (botón).
+                if (victoryGroup.activeSelf && screenAnimations != null && screenAnimations.IsAnimationPlaying())
                 {
-                    waitingForRestart = false;
-                    Time.timeScale = 1f;
-                    ScreenManager.SetPlayerControl(true);
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                    return;
+                    if (!EventSystem.current.IsPointerOverGameObject())
+                    {
+                        screenAnimations.RequestSkip();
+
+                        UpdateRankImages(Score);
+                        string finalRank = CalculateRank(Score);
+                        Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
+                    }
                 }
             }
+            // Caso: Juego activo (saltear diálogos/cinemáticas que corren con timeScale=1)
             else if (screenAnimations != null && screenAnimations.IsAnimationPlaying())
             {
-                // 1. Forzar fin de contadores y elementos visuales en ScreenAnimations
                 screenAnimations.RequestSkip();
 
-                // 2. Ejecutar lógica de debug y configuración de rango que sigue al conteo
                 UpdateRankImages(Score);
                 string finalRank = CalculateRank(Score);
                 Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
-
-                // 3. Ya que ScreenAnimations.RequestSkip fuerza la activación y posición final, 
-                // solo nos queda asegurar la rotación y el salto.
-
-                // El coroutine de rotación y salto ya no está bajo el control de ScreenManager,
-                // por lo que StartVictorySequence debe ser modificado para que el RequestSkip 
-                // inicie esos efectos de forma forzada si es necesario.
-
-                // Si la animación fue salteada, debemos asumir que el coroutine principal ya terminó los contadores
-                // y que lo siguiente será la activación del menú (lo cual ocurre al finalizar StartVictorySequence).
-                // Aquí solo nos enfocamos en que lo visual esté correcto.
             }
         }
     }

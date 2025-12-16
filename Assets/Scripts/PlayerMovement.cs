@@ -24,6 +24,11 @@ public class PlayerMovement : MonoBehaviour
     public Material runMaterial;
     public float alphaAppearSpeed = 3f;
 
+    [Header("Sonido de Pasos")]
+    public AudioClip footstepSound;
+    public float footstepDelay = 0.4f;
+    private float footstepTimer;
+
     CharacterController controller;
     Camera playerCamera;
     float xRotation;
@@ -54,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         RotacionMouse();
         AplicarGravedad();
         CheckRunAlpha();
+        PlayFootstepSound();
     }
 
     void CheckGround()
@@ -76,6 +82,36 @@ public class PlayerMovement : MonoBehaviour
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+    }
+
+    void PlayFootstepSound()
+    {
+        if (footstepSound == null) return;
+
+        Vector3 horizontalVelocity = controller.velocity;
+        horizontalVelocity.y = 0;
+        bool isMoving = horizontalVelocity.magnitude > 0.1f;
+
+        if (isGrounded && isMoving)
+        {
+            footstepTimer += Time.deltaTime;
+
+            float speedFactor = isRunning ? 0.6f : 1f;
+            float calculatedDelay = footstepDelay * speedFactor;
+
+            if (footstepTimer >= calculatedDelay)
+            {
+                Debug.Log("Intentando reproducir paso.");
+                AudioManager.PlaySFX2D(footstepSound);
+                footstepTimer = 0f;
+            }
+        }
+        else
+        {
+            footstepTimer = 0f;
+        }
+
+
     }
 
     void AplicarGravedad()

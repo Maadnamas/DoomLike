@@ -7,6 +7,9 @@ public class CardPickup : MonoBehaviour, ICollectable
     public Renderer backrender;
     public float rotationSpeed = 60f;
 
+    [Header("Audio")]
+    public AudioClip pickupSound;
+
     void Start()
     {
         ApplyCardTexture();
@@ -59,6 +62,11 @@ public class CardPickup : MonoBehaviour, ICollectable
                 cardID = cardToGive.cardID,
                 isFoil = cardToGive.isFoil
             });
+
+            if (pickupSound != null)
+            {
+                AudioManager.PlaySFX2D(pickupSound);
+            }
 
             gameObject.SetActive(false);
         }

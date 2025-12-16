@@ -71,4 +71,6 @@ public class EnemyPatrolBehavior : IEnemyBehavior
         do { newPoint = Random.Range(0, length); } while (newPoint == currentPoint);
         return newPoint;
     }
+
+    public bool IsWaiting() => isWaiting;
 }

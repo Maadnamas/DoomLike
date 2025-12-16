@@ -221,6 +221,29 @@ public class EnemyAI : MonoBehaviour
 
     public IEnemyAnimator GetAnimator() => enemyAnimator;
 
+    public void PlayWalkSound()
+    {
+        if (enemyHealth.IsDead || enemyData.walkSound == null) return;
+
+        bool shouldPlay = false;
+
+        if (currentBehavior is EnemyChaseBehavior chase)
+        {
+            if (!chase.IsStuckWatching())
+                shouldPlay = true;
+        }
+        else if (currentBehavior is EnemyPatrolBehavior patrol)
+        {
+            if (!patrol.IsWaiting())
+                shouldPlay = true;
+        }
+
+        if (shouldPlay)
+        {
+            AudioManager.PlaySFX3D(enemyData.walkSound, transform.position);
+        }
+    }
+
     void OnDrawGizmosSelected()
     {
         if (enemyData == null) return;
