@@ -11,10 +11,10 @@ public class BreathingCameraEffect : MonoBehaviour
 
     [Header("Configuración del FOV")]
     [Tooltip("FOV inicial")]
-    [SerializeField][Range(1f, 10f)] private float startFOV = 7f;
+    [SerializeField] private float startFOV = 7f;
 
     [Tooltip("FOV final")]
-    [SerializeField][Range(50f, 90f)] private float endFOV = 60f;
+    [SerializeField] private float endFOV = 60f;
 
     [Tooltip("Tiempo para llegar al FOV final")]
     [SerializeField][Range(0.5f, 10f)] private float fovTransitionTime = 3f;
