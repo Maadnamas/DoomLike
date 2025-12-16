@@ -8,7 +8,6 @@ public static class PlayerSaveSystem
 
     public static void Save(PlayerMemento memento)
     {
-        // Convertir a formato serializable para JSON
         var serializableData = new SerializablePlayerMemento(memento);
         string json = JsonUtility.ToJson(serializableData, true);
         File.WriteAllText(path, json);
@@ -19,7 +18,7 @@ public static class PlayerSaveSystem
     {
         if (!File.Exists(path))
         {
-            Debug.LogWarning("No se encontró guardado en " + path);
+            Debug.LogWarning("No se encontro guardado en " + path);
             return null;
         }
 
@@ -28,7 +27,6 @@ public static class PlayerSaveSystem
         return serializableData.ToPlayerMemento();
     }
 
-    // Clase auxiliar para serialización de datos complejos
     [System.Serializable]
     private class SerializablePlayerMemento
     {
@@ -37,9 +35,9 @@ public static class PlayerSaveSystem
         public SerializableQuaternion playerRotation;
         public float cameraPitch;
         public int health;
-        public List<PlayerMemento.WeaponData> weapons = new List<PlayerMemento.WeaponData>();
+        public int medkitCount; // NUEVO: Para guardar medkits
+        public List<SerializableWeaponData> weapons = new List<SerializableWeaponData>();
         public int equippedWeaponIndex;
-        public List<SerializableKeyValuePair> additionalData = new List<SerializableKeyValuePair>();
 
         public SerializablePlayerMemento(PlayerMemento memento)
         {
@@ -48,48 +46,61 @@ public static class PlayerSaveSystem
             playerRotation = new SerializableQuaternion(memento.playerRotation);
             cameraPitch = memento.cameraPitch;
             health = memento.health;
-            weapons = memento.weapons;
+            medkitCount = memento.medkitCount; // NUEVO
             equippedWeaponIndex = memento.equippedWeaponIndex;
 
-            // Convertir diccionario a lista serializable
-            foreach (var kvp in memento.additionalData)
+            foreach (var weapon in memento.weapons)
             {
-                additionalData.Add(new SerializableKeyValuePair(kvp.Key, kvp.Value));
+                weapons.Add(new SerializableWeaponData(weapon));
             }
         }
 
         public PlayerMemento ToPlayerMemento()
         {
+            List<PlayerMemento.WeaponData> weaponList = new List<PlayerMemento.WeaponData>();
+
+            foreach (var weapon in weapons)
+            {
+                weaponList.Add(weapon.ToWeaponData());
+            }
+
             var memento = new PlayerMemento(
                 sceneName,
                 position.ToVector3(),
                 playerRotation.ToQuaternion(),
                 cameraPitch,
                 health,
-                weapons,
+                medkitCount, // NUEVO
+                weaponList,
                 equippedWeaponIndex
             );
-
-            // Restaurar datos adicionales
-            foreach (var item in additionalData)
-            {
-                memento.SetAdditionalData(item.key, item.value);
-            }
 
             return memento;
         }
     }
 
     [System.Serializable]
-    private class SerializableKeyValuePair
+    private class SerializableWeaponData
     {
-        public string key;
-        public object value;
+        public int weaponID;
+        public int currentAmmo;
+        public int slotIndex;
 
-        public SerializableKeyValuePair(string k, object v)
+        public SerializableWeaponData(PlayerMemento.WeaponData data)
         {
-            key = k;
-            value = v;
+            weaponID = data.weaponID;
+            currentAmmo = data.currentAmmo;
+            slotIndex = data.slotIndex;
+        }
+
+        public PlayerMemento.WeaponData ToWeaponData()
+        {
+            return new PlayerMemento.WeaponData
+            {
+                weaponID = weaponID,
+                currentAmmo = currentAmmo,
+                slotIndex = slotIndex
+            };
         }
     }
 

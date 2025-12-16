@@ -5,6 +5,12 @@ public abstract class WeaponBase : MonoBehaviour
     [Header("Weapon Settings")]
     public string weaponName = "Unnamed Weapon";
     public int weaponID = 00;
+
+    [Header("Slot Assignment")]
+    [Tooltip("Slot del array donde va esta arma (0-3)")]
+    [Range(0, 3)]
+    public int assignedSlot = 0;
+
     public Sprite weaponSprite;
 
     [Header("HUD Icon")]
@@ -53,7 +59,6 @@ public abstract class WeaponBase : MonoBehaviour
         }
 
         currentAmmo = MaxAmmo;
-
     }
 
     public virtual void TryShoot()

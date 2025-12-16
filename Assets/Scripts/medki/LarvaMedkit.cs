@@ -262,15 +262,16 @@ public class LarvaMedkit : MonoBehaviour, ICollectable
         isCollected = true;
 
         if (collectSound != null)
-        {
             AudioManager.PlaySFX2D(collectSound);
-        }
 
         if (collectEffect != null)
-        {
             Instantiate(collectEffect, transform.position, Quaternion.identity);
-        }
 
-        Destroy(gameObject);
+        // Notificar al manager
+        if (LarvaManager.Instance != null)
+            LarvaManager.Instance.MarkLarvaAsCollected(this);
+
+        // Solo desactivar, NO destruir
+        gameObject.SetActive(false);
     }
 }

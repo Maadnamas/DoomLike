@@ -1,19 +1,19 @@
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine; // <-- AÑADE ESTA LÍNEA
 
 [System.Serializable]
 public class PlayerMemento
 {
     public string sceneName;
-    public Vector3 position;
-    public Quaternion playerRotation;
+    public Vector3 position; // Ahora reconocerá UnityEngine.Vector3
+    public Quaternion playerRotation; // Ahora reconocerá UnityEngine.Quaternion
     public float cameraPitch;
     public int health;
+    public int medkitCount;
 
     public List<WeaponData> weapons = new List<WeaponData>();
     public int equippedWeaponIndex;
 
- 
     public Dictionary<string, object> additionalData = new Dictionary<string, object>();
 
     [System.Serializable]
@@ -21,9 +21,10 @@ public class PlayerMemento
     {
         public int weaponID;
         public int currentAmmo;
+        public int slotIndex;
     }
 
-    public PlayerMemento(string scene, Vector3 pos, Quaternion rot, float pitch, int hp,
+    public PlayerMemento(string scene, Vector3 pos, Quaternion rot, float pitch, int hp, int medkits,
                          List<WeaponData> weaponList, int equippedIndex)
     {
         sceneName = scene;
@@ -31,6 +32,7 @@ public class PlayerMemento
         playerRotation = rot;
         cameraPitch = pitch;
         health = hp;
+        medkitCount = medkits;
         weapons = weaponList;
         equippedWeaponIndex = equippedIndex;
     }

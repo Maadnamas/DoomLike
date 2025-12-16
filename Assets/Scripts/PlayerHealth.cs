@@ -170,6 +170,21 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
             Die();
     }
 
+    // En PlayerHealth.cs, añade:
+    public void SetMedkitCount(int count)
+    {
+        currentMedkits = Mathf.Clamp(count, 0, maxMedkits);
+
+        // Dispara el mismo evento que AddMedkit()
+        EventManager.TriggerEvent(GameEvents.UI_UPDATE_MEDKITS, new MedkitEventData
+        {
+            currentMedkits = currentMedkits,
+            maxMedkits = maxMedkits
+        });
+
+        Debug.Log("Medkits actualizados a: " + currentMedkits);
+    }
+
     public void Die()
     {
         isDead = true;

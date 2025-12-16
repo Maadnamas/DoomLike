@@ -22,55 +22,51 @@ public class GameSaveManager : MonoBehaviour
             LoadGame();
     }
 
-    // NUEVO: Método para buscar las referencias del jugador
     void FindPlayerReferences()
     {
-        // Primero intentar encontrar el GameObject del jugador
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         {
             playerMovement = player.GetComponent<PlayerMovement>();
             playerHealth = player.GetComponent<PlayerHealth>();
+
             weaponManager = player.GetComponent<WeaponManager>();
+            if (weaponManager == null)
+            {
+                weaponManager = player.GetComponentInChildren<WeaponManager>();
+            }
         }
         else
         {
-            // Si no hay tag, usar FindObjectOfType
             playerMovement = FindObjectOfType<PlayerMovement>();
             playerHealth = FindObjectOfType<PlayerHealth>();
             weaponManager = FindObjectOfType<WeaponManager>();
         }
 
-        // Validar que se encontraron todas las referencias
         if (playerMovement == null)
         {
-            Debug.LogError("GameSaveManager: No se encontró PlayerMovement en la escena");
-            Debug.Log("Asegúrate de que el prefab del jugador está instanciado en la escena");
+            Debug.LogError("GameSaveManager: No se encontro PlayerMovement en la escena");
         }
 
         if (playerHealth == null)
         {
-            Debug.LogError("GameSaveManager: No se encontró PlayerHealth en la escena");
-            Debug.Log("Asegúrate de que el GameObject del jugador tiene el componente PlayerHealth");
+            Debug.LogError("GameSaveManager: No se encontro PlayerHealth en la escena");
         }
 
         if (weaponManager == null)
         {
-            Debug.LogError("GameSaveManager: No se encontró WeaponManager en la escena");
-            Debug.Log("Asegúrate de que el GameObject del jugador tiene el componente WeaponManager");
+            Debug.LogError("GameSaveManager: No se encontro WeaponManager en la escena");
         }
     }
 
     void SaveGame()
     {
-        // Validar referencias antes de guardar
         if (playerMovement == null || playerHealth == null || weaponManager == null)
         {
             Debug.LogWarning("Referencias del jugador no encontradas, intentando buscar...");
             FindPlayerReferences();
 
-            // Si aún son null, mostrar error y salir
             if (playerMovement == null || playerHealth == null || weaponManager == null)
             {
                 Debug.LogError("No se puede guardar: faltan referencias del jugador");
@@ -108,7 +104,6 @@ public class GameSaveManager : MonoBehaviour
         }
         else
         {
-            // Asegurarse de tener referencias antes de restaurar
             if (playerMovement == null || playerHealth == null || weaponManager == null)
             {
                 Debug.Log("Buscando referencias del jugador...");
@@ -121,19 +116,16 @@ public class GameSaveManager : MonoBehaviour
 
     IEnumerator LoadSceneAndRestore(PlayerMemento memento)
     {
-        Debug.Log($"Cargando escena: {memento.sceneName}");
+        Debug.Log("Cargando escena: " + memento.sceneName);
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(memento.sceneName);
 
-        // Esperar a que la escena se cargue completamente
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
 
-        // Pequeña espera para asegurar que todos los objetos se instanciaron
         yield return new WaitForSeconds(0.1f);
 
-        // Buscar referencias después de cargar la escena
         FindPlayerReferences();
 
         if (playerMovement != null && playerHealth != null && weaponManager != null)
@@ -143,8 +135,7 @@ public class GameSaveManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No se pudieron encontrar las referencias del jugador después de cargar la escena");
-            Debug.Log("Asegúrate de que el prefab del jugador se instancia en la escena " + memento.sceneName);
+            Debug.LogError("No se pudieron encontrar las referencias del jugador despues de cargar la escena");
         }
     }
 
@@ -160,7 +151,6 @@ public class GameSaveManager : MonoBehaviour
         Debug.Log("Juego cargado correctamente");
     }
 
-    //  NUEVO: Método para probar desde el editor
     [ContextMenu("Buscar Referencias del Jugador")]
     void FindReferencesEditor()
     {
@@ -168,7 +158,7 @@ public class GameSaveManager : MonoBehaviour
 
         if (playerMovement != null && playerHealth != null && weaponManager != null)
         {
-            Debug.Log(" Todas las referencias encontradas correctamente");
+            Debug.Log("Todas las referencias encontradas correctamente");
         }
     }
 }

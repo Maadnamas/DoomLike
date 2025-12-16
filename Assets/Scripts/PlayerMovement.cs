@@ -25,7 +25,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
 
-    // 🔹 NUEVO: bandera global para pausar el control del jugador
     public static bool isControlEnabled = true;
 
     void Start()
@@ -39,7 +38,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 🔹 Si el control está deshabilitado, no mover ni rotar
         if (!isControlEnabled)
             return;
 
@@ -100,10 +98,8 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawWireSphere(checkPosition, groundCheckDistance);
     }
 
-    // guardar
     public PlayerMemento SaveState(PlayerHealth health, WeaponManager weaponManager)
     {
-        // 🔹 NUEVO: Validar parámetros
         if (health == null)
         {
             Debug.LogError("PlayerHealth es null en SaveState");
@@ -118,39 +114,54 @@ public class PlayerMovement : MonoBehaviour
 
         string sceneName = SceneManager.GetActiveScene().name;
 
-        // 🔹 NUEVO: Validar array de armas
         List<PlayerMemento.WeaponData> weaponList = new List<PlayerMemento.WeaponData>();
-        if (weaponManager.weapons != null)
+
+        for (int i = 0; i < weaponManager.weapons.Length; i++)
         {
-            foreach (var weapon in weaponManager.weapons)
+            if (weaponManager.weapons[i] != null)
             {
-                if (weapon != null) // Validar cada arma
+                var data = new PlayerMemento.WeaponData
                 {
-                    var data = new PlayerMemento.WeaponData
-                    {
-                        weaponID = weapon.weaponID,
-                        currentAmmo = weapon.currentAmmo
-                    };
-                    weaponList.Add(data);
-                }
+                    weaponID = weaponManager.weapons[i].weaponID,
+                    currentAmmo = weaponManager.weapons[i].currentAmmo,
+                    slotIndex = i
+                };
+                weaponList.Add(data);
             }
         }
 
-        // Crear snapshot
-        return new PlayerMemento(
+        // Obtener cantidad de medkits
+        int medkitCount = health.GetMedkitCount();
+
+        PlayerMemento memento = new PlayerMemento(
             sceneName,
             transform.position,
             transform.rotation,
             xRotation,
             health.GetCurrentHealth(),
+            medkitCount,
             weaponList,
             weaponManager.currentIndex
         );
+
+        // Guardar estado de pickups
+        if (WeaponPickupManager.Instance != null)
+        {
+            WeaponPickupManager.Instance.SavePickupStates(memento);
+        }
+
+        // Guardar estado de larvas
+        if (LarvaManager.Instance != null)
+        {
+            LarvaManager.Instance.SaveLarvaStates(memento);
+        }
+
+        Debug.Log("Partida guardada correctamente");
+        return memento;
     }
 
     public void LoadState(PlayerMemento memento, PlayerHealth health, WeaponManager weaponManager)
     {
-        // 🔹 NUEVO: Validar memento
         if (memento == null)
         {
             Debug.LogError("Memento es null en LoadState");
@@ -172,39 +183,146 @@ public class PlayerMovement : MonoBehaviour
         CharacterController controller = GetComponent<CharacterController>();
         if (controller == null) return;
 
-        if (controller.enabled) controller.enabled = false;
+        // Deshabilitar controlador temporalmente para mover al jugador
+        bool wasEnabled = controller.enabled;
+        controller.enabled = false;
 
+        // Restaurar posición y rotación
         transform.position = memento.position;
         transform.rotation = memento.playerRotation;
 
-        // Restaurar rotación vertical (cámara)
+        // Restaurar rotación de cámara
         xRotation = memento.cameraPitch;
         if (playerCamera != null)
             playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         else if (Camera.main)
             Camera.main.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
-        controller.enabled = true;
+        // Reactivar controlador
+        controller.enabled = wasEnabled;
 
-        // Restaurar vida
+        // Restaurar salud (esto debería actualizar el HUD automáticamente)
         health.SetCurrentHealth(memento.health);
 
-        // Restaurar armas y munición
-        if (weaponManager.weapons != null && memento.weapons != null)
+        // Restaurar medkits
+        RestoreMedkits(health, memento.medkitCount);
+
+        // Cargar armas
+        weaponManager.LoadWeaponsFromMemento(memento.weapons);
+
+        // Equipar arma correcta
+        EquipWeaponFromSave(weaponManager, memento.equippedWeaponIndex);
+
+        // Restaurar pickups (solo activar/desactivar)
+        if (WeaponPickupManager.Instance != null)
         {
-            for (int i = 0; i < weaponManager.weapons.Length && i < memento.weapons.Count; i++)
+            WeaponPickupManager.Instance.LoadPickupStates(memento);
+        }
+
+        // Restaurar larvas (solo activar/desactivar)
+        if (LarvaManager.Instance != null)
+        {
+            LarvaManager.Instance.LoadLarvaStates(memento);
+        }
+
+        Debug.Log("Partida cargada correctamente");
+    }
+
+    // Método para restaurar medkits
+    private void RestoreMedkits(PlayerHealth health, int targetCount)
+    {
+        try
+        {
+            // Intentar usar SetMedkitCount si existe
+            var setMethod = health.GetType().GetMethod("SetMedkitCount");
+            if (setMethod != null)
             {
-                if (weaponManager.weapons[i] != null)
+                setMethod.Invoke(health, new object[] { targetCount });
+                return;
+            }
+
+            // Si no existe SetMedkitCount, intentar con AddMedkit
+            var addMethod = health.GetType().GetMethod("AddMedkit");
+            if (addMethod != null)
+            {
+                // Primero resetear a 0
+                var currentMedkitsMethod = health.GetType().GetMethod("GetMedkitCount");
+                if (currentMedkitsMethod != null)
                 {
-                    weaponManager.weapons[i].currentAmmo = memento.weapons[i].currentAmmo;
+                    int current = (int)currentMedkitsMethod.Invoke(health, null);
+
+                    // Agregar la diferencia
+                    for (int i = current; i < targetCount; i++)
+                    {
+                        addMethod.Invoke(health, null);
+                    }
                 }
             }
         }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("No se pudo restaurar medkits: " + e.Message);
+        }
+    }
 
-        weaponManager.currentIndex = memento.equippedWeaponIndex;
+    // Método para equipar arma al cargar
+    private void EquipWeaponFromSave(WeaponManager weaponManager, int weaponIndex)
+    {
+        if (weaponManager == null) return;
 
-        // Forzar selección del arma
-        weaponManager.SendMessage("SelectWeapon", weaponManager.currentIndex,
-            SendMessageOptions.DontRequireReceiver);
+        try
+        {
+            // Intentar usar TrySelectWeapon si es público
+            var trySelectMethod = typeof(WeaponManager).GetMethod("TrySelectWeapon");
+            if (trySelectMethod != null)
+            {
+                trySelectMethod.Invoke(weaponManager, new object[] { weaponIndex });
+                return;
+            }
+
+            // Intentar usar SelectWeapon si es público
+            var selectMethod = typeof(WeaponManager).GetMethod("SelectWeapon");
+            if (selectMethod != null)
+            {
+                selectMethod.Invoke(weaponManager, new object[] { weaponIndex });
+                return;
+            }
+
+            // Si no hay métodos públicos, hacerlo manualmente
+            if (weaponIndex >= 0 && weaponIndex < weaponManager.weapons.Length &&
+                weaponManager.weapons[weaponIndex] != null)
+            {
+                // Desactivar todas las armas
+                for (int i = 0; i < weaponManager.weapons.Length; i++)
+                {
+                    if (weaponManager.weapons[i] != null)
+                    {
+                        weaponManager.weapons[i].SetActive(i == weaponIndex);
+                    }
+                }
+
+                // Actualizar índice actual
+                weaponManager.currentIndex = weaponIndex;
+
+                // Actualizar munición actual
+                if (weaponManager.weapons[weaponIndex] != null)
+                {
+                    weaponManager.currentweaponammo = weaponManager.weapons[weaponIndex].currentAmmo;
+                }
+
+                // Disparar evento para actualizar HUD
+                EventManager.TriggerEvent(GameEvents.WEAPON_SWITCHED, new WeaponSwitchEventData
+                {
+                    weaponName = weaponManager.weapons[weaponIndex].weaponName,
+                    ammoCount = weaponManager.weapons[weaponIndex].currentAmmo
+                });
+
+                Debug.Log($"Arma equipada desde guardado: índice {weaponIndex}");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("Error al equipar arma: " + e.Message);
+        }
     }
 }
