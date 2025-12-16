@@ -13,7 +13,7 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private GameObject hudGroup;
     [SerializeField] private GameObject victoryGroup;
     [SerializeField] private GameObject defeatGroup;
-    [SerializeField] private ScreenAnimations screenAnimations; // NUEVO: Referencia al script de animaciones
+    [SerializeField] private ScreenAnimations screenAnimations;
 
     [Header("Pantalla de Victoria (Solo para Actualizar Datos)")]
     [SerializeField] private Image rankImage;
@@ -140,13 +140,11 @@ public class ScreenManager : MonoBehaviour
         defeatGroup.SetActive(false);
         targetScreen.SetActive(true);
 
-        // Determinar rank y actualizar sprites ANTES de iniciar animaciones
         string finalRank = CalculateRank(Score);
         Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
 
         UpdateRankImages(Score);
 
-        // Delegar la secuencia de caída, conteo y aparición de imágenes al nuevo script
         yield return StartCoroutine(screenAnimations.StartVictorySequence(Score, EnemiesKilled));
 
         if (pauseGame)
@@ -176,7 +174,6 @@ public class ScreenManager : MonoBehaviour
             }
         }
 
-        // Asignar sprites a las imágenes
         if (rankImage != null && bestRankSprite != null)
         {
             rankImage.sprite = bestRankSprite;
@@ -186,7 +183,6 @@ public class ScreenManager : MonoBehaviour
             rankImageLarva.sprite = bestLarvaSprite;
         }
 
-        // Comunicar el estado de salto a ScreenAnimations
         screenAnimations.SetLarvaJumpState(shouldJump);
     }
 
@@ -267,13 +263,26 @@ public class ScreenManager : MonoBehaviour
                     return;
                 }
             }
-            // Delegar la lógica de salteo al nuevo script
             else if (screenAnimations != null && screenAnimations.IsAnimationPlaying())
             {
+                // 1. Forzar fin de contadores y elementos visuales en ScreenAnimations
                 screenAnimations.RequestSkip();
 
-                // Forzar los estados finales que RequestSkip no puede manejar automáticamente
-                UpdateRankImages(Score); // Asegura que los sprites y la configuración de salto estén correctos
+                // 2. Ejecutar lógica de debug y configuración de rango que sigue al conteo
+                UpdateRankImages(Score);
+                string finalRank = CalculateRank(Score);
+                Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
+
+                // 3. Ya que ScreenAnimations.RequestSkip fuerza la activación y posición final, 
+                // solo nos queda asegurar la rotación y el salto.
+
+                // El coroutine de rotación y salto ya no está bajo el control de ScreenManager,
+                // por lo que StartVictorySequence debe ser modificado para que el RequestSkip 
+                // inicie esos efectos de forma forzada si es necesario.
+
+                // Si la animación fue salteada, debemos asumir que el coroutine principal ya terminó los contadores
+                // y que lo siguiente será la activación del menú (lo cual ocurre al finalizar StartVictorySequence).
+                // Aquí solo nos enfocamos en que lo visual esté correcto.
             }
         }
     }

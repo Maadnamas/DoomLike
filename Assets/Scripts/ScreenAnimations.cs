@@ -30,7 +30,6 @@ public class ScreenAnimations : MonoBehaviour
     [SerializeField] private float rankRotationSpeed = 3f;
     [SerializeField] private float rankRotationMaxAngle = 10f;
 
-    // Banderas internas y datos
     private Vector3 initialVictoryPanelPosition;
     private Vector3 initialLarvaPosition;
     private bool shouldLarvaJump = false;
@@ -60,14 +59,45 @@ public class ScreenAnimations : MonoBehaviour
         if (scoreAnimationCoroutine != null)
         {
             StopCoroutine(scoreAnimationCoroutine);
-            scoreText.text = ScreenManager.Score.ToString();
             scoreAnimationCoroutine = null;
         }
         if (enemiesAnimationCoroutine != null)
         {
             StopCoroutine(enemiesAnimationCoroutine);
-            enemiesKilledText.text = ScreenManager.EnemiesKilled.ToString();
             enemiesAnimationCoroutine = null;
+        }
+
+        if (scoreText != null)
+        {
+            scoreText.text = ScreenManager.Score.ToString();
+        }
+        if (enemiesKilledText != null)
+        {
+            enemiesKilledText.text = ScreenManager.EnemiesKilled.ToString();
+        }
+
+        // --- ACTIVACIÓN FORZADA DE RANKING PRINCIPAL Y ROTACIÓN ---
+        if (rankImage != null)
+        {
+            rankImage.gameObject.SetActive(true);
+            rankImage.transform.localScale = Vector3.one;
+            // Iniciar la rotación inmediatamente al saltear si no está ya activa
+            if (rankRotationCoroutine == null)
+            {
+                rankRotationCoroutine = StartCoroutine(RotateRankImage());
+            }
+        }
+        // --------------------------------------------------------
+
+        if (rankImageLarva != null)
+        {
+            rankImageLarva.gameObject.SetActive(true);
+            rankImageLarva.rectTransform.localPosition = initialLarvaPosition;
+        }
+
+        if (shouldLarvaJump && larvaJumpCoroutine == null)
+        {
+            larvaJumpCoroutine = StartCoroutine(JumpRoutine());
         }
 
         skipAnimationRequested = true;
@@ -97,29 +127,28 @@ public class ScreenAnimations : MonoBehaviour
         if (rankImage != null) rankImage.gameObject.SetActive(false);
         if (rankImageLarva != null) rankImageLarva.gameObject.SetActive(false);
 
+        // Resetear la rotación para que inicie desde cero
+        if (rankImage != null) rankImage.rectTransform.localRotation = Quaternion.identity;
+
         skipAnimationRequested = false;
 
-        // 1. Caída y Rebote del panel
         if (victoryPanelRect != null)
         {
             victoryPanelRect.localPosition = initialVictoryPanelPosition + Vector3.up * initialOffScreenOffset;
             yield return StartCoroutine(AnimateVictoryPanelFall());
         }
 
-        // 2. Conteo de Puntuación y Muertes
         scoreAnimationCoroutine = StartCoroutine(CountUp(scoreText, score, counterDuration));
         yield return scoreAnimationCoroutine;
 
         enemiesAnimationCoroutine = StartCoroutine(CountUp(enemiesKilledText, enemiesKilled, counterDuration));
         yield return enemiesAnimationCoroutine;
 
-        // 3. Aparición de Ranking (Simultáneo)
         StartCoroutine(AnimateRankAppearance());
-        rankRotationCoroutine = StartCoroutine(RotateRankImage());
+        rankRotationCoroutine = StartCoroutine(RotateRankImage()); // La rotación se inicia inmediatamente con el pop-in
 
         yield return new WaitForSecondsRealtime(rankPopDuration);
 
-        // 4. Aparición de Larva
         yield return StartCoroutine(AnimateLarvaEnter());
 
         if (shouldLarvaJump)
@@ -186,7 +215,6 @@ public class ScreenAnimations : MonoBehaviour
         }
 
         text.text = targetValue.ToString();
-        // skipAnimationRequested NO se resetea aquí, se usa para forzar el salto si se presiona click
     }
 
     private IEnumerator AnimateRankAppearance()
@@ -219,6 +247,7 @@ public class ScreenAnimations : MonoBehaviour
         while (true)
         {
             time += Time.unscaledDeltaTime * rankRotationSpeed;
+            // La rotación se aplica al eje Z (rotación lateral)
             float angle = Mathf.Sin(time) * rankRotationMaxAngle;
             rect.localRotation = Quaternion.Euler(0f, 0f, angle);
             yield return null;
@@ -259,10 +288,11 @@ public class ScreenAnimations : MonoBehaviour
         while (shouldLarvaJump)
         {
             float time = 0f;
-            while (time < larvaJumpDuration / 2f)
+
+            while (time < larvaJumpDuration)
             {
                 time += Time.unscaledDeltaTime;
-                float t = time / (larvaJumpDuration / 2f);
+                float t = time / larvaJumpDuration;
                 float yOffset = Mathf.Sin(t * Mathf.PI) * larvaJumpHeight;
                 rect.localPosition = restPos + Vector3.up * yOffset;
                 yield return null;

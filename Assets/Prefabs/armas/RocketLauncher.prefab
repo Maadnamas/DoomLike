@@ -46,11 +46,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Rocket Launcher
   weaponID: 2
+  assignedSlot: 2
   weaponSprite: {fileID: 21300000, guid: 5c82b644498bb3f49b4d6fb87674e476, type: 3}
+  weaponIcon: {fileID: 21300000, guid: 7b5e7f5ea7f5b064caa977523c3790c6, type: 3}
   muzzlePoint: {fileID: 0}
   fpsCamera: {fileID: 0}
   damage: 10
-  fireRate: 5
+  fireRate: 1
   shootSound: {fileID: 0}
   MaxAmmo: 5
   currentAmmo: 0
