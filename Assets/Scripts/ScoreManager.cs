@@ -5,7 +5,7 @@ public class ScoreManager : MonoBehaviour
 {
     [Header("Configuración de Puntos (Sumar)")]
     [SerializeField] private int pointsPerEnemyKill = 100;
-    [SerializeField] private int pointsPerBossKill = 1000; 
+    [SerializeField] private int pointsPerBossKill = 1000;
     [SerializeField] private int pointsPerEnemyHit = 10;
     [SerializeField] private int pointsPerAmmoPickup = 5;
     [SerializeField] private int pointsPerHeal = 20;
@@ -45,7 +45,7 @@ public class ScoreManager : MonoBehaviour
         while (EventManager.Instance == null) yield return null;
 
         EventManager.StartListening(GameEvents.ENEMY_DIED, OnEnemyDied);
-        EventManager.StartListening(GameEvents.BOSS_DIED, OnBossDied); 
+        EventManager.StartListening(GameEvents.BOSS_DIED, OnBossDied);
         EventManager.StartListening(GameEvents.ENEMY_DAMAGED, OnEnemyDamaged);
         EventManager.StartListening(GameEvents.AMMO_PICKED_UP, OnAmmoPickedUp);
         EventManager.StartListening(GameEvents.PLAYER_HEALED, OnPlayerHealed);
@@ -63,7 +63,7 @@ public class ScoreManager : MonoBehaviour
         if (EventManager.Instance == null) return;
 
         EventManager.StopListening(GameEvents.ENEMY_DIED, OnEnemyDied);
-        EventManager.StopListening(GameEvents.BOSS_DIED, OnBossDied); // NUEVO
+        EventManager.StopListening(GameEvents.BOSS_DIED, OnBossDied);
         EventManager.StopListening(GameEvents.ENEMY_DAMAGED, OnEnemyDamaged);
         EventManager.StopListening(GameEvents.AMMO_PICKED_UP, OnAmmoPickedUp);
         EventManager.StopListening(GameEvents.PLAYER_HEALED, OnPlayerHealed);
@@ -87,6 +87,10 @@ public class ScoreManager : MonoBehaviour
     {
         if (!isGameActive) return;
         currentScore -= amount;
+        if (currentScore < 0)
+        {
+            currentScore = 0;
+        }
         UpdateGlobalScore();
     }
 
@@ -107,12 +111,13 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    private void OnEnemyDied(object data) {
-        AddScore(pointsPerEnemyKill); 
+    private void OnEnemyDied(object data)
+    {
+        AddScore(pointsPerEnemyKill);
         Debug.Log($"Enemigo derrotado. Total de Enemigos: {ScreenManager.EnemiesKilled}");
 
-        }
-private void OnBossDied(object data)
+    }
+    private void OnBossDied(object data)
     {
         if (data is BossDeathEventData bossData)
         {

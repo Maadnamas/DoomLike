@@ -91,6 +91,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   jumpKey: 32
+  runMaterial: {fileID: 2100000, guid: 6de2ec4466f302d499cd73aaa9552aba, type: 2}
+  alphaAppearSpeed: 3
 --- !u!114 &8667431920452130738
 MonoBehaviour:
   m_ObjectHideFlags: 0

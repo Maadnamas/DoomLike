@@ -2061,10 +2061,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1157.0,
-            "y": -185.0,
-            "width": 231.0,
-            "height": 34.0
+            "x": -1086.9996337890625,
+            "y": -48.00000762939453,
+            "width": 230.9998779296875,
+            "height": 33.99998092651367
         }
     },
     "m_Slots": [
@@ -2869,9 +2869,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1134.0,
-            "y": -571.0,
-            "width": 208.0,
+            "x": -616.999755859375,
+            "y": -486.0,
+            "width": 207.99972534179688,
             "height": 301.9999694824219
         }
     },
@@ -3153,10 +3153,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -831.0,
-            "y": -222.0,
-            "width": 208.0,
-            "height": 301.9999694824219
+            "x": -760.999755859375,
+            "y": -85.00001525878906,
+            "width": 207.99969482421876,
+            "height": 302.0
         }
     },
     "m_Slots": [
@@ -3528,10 +3528,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1134.0,
-            "y": -131.0,
-            "width": 208.0,
-            "height": 301.99993896484377
+            "x": -1063.9998779296875,
+            "y": 6.000034809112549,
+            "width": 208.0001220703125,
+            "height": 301.9999084472656
         }
     },
     "m_Slots": [
@@ -4552,10 +4552,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1493.0,
-            "y": -571.0,
-            "width": 208.0,
-            "height": 315.0
+            "x": -975.9999389648438,
+            "y": -486.0,
+            "width": 206.0001220703125,
+            "height": 130.99993896484376
         }
     },
     "m_Slots": [
@@ -5046,7 +5046,7 @@
     "m_ZTestMode": 4,
     "m_ZWriteControl": 0,
     "m_AlphaMode": 0,
-    "m_RenderFace": 2,
+    "m_RenderFace": 0,
     "m_AlphaClip": true,
     "m_CastShadows": true,
     "m_ReceiveShadows": true,
