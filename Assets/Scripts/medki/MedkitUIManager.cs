@@ -82,7 +82,7 @@ public class MedkitUIManager : MonoBehaviour
     {
         if (medkitCountText != null)
         {
-            medkitCountText.text = $"{current}/{max}";
+            medkitCountText.text = $"{current}";
         }
 
         if (medkitIcons != null && medkitIcons.Length > 0)

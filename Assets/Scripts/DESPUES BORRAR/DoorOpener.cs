@@ -3,9 +3,11 @@ using UnityEngine;
 public class DoorOpener : MonoBehaviour
 {
     [Header("Configuración")]
-    public float delay = 47f;          // Tiempo antes de abrir
     public float moveDistance = 10f;   // Unidades que sube la puerta
     public float speed = 3f;           // Velocidad del movimiento
+
+    [Header("Audio (Opcional)")]
+    [SerializeField] private AudioClip doorOpenSound;
 
     private Vector3 initialPos;
     private Vector3 targetPos;
@@ -15,13 +17,21 @@ public class DoorOpener : MonoBehaviour
     {
         initialPos = transform.position;
         targetPos = initialPos + Vector3.up * moveDistance;
-
-        Invoke(nameof(StartOpening), delay);
     }
 
-    void StartOpening()
+    public void OpenDoor()
     {
-        opening = true;
+        if (!opening)
+        {
+            opening = true;
+            Debug.Log("Puerta comenzando a abrirse");
+
+            // Reproducir sonido de puerta si está asignado
+            if (doorOpenSound != null)
+            {
+                AudioManager.PlaySFX3D(doorOpenSound, transform.position);
+            }
+        }
     }
 
     void Update()
@@ -36,7 +46,10 @@ public class DoorOpener : MonoBehaviour
 
             // Si llegó, dejar de mover
             if (transform.position == targetPos)
+            {
                 opening = false;
+                Debug.Log("Puerta completamente abierta");
+            }
         }
     }
 }

@@ -14,6 +14,9 @@ public class BossHealth : MonoBehaviour, IDamageable
     [SerializeField] private bool useRagdoll = true;
     [SerializeField] private float ragdollDestroyDelay = 5f;
 
+    [Header("Puerta")]
+    [SerializeField] private DoorOpener doorToOpen;
+
     private BossAnimator bossAnimator;
     private CharacterController characterController;
     private Animator animator;
@@ -141,9 +144,14 @@ public class BossHealth : MonoBehaviour, IDamageable
             position = transform.position,
         });
 
+        // Abrir la puerta cuando el boss muere
+        if (doorToOpen != null)
+        {
+           doorToOpen.OpenDoor();
+        }
+
         if (useRagdoll)
         {
-            // Activar ragdoll
             ActivateRagdoll();
         }
         else

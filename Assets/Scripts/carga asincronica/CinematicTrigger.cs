@@ -74,7 +74,7 @@ public class CinematicTrigger : MonoBehaviour
 
     private void Update()
     {
-        if (isCinematicPlaying && Input.GetKeyDown(KeyCode.Space))
+        if (isCinematicPlaying && Input.GetKeyDown(KeyCode.Return))
         {
             SkipCinematic();
         }

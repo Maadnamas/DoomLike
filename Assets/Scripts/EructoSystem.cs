@@ -4,33 +4,25 @@ using UnityEngine;
 
 public class EructoSystemm : AbilityBase
 {
-    [Header("eructo setins")]
-    public GameObject burpSmokePrefab;      
+    [Header("Eructo Settings")]
+    public GameObject burpSmokePrefab;
+    public AudioClip[] burpSounds;
+    public float burpCooldown = 3f;
 
-    public AudioClip[] burpSounds;          
-
-    public float burpCooldown = 3f;      
-    
-    public float spawnDistance = 1f;        
-
+    public float spawnDistance = 1f;
     private float burpTimer = 0f;
-    private AudioSource audioSource;
 
-    [Header("Pitch stenigns")]
-    public float minPitch = 0.95f;         
+    [Header("Pitch Settings")]
+    public float minPitch = 0.95f;
+    public float maxPitch = 1.05f;
 
-    public float maxPitch = 1.05f;           
-
-
-    void Start()
-    {
-        audioSource = GetComponent<AudioSource>();
-    }
+    [Header("Volume Settings")]
+    public float minVolume = 0.8f;
+    public float maxVolume = 1f;
 
     public override void ActionExecution()
     {
         burpTimer -= Time.deltaTime;
-
         if (Input.GetKeyDown(KeyCode.C) && burpTimer <= 0f)
         {
             Burp();
@@ -43,22 +35,17 @@ public class EructoSystemm : AbilityBase
         if (burpSmokePrefab)
         {
             Vector3 spawnPos = transform.position + transform.forward * spawnDistance;
-
             GameObject smoke = Instantiate(burpSmokePrefab, spawnPos, Quaternion.identity);
             Destroy(smoke, 2f);
         }
-
 
         if (burpSounds != null && burpSounds.Length > 0)
         {
             int randomIndex = Random.Range(0, burpSounds.Length);
             AudioClip chosenClip = burpSounds[randomIndex];
 
-            audioSource.pitch = Random.Range(minPitch, maxPitch); 
-            audioSource.volume = Random.Range(0.8f, 1f);
-            audioSource.PlayOneShot(chosenClip);
+            // Usar AudioManager para reproducir el sonido en 3D en la posición del jugador
+            AudioManager.PlaySFX3D(chosenClip, transform.position);
         }
-
-        Debug.Log("SE COMUNICA MEDIANTE ESTE DEBUG.LOG QUE MASON HA ERUCTADO");
     }
 }

@@ -54,9 +54,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.J))
-            TakeDamage(20, Vector3.zero, Vector3.zero);
-
         if (Input.GetKeyDown(KeyCode.H))
             UseMedkit();
     }
