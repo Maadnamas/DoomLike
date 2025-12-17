@@ -312,6 +312,22 @@ public class ScreenManager : MonoBehaviour
         StartCoroutine(LoadSceneWithFade(menuSceneName));
     }
 
+    public void OnRestartButtonPressed()
+    {
+        StartCoroutine(RestartCurrentScene());
+    }
+
+    private IEnumerator RestartCurrentScene()
+    {
+        if (fadeCanvasGroup != null)
+            yield return StartCoroutine(Fade(1f));
+
+        EngineResume();
+
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex);
+    }
+
     private IEnumerator LoadSceneWithFade(string sceneName)
     {
         if (fadeCanvasGroup != null)
@@ -356,31 +372,25 @@ public class ScreenManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            // Caso: Juego pausado por Victoria/Derrota
-            if (Time.timeScale == 0f)
+            // Caso: Pantalla de derrota activa - reiniciar escena con clic
+            if (defeatGroup.activeSelf && waitingForRestart)
             {
-                // Solo permitimos SALTEAR la animación si la pantalla de victoria está activa,
-                // la animación está en curso, Y el clic NO está sobre un elemento de UI (botón).
-                if (victoryGroup.activeSelf && screenAnimations != null && screenAnimations.IsAnimationPlaying())
+                if (!EventSystem.current.IsPointerOverGameObject())
                 {
-                    if (!EventSystem.current.IsPointerOverGameObject())
-                    {
-                        screenAnimations.RequestSkip();
-
-                        UpdateRankImages(Score);
-                        string finalRank = CalculateRank(Score);
-                        Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
-                    }
+                    StartCoroutine(RestartCurrentScene());
                 }
             }
-            // Caso: Juego activo (saltear diálogos/cinemáticas que corren con timeScale=1)
-            else if (screenAnimations != null && screenAnimations.IsAnimationPlaying())
+            // Caso: Pantalla de victoria - saltear animación
+            else if (victoryGroup.activeSelf && screenAnimations != null && screenAnimations.IsAnimationPlaying())
             {
-                screenAnimations.RequestSkip();
+                if (!EventSystem.current.IsPointerOverGameObject())
+                {
+                    screenAnimations.RequestSkip();
 
-                UpdateRankImages(Score);
-                string finalRank = CalculateRank(Score);
-                Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
+                    UpdateRankImages(Score);
+                    string finalRank = CalculateRank(Score);
+                    Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
+                }
             }
         }
     }
