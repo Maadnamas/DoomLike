@@ -31,8 +31,6 @@ public class SceneSetup : MonoBehaviour
 
     public RankData[] Ranks => ranks;
 
-    private System.Collections.Generic.List<AudioSource> backgroundSources = new System.Collections.Generic.List<AudioSource>();
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -40,14 +38,14 @@ public class SceneSetup : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
 
         if (Application.isPlaying)
         {
             if (backgroundMusicClips != null && backgroundMusicClips.Length > 0)
             {
-                SetupBackgroundMusic();
+                // Usar AudioManager en lugar de crear AudioSources locales
+                AudioManager.PlayBackgroundMusic(backgroundMusicClips);
             }
         }
     }
@@ -60,63 +58,19 @@ public class SceneSetup : MonoBehaviour
         }
     }
 
-    private void SetupBackgroundMusic()
-    {
-        foreach (AudioClip clip in backgroundMusicClips)
-        {
-            if (clip != null)
-            {
-                AudioSource source = gameObject.AddComponent<AudioSource>();
-                source.clip = clip;
-                source.loop = true;
-                source.spatialBlend = 0f;
-                source.volume = 1f;
-                source.Play();
-                backgroundSources.Add(source);
-            }
-        }
-    }
-
+    // Métodos estáticos que delegan al AudioManager
     public static void StopBackgroundMusic()
     {
-        if (Instance != null)
-        {
-            foreach (AudioSource source in Instance.backgroundSources)
-            {
-                if (source != null && source.isPlaying)
-                {
-                    source.Stop();
-                }
-            }
-        }
+        AudioManager.StopBackgroundMusic();
     }
 
     public static void PauseBackgroundMusic()
     {
-        if (Instance != null)
-        {
-            foreach (AudioSource source in Instance.backgroundSources)
-            {
-                if (source != null && source.isPlaying) 
-                {
-                    source.Pause();
-                }
-            }
-        }
+        AudioManager.PauseBackgroundMusic();
     }
 
     public static void ResumeBackgroundMusic()
     {
-        if (Instance != null)
-        {
-            foreach (AudioSource source in Instance.backgroundSources)
-            {
-
-                if (source != null && !source.isPlaying)
-                {
-                    source.UnPause();
-                }
-            }
-        }
+        AudioManager.ResumeBackgroundMusic();
     }
 }

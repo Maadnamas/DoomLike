@@ -14,7 +14,7 @@ public class AmmoBox : CollectableObject
 
     public override void Collect()
     {
-
+        PlaySound();
         EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
         {
             weaponType = m_AmmoType.ToString(),

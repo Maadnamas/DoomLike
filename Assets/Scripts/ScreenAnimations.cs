@@ -32,11 +32,10 @@ public class ScreenAnimations : MonoBehaviour
 
     [Header("Audio de Conteo y Aparición")]
     [SerializeField] private AudioClip countIncrementSound;
+    [SerializeField] private float countSoundInterval = 0.1f;
     [SerializeField] private AudioClip countEndSound;
     [SerializeField] private AudioClip rankAppearSound;
     [SerializeField] private AudioClip larvaAppearSound;
-
-    private AudioSource countAudioSource;
 
     private Vector3 initialVictoryPanelPosition;
     private Vector3 initialLarvaPosition;
@@ -47,7 +46,7 @@ public class ScreenAnimations : MonoBehaviour
     private Coroutine enemiesAnimationCoroutine;
     private Coroutine larvaJumpCoroutine;
     private Coroutine rankRotationCoroutine;
-
+    private Coroutine countSoundCoroutine;
 
     private void Awake()
     {
@@ -60,11 +59,6 @@ public class ScreenAnimations : MonoBehaviour
         {
             initialLarvaPosition = rankImageLarva.rectTransform.localPosition;
         }
-
-        countAudioSource = gameObject.AddComponent<AudioSource>();
-        countAudioSource.spatialBlend = 0f;
-        countAudioSource.loop = true;
-        countAudioSource.playOnAwake = false;
     }
 
     public void RequestSkip()
@@ -79,10 +73,10 @@ public class ScreenAnimations : MonoBehaviour
             StopCoroutine(enemiesAnimationCoroutine);
             enemiesAnimationCoroutine = null;
         }
-
-        if (countAudioSource.isPlaying)
+        if (countSoundCoroutine != null)
         {
-            countAudioSource.Stop();
+            StopCoroutine(countSoundCoroutine);
+            countSoundCoroutine = null;
         }
 
         if (scoreText != null)
@@ -143,6 +137,7 @@ public class ScreenAnimations : MonoBehaviour
     {
         if (rankRotationCoroutine != null) StopCoroutine(rankRotationCoroutine);
         if (larvaJumpCoroutine != null) StopCoroutine(larvaJumpCoroutine);
+        if (countSoundCoroutine != null) StopCoroutine(countSoundCoroutine);
 
         if (scoreText != null) scoreText.text = "0";
         if (enemiesKilledText != null) enemiesKilledText.text = "0";
@@ -223,10 +218,10 @@ public class ScreenAnimations : MonoBehaviour
         float endTime = startTime + duration;
         int startValue = 0;
 
-        if (countIncrementSound != null && !countAudioSource.isPlaying)
+        // Iniciar el sonido de conteo usando PlaySFX2D repetidamente
+        if (countIncrementSound != null && !skipAnimationRequested)
         {
-            countAudioSource.clip = countIncrementSound;
-            countAudioSource.Play();
+            countSoundCoroutine = StartCoroutine(PlayCountSoundLoop());
         }
 
         while (Time.unscaledTime < endTime && !skipAnimationRequested)
@@ -240,13 +235,26 @@ public class ScreenAnimations : MonoBehaviour
 
         text.text = targetValue.ToString();
 
-        if (countAudioSource.isPlaying)
+        // Detener el sonido de conteo - CRITICAL: detener la coroutine primero
+        if (countSoundCoroutine != null)
         {
-            countAudioSource.Stop();
+            StopCoroutine(countSoundCoroutine);
+            countSoundCoroutine = null;
         }
+
+        // Reproducir sonido de finalización usando AudioManager
         if (countEndSound != null)
         {
             AudioManager.PlaySFX2D(countEndSound);
+        }
+    }
+
+    private IEnumerator PlayCountSoundLoop()
+    {
+        while (!skipAnimationRequested)
+        {
+            AudioManager.PlaySFX2D(countIncrementSound);
+            yield return new WaitForSecondsRealtime(countSoundInterval);
         }
     }
 
