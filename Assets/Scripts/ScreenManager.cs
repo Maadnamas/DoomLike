@@ -32,10 +32,6 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private CanvasGroup fadeCanvasGroup;
     [SerializeField] private float fadeDuration = 1f;
 
-    [Header("Audio")]
-    [SerializeField] private AudioClip victoryMusic;
-    private AudioSource victoryAudioSource;
-
     private bool waitingForRestart = false;
     private bool isPaused = false;
 
@@ -50,11 +46,6 @@ public class ScreenManager : MonoBehaviour
             Instance = this;
             isCinematicActive = false;
         }
-
-        victoryAudioSource = gameObject.AddComponent<AudioSource>();
-        victoryAudioSource.spatialBlend = 0f;
-        victoryAudioSource.loop = false;
-        victoryAudioSource.playOnAwake = false;
     }
 
     private void OnEnable()
@@ -120,13 +111,6 @@ public class ScreenManager : MonoBehaviour
     private void OnGameVictory(object data)
     {
         PlayerHealth.gameIsOver = true;
-
-        SceneSetup.StopBackgroundMusic();
-        if (victoryMusic != null)
-        {
-            victoryAudioSource.clip = victoryMusic;
-            victoryAudioSource.Play();
-        }
 
         StartCoroutine(SwitchScreenAndAnimateVictory(victoryGroup, pauseGame: true));
         ScreenManager.SetPlayerControl(false);
@@ -319,14 +303,12 @@ public class ScreenManager : MonoBehaviour
 
     public void OnContinueButtonPressed()
     {
-        StopVictoryMusic();
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
         StartCoroutine(LoadSceneWithFade(nextSceneIndex));
     }
 
     public void OnMenuButtonPressed()
     {
-        StopVictoryMusic();
         StartCoroutine(LoadSceneWithFade(menuSceneName));
     }
 
@@ -355,14 +337,6 @@ public class ScreenManager : MonoBehaviour
         {
             Debug.LogError("No hay más escenas en el índice de compilación. Cargando menú...");
             SceneManager.LoadScene(menuSceneName);
-        }
-    }
-
-    private void StopVictoryMusic()
-    {
-        if (victoryAudioSource != null && victoryAudioSource.isPlaying)
-        {
-            victoryAudioSource.Stop();
         }
     }
 

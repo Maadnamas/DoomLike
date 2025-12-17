@@ -31,8 +31,8 @@ public class ScreenAnimations : MonoBehaviour
     [SerializeField] private float rankRotationMaxAngle = 10f;
 
     [Header("Audio de Conteo y Aparición")]
+    [SerializeField] private AudioClip victoryStartSound;
     [SerializeField] private AudioClip countIncrementSound;
-    [SerializeField] private float countSoundInterval = 0.1f;
     [SerializeField] private AudioClip countEndSound;
     [SerializeField] private AudioClip rankAppearSound;
     [SerializeField] private AudioClip larvaAppearSound;
@@ -46,7 +46,7 @@ public class ScreenAnimations : MonoBehaviour
     private Coroutine enemiesAnimationCoroutine;
     private Coroutine larvaJumpCoroutine;
     private Coroutine rankRotationCoroutine;
-    private Coroutine countSoundCoroutine;
+    // Se elimina countSoundCoroutine
 
     private void Awake()
     {
@@ -73,11 +73,9 @@ public class ScreenAnimations : MonoBehaviour
             StopCoroutine(enemiesAnimationCoroutine);
             enemiesAnimationCoroutine = null;
         }
-        if (countSoundCoroutine != null)
-        {
-            StopCoroutine(countSoundCoroutine);
-            countSoundCoroutine = null;
-        }
+
+        // Detener el sonido de conteo si está activo
+        AudioManager.StopSFXLong();
 
         if (scoreText != null)
         {
@@ -86,6 +84,12 @@ public class ScreenAnimations : MonoBehaviour
         if (enemiesKilledText != null)
         {
             enemiesKilledText.text = ScreenManager.EnemiesKilled.ToString();
+        }
+
+        // Reproducir sonido de finalización de conteo una vez
+        if (countEndSound != null)
+        {
+            AudioManager.PlaySFX2D(countEndSound);
         }
 
         if (rankImage != null)
@@ -137,7 +141,9 @@ public class ScreenAnimations : MonoBehaviour
     {
         if (rankRotationCoroutine != null) StopCoroutine(rankRotationCoroutine);
         if (larvaJumpCoroutine != null) StopCoroutine(larvaJumpCoroutine);
-        if (countSoundCoroutine != null) StopCoroutine(countSoundCoroutine);
+
+        // Asegurar que cualquier sonido largo anterior se detenga
+        AudioManager.StopSFXLong();
 
         if (scoreText != null) scoreText.text = "0";
         if (enemiesKilledText != null) enemiesKilledText.text = "0";
@@ -152,6 +158,11 @@ public class ScreenAnimations : MonoBehaviour
         {
             victoryPanelRect.localPosition = initialVictoryPanelPosition + Vector3.up * initialOffScreenOffset;
             yield return StartCoroutine(AnimateVictoryPanelFall());
+        }
+
+        if (victoryStartSound != null)
+        {
+            AudioManager.PlaySFX2D(victoryStartSound);
         }
 
         scoreAnimationCoroutine = StartCoroutine(CountUp(scoreText, score, counterDuration));
@@ -218,10 +229,10 @@ public class ScreenAnimations : MonoBehaviour
         float endTime = startTime + duration;
         int startValue = 0;
 
-        // Iniciar el sonido de conteo usando PlaySFX2D repetidamente
-        if (countIncrementSound != null && !skipAnimationRequested)
+        // Reproducir el sonido continuo del contador al inicio
+        if (countIncrementSound != null)
         {
-            countSoundCoroutine = StartCoroutine(PlayCountSoundLoop());
+            AudioManager.PlaySFXLong(countIncrementSound);
         }
 
         while (Time.unscaledTime < endTime && !skipAnimationRequested)
@@ -235,28 +246,17 @@ public class ScreenAnimations : MonoBehaviour
 
         text.text = targetValue.ToString();
 
-        // Detener el sonido de conteo - CRITICAL: detener la coroutine primero
-        if (countSoundCoroutine != null)
-        {
-            StopCoroutine(countSoundCoroutine);
-            countSoundCoroutine = null;
-        }
+        // Detener el sonido continuo del contador al terminar
+        AudioManager.StopSFXLong();
 
-        // Reproducir sonido de finalización usando AudioManager
+        // Reproducir sonido de finalización (corto)
         if (countEndSound != null)
         {
             AudioManager.PlaySFX2D(countEndSound);
         }
     }
 
-    private IEnumerator PlayCountSoundLoop()
-    {
-        while (!skipAnimationRequested)
-        {
-            AudioManager.PlaySFX2D(countIncrementSound);
-            yield return new WaitForSecondsRealtime(countSoundInterval);
-        }
-    }
+    // Se elimina private IEnumerator PlayCountSoundLoop()
 
     private IEnumerator AnimateRankAppearance()
     {

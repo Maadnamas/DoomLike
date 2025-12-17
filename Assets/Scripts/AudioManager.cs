@@ -5,6 +5,7 @@ public class AudioManager : MonoBehaviour
 {
     static AudioManager instance;
     static AudioSource sfx2DSource;
+    static AudioSource sfxLongSource; // Nuevo AudioSource para SFX largos detenibles
 
     [Header("Audio Mixer Settings")]
     [SerializeField] AudioMixerGroup sfxMixerGroup;
@@ -18,22 +19,50 @@ public class AudioManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            sfx2DSource = gameObject.AddComponent<AudioSource>();
-            sfx2DSource.spatialBlend = 0f; // 2D
 
-            // Asignar el mixer group al AudioSource 2D
+            // AudioSource para SFX cortos (PlayOneShot)
+            sfx2DSource = gameObject.AddComponent<AudioSource>();
+            sfx2DSource.spatialBlend = 0f;
+
+            // AudioSource para SFX largos detenibles (como el contador)
+            sfxLongSource = gameObject.AddComponent<AudioSource>();
+            sfxLongSource.spatialBlend = 0f;
+            sfxLongSource.loop = false;
+            sfxLongSource.playOnAwake = false;
+
             if (instance.sfxMixerGroup != null)
             {
                 sfx2DSource.outputAudioMixerGroup = instance.sfxMixerGroup;
+                sfxLongSource.outputAudioMixerGroup = instance.sfxMixerGroup;
             }
         }
         else Destroy(gameObject);
     }
 
+    // Para SFX cortos, no detenibles (el uso principal)
     public static void PlaySFX2D(AudioClip clip)
     {
         if (instance == null || clip == null) return;
         sfx2DSource.PlayOneShot(clip);
+    }
+
+    // Nuevo método para SFX largos o detenibles
+    public static void PlaySFXLong(AudioClip clip)
+    {
+        if (instance == null || clip == null || sfxLongSource == null) return;
+
+        sfxLongSource.clip = clip;
+        sfxLongSource.Play();
+    }
+
+    // Nuevo método para detener el SFX largo
+    public static void StopSFXLong()
+    {
+        if (instance == null || sfxLongSource == null) return;
+        if (sfxLongSource.isPlaying)
+        {
+            sfxLongSource.Stop();
+        }
     }
 
     public static void PlaySFX3D(AudioClip clip, Vector3 pos)
@@ -43,12 +72,11 @@ public class AudioManager : MonoBehaviour
         temp.transform.position = pos;
         AudioSource src = temp.AddComponent<AudioSource>();
         src.clip = clip;
-        src.spatialBlend = 1f;         // 100% 3d
+        src.spatialBlend = 1f;
         src.minDistance = 1f;
         src.maxDistance = 25f;
         src.rolloffMode = AudioRolloffMode.Linear;
 
-        // Asignar el mixer group al AudioSource 3D
         if (instance.sfxMixerGroup != null)
         {
             src.outputAudioMixerGroup = instance.sfxMixerGroup;
@@ -58,16 +86,12 @@ public class AudioManager : MonoBehaviour
         Object.Destroy(temp, clip.length);
     }
 
-    // ===== NUEVOS MÉTODOS PARA MÚSICA =====
-
     public static void PlayBackgroundMusic(AudioClip[] clips)
     {
         if (instance == null || clips == null || clips.Length == 0) return;
 
-        // Detener música anterior si existe
         StopBackgroundMusic();
 
-        // Crear AudioSources para cada clip
         foreach (AudioClip clip in clips)
         {
             if (clip != null)
@@ -78,7 +102,6 @@ public class AudioManager : MonoBehaviour
                 source.spatialBlend = 0f;
                 source.volume = 1f;
 
-                // Asignar el mixer group de música
                 if (instance.musicMixerGroup != null)
                 {
                     source.outputAudioMixerGroup = instance.musicMixerGroup;
