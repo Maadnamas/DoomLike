@@ -12,11 +12,14 @@ public class DialogueManager : MonoBehaviour
     public GameObject DialogueParent;
     public TextMeshProUGUI DialogTitleText;
     public TextMeshProUGUI DialogBodyText;
+    public Image NpcPortraitUI; // NUEVO: Arrastra aquí el componente Image de la cara
     public Transform responseButtonContainer;
     public GameObject responseButtonPrefab;
 
     private List<DialogueResponse> currentResponses = new List<DialogueResponse>();
     private string currentTitle;
+    private TMP_FontAsset currentFont;
+    private Sprite currentPortrait;
 
     private void Awake()
     {
@@ -30,14 +33,11 @@ public class DialogueManager : MonoBehaviour
     {
         if (!IsDialogueActive()) return;
 
-        // VERIFICACIÓN DE PAUSA
-        // Si ScreenManager ya tiene la función, la usamos aquí.
         if (ScreenManager.Instance != null && ScreenManager.Instance.IsGamePaused())
         {
-            return; // Si está en pausa, ignoramos los números
+            return;
         }
 
-        // Inputs
         if (Input.GetKeyDown(KeyCode.Alpha1)) SelectResponseByIndex(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SelectResponseByIndex(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) SelectResponseByIndex(2);
@@ -48,7 +48,6 @@ public class DialogueManager : MonoBehaviour
     {
         if (IsDialogueActive())
         {
-            // Verificamos pausa para no pelear con el TimeScale
             bool isMenuPaused = (ScreenManager.Instance != null && ScreenManager.Instance.IsGamePaused());
 
             if (!isMenuPaused)
@@ -63,12 +62,33 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(string title, DialogueNode node)
+    // Actualizado para recibir Sprite también
+    public void StartDialogue(string title, DialogueNode node, TMP_FontAsset font = null, Sprite portrait = null)
     {
         ShowDialogue();
         currentTitle = title;
+        currentFont = font;
+        currentPortrait = portrait;
+
         DialogTitleText.text = title;
         DialogBodyText.text = node.dialogueText;
+
+        // Aplicar Fuente
+        if (currentFont != null) DialogBodyText.font = currentFont;
+
+        // Aplicar Retrato (Cara)
+        if (NpcPortraitUI != null)
+        {
+            if (currentPortrait != null)
+            {
+                NpcPortraitUI.sprite = currentPortrait;
+                NpcPortraitUI.gameObject.SetActive(true);
+            }
+            else
+            {
+                NpcPortraitUI.gameObject.SetActive(false); // Ocultar si no hay foto
+            }
+        }
 
         foreach (Transform child in responseButtonContainer)
         {
@@ -115,7 +135,8 @@ public class DialogueManager : MonoBehaviour
     {
         if (response.nextNode != null)
         {
-            StartDialogue(currentTitle, response.nextNode);
+            // Mantenemos la fuente y el retrato en la siguiente parte del diálogo
+            StartDialogue(currentTitle, response.nextNode, currentFont, currentPortrait);
         }
         else
         {
@@ -132,7 +153,6 @@ public class DialogueManager : MonoBehaviour
     {
         DialogueParent.SetActive(false);
 
-        // Al cerrar, verificamos que NO esté en pausa antes de devolver control
         if (ScreenManager.Instance == null || !ScreenManager.Instance.IsGamePaused())
         {
             Time.timeScale = 1f;

@@ -6,15 +6,13 @@ public class Actor : MonoBehaviour
     public Dialogue Dialogue;
 
     [Header("Configuración Interacción")]
-    public Transform player;       // Arrastra a tu Jugador (Player) aquí
-    public float interactionRange = 3.0f; // Distancia máxima para hablar
+    public Transform player;
+    public float interactionRange = 3.0f;
 
     private void Update()
     {
-        // 1. Calculamos distancia
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // 2. Si está cerca Y presiona E Y no hay otro diálogo abierto
         if (distance <= interactionRange && Input.GetKeyDown(KeyCode.E))
         {
             if (!DialogueManager.Instance.IsDialogueActive())
@@ -26,10 +24,10 @@ public class Actor : MonoBehaviour
 
     public void SpeakTo()
     {
-        DialogueManager.Instance.StartDialogue(Name, Dialogue.RootNode);
+        // Pasamos nombre, nodo inicial, fuente y el retrato
+        DialogueManager.Instance.StartDialogue(Name, Dialogue.RootNode, Dialogue.npcFont, Dialogue.npcPortrait);
     }
 
-    // Dibujito amarillo en el editor para ver el rango
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
