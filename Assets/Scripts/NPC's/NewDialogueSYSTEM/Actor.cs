@@ -24,8 +24,14 @@ public class Actor : MonoBehaviour
 
     public void SpeakTo()
     {
-        // Pasamos nombre, nodo inicial, fuente y el retrato
-        DialogueManager.Instance.StartDialogue(Name, Dialogue.RootNode, Dialogue.npcFont, Dialogue.npcPortrait);
+        // Enviamos: Nombre, Nodo Raíz, Fuente, Sprite Abierto, Sprite Cerrado
+        DialogueManager.Instance.StartDialogue(
+            Name,
+            Dialogue.RootNode,
+            Dialogue.npcFont,
+            Dialogue.npcPortraitOpen,
+            Dialogue.npcPortraitClosed
+        );
     }
 
     private void OnDrawGizmosSelected()

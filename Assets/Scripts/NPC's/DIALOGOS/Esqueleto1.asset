@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Esqueleto1
   m_EditorClassIdentifier: 
   npcFont: {fileID: 11400000, guid: e9445544dc83202478af356e82f8b4cc, type: 2}
-  npcPortrait: {fileID: 21300000, guid: 1daf0ebf778b1a04d86d21b5fa52a470, type: 3}
+  npcPortraitClosed: {fileID: 21300000, guid: 12551abbd3896f742bfa8e8ad4dabba1, type: 3}
+  npcPortraitOpen: {fileID: 21300000, guid: 1a45b85ab8fea9c4f85c6e02e990425e, type: 3}
   RootNode:
     dialogueText: Por que tus huesos estan cubiertos de esa carne fea?
     responses:

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -12,14 +13,20 @@ public class DialogueManager : MonoBehaviour
     public GameObject DialogueParent;
     public TextMeshProUGUI DialogTitleText;
     public TextMeshProUGUI DialogBodyText;
-    public Image NpcPortraitUI; // NUEVO: Arrastra aquí el componente Image de la cara
+    public Image NpcPortraitUI;
     public Transform responseButtonContainer;
     public GameObject responseButtonPrefab;
+
+    [Header("Ajustes de Animación")]
+    public float animationSpeed = 0.2f; // Tiempo entre frames
 
     private List<DialogueResponse> currentResponses = new List<DialogueResponse>();
     private string currentTitle;
     private TMP_FontAsset currentFont;
-    private Sprite currentPortrait;
+
+    private Sprite portraitClosed;
+    private Sprite portraitOpen;
+    private Coroutine talkingCoroutine;
 
     private void Awake()
     {
@@ -33,10 +40,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (!IsDialogueActive()) return;
 
-        if (ScreenManager.Instance != null && ScreenManager.Instance.IsGamePaused())
-        {
-            return;
-        }
+        if (ScreenManager.Instance != null && ScreenManager.Instance.IsGamePaused()) return;
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) SelectResponseByIndex(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SelectResponseByIndex(1);
@@ -56,44 +60,46 @@ public class DialogueManager : MonoBehaviour
             }
 
             if (PlayerMovement.isControlEnabled) PlayerMovement.isControlEnabled = false;
-
             if (Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
             if (!Cursor.visible) Cursor.visible = true;
         }
     }
 
-    // Actualizado para recibir Sprite también
-    public void StartDialogue(string title, DialogueNode node, TMP_FontAsset font = null, Sprite portrait = null)
+    public void StartDialogue(string title, DialogueNode node, TMP_FontAsset font = null, Sprite open = null, Sprite closed = null)
     {
         ShowDialogue();
         currentTitle = title;
         currentFont = font;
-        currentPortrait = portrait;
+        portraitOpen = open;
+        portraitClosed = closed;
 
         DialogTitleText.text = title;
         DialogBodyText.text = node.dialogueText;
 
-        // Aplicar Fuente
         if (currentFont != null) DialogBodyText.font = currentFont;
 
-        // Aplicar Retrato (Cara)
+        // Gestión de Retrato y Animación
         if (NpcPortraitUI != null)
         {
-            if (currentPortrait != null)
+            if (portraitOpen != null && portraitClosed != null)
             {
-                NpcPortraitUI.sprite = currentPortrait;
+                NpcPortraitUI.gameObject.SetActive(true);
+                // Reiniciar corrutina de habla
+                if (talkingCoroutine != null) StopCoroutine(talkingCoroutine);
+                talkingCoroutine = StartCoroutine(AnimateTalking());
+            }
+            else if (portraitClosed != null) // Si solo hay una, se queda fija
+            {
+                NpcPortraitUI.sprite = portraitClosed;
                 NpcPortraitUI.gameObject.SetActive(true);
             }
             else
             {
-                NpcPortraitUI.gameObject.SetActive(false); // Ocultar si no hay foto
+                NpcPortraitUI.gameObject.SetActive(false);
             }
         }
 
-        foreach (Transform child in responseButtonContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (Transform child in responseButtonContainer) Destroy(child.gameObject);
         currentResponses.Clear();
 
         if (node.responses.Count > 0)
@@ -102,9 +108,7 @@ public class DialogueManager : MonoBehaviour
             foreach (DialogueResponse response in node.responses)
             {
                 GameObject buttonObj = Instantiate(responseButtonPrefab, responseButtonContainer);
-                string numberedText = $"{index + 1}. {response.responseText}";
-                buttonObj.GetComponentInChildren<TextMeshProUGUI>().text = numberedText;
-
+                buttonObj.GetComponentInChildren<TextMeshProUGUI>().text = $"{index + 1}. {response.responseText}";
                 currentResponses.Add(response);
                 buttonObj.GetComponent<Button>().onClick.AddListener(() => SelectResponse(response));
                 index++;
@@ -121,36 +125,39 @@ public class DialogueManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
     }
 
-    private void SelectResponseByIndex(int index)
+    private IEnumerator AnimateTalking()
     {
-        if (index >= 0 && index < currentResponses.Count)
+        while (true)
         {
-            DialogueResponse response = currentResponses[index];
-            if (response != null) SelectResponse(response);
-            else HideDialogue();
+            NpcPortraitUI.sprite = portraitOpen;
+            yield return new WaitForSecondsRealtime(animationSpeed);
+            NpcPortraitUI.sprite = portraitClosed;
+            yield return new WaitForSecondsRealtime(animationSpeed);
         }
     }
 
     public void SelectResponse(DialogueResponse response)
     {
         if (response.nextNode != null)
-        {
-            // Mantenemos la fuente y el retrato en la siguiente parte del diálogo
-            StartDialogue(currentTitle, response.nextNode, currentFont, currentPortrait);
-        }
+            StartDialogue(currentTitle, response.nextNode, currentFont, portraitOpen, portraitClosed);
         else
-        {
             HideDialogue();
+    }
+
+    private void SelectResponseByIndex(int index)
+    {
+        if (index >= 0 && index < currentResponses.Count)
+        {
+            if (currentResponses[index] != null) SelectResponse(currentResponses[index]);
+            else HideDialogue();
         }
     }
 
-    private void ShowDialogue()
-    {
-        DialogueParent.SetActive(true);
-    }
+    private void ShowDialogue() => DialogueParent.SetActive(true);
 
     public void HideDialogue()
     {
+        if (talkingCoroutine != null) StopCoroutine(talkingCoroutine);
         DialogueParent.SetActive(false);
 
         if (ScreenManager.Instance == null || !ScreenManager.Instance.IsGamePaused())
@@ -162,8 +169,5 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public bool IsDialogueActive()
-    {
-        return DialogueParent.activeSelf;
-    }
+    public bool IsDialogueActive() => DialogueParent.activeSelf;
 }

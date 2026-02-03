@@ -5,8 +5,10 @@ using UnityEngine;
 public class Dialogue : ScriptableObject
 {
     [Header("Configuración Visual")]
-    public TMP_FontAsset npcFont; // Fuente específica
-    public Sprite npcPortrait;   // Imagen/Cara del NPC
+    public TMP_FontAsset npcFont;
+
+    public Sprite npcPortraitClosed; // Boca cerrada
+    public Sprite npcPortraitOpen;   // Boca abierta
 
     [Header("Nodos")]
     public DialogueNode RootNode;
