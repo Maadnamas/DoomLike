@@ -3,7 +3,22 @@ guid: 30a67204444c6ce44950583dda9fdd7f
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Middle_Ring
+    second: {fileID: 2100000, guid: 50a1223eb72dcd44f93af9f5290fb46a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Middle_Ring.001
+    second: {fileID: 2100000, guid: 50a1223eb72dcd44f93af9f5290fb46a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Middle_Ring.002
+    second: {fileID: 2100000, guid: 50a1223eb72dcd44f93af9f5290fb46a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

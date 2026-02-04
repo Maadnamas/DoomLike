@@ -37,7 +37,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 0
+    - _Alpha: 0.6264079
     - _Contrast: 0.84
     - _NoiseRotation: 90
     - _NoiseSize: 11.1
