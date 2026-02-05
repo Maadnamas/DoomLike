@@ -19,11 +19,28 @@ MonoBehaviour:
   RootNode:
     dialogueText: "\xBFPara que abriste la puerta?, ahora tengo que limpiar"
     responses:
-    - responseText: Por que no tenes carne fea al rededor de tu esqueleto?
+    - responseText: Que estas haciendo?
       nextNode:
-        dialogueText: Buena pregunta, no me molestes mas
-        responses: []
-    - responseText: Para que te paras al lado del fuego si no sentis calor?
+        dialogueText: Estoy limpiando te acabo de decir
+        responses:
+        - responseText: Ah tenes razon bueno te dejo limpiar
+          nextNode:
+            dialogueText: 
+            responses: []
+        - responseText: ...
+          nextNode:
+            dialogueText: ...?
+            responses: []
+    - responseText: Bueno segui limpiando que te falta bastante
       nextNode:
-        dialogueText: EH?
-        responses: []
+        dialogueText: No me digas si me acabas de llenar de basura
+        responses:
+        - responseText: Bueno disculpa ahi me voy
+          nextNode:
+            dialogueText: 
+            responses: []
+        - responseText: Bajame el tonito que si la puerta  esta ahi es  para pasar
+          nextNode:
+            dialogueText: No  te hagas el vivo  que llamo a mi jefe y te saca de
+              la torre
+            responses: []
