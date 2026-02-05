@@ -76,15 +76,27 @@ public class EnemyAI : MonoBehaviour
         CheckVision();
         currentBehavior?.Execute(this);
 
-        if (characterController.isGrounded)
+        // --- CORRECCIÓN DE GRAVEDAD ---
+
+        // Solo aplicamos física de caída si el Data lo permite
+        if (enemyData.useGravity)
         {
-            currentVelocity.y = -0.5f;
+            if (characterController.isGrounded)
+            {
+                currentVelocity.y = -0.5f; // Pequeña fuerza para mantenerlo pegado al suelo
+            }
+            else
+            {
+                currentVelocity.y += Physics.gravity.y * Time.deltaTime;
+            }
         }
         else
         {
-            currentVelocity.y += Physics.gravity.y * Time.deltaTime;
+            // Si es una torreta flotante, anulamos la velocidad vertical
+            currentVelocity.y = 0f;
         }
 
+        // Aplicamos el movimiento vertical
         characterController.Move(new Vector3(0, currentVelocity.y, 0) * Time.deltaTime);
     }
 
