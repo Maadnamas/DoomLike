@@ -43,5 +43,5 @@ Material:
     - _Ouline_Threshold: 0.91
     m_Colors:
     - _Outline_Color: {r: 0, g: 0, b: 0, a: 0}
-    - _gordura_outline: {r: 1.2, g: 1.2, b: 0, a: 0}
+    - _gordura_outline: {r: 2, g: 2, b: 0, a: 0}
   m_BuildTextureStacks: []

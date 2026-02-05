@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering.Universal;
 
 public class ScreenManager : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private GameObject defeatGroup;
     [SerializeField] private GameObject pauseGroup;
     [SerializeField] private ScreenAnimations screenAnimations;
+
+    [Header("Render Features")]
+    [SerializeField] private ScriptableRendererFeature outlineFeature;
 
     [Header("Pantalla de Victoria (Solo para Actualizar Datos)")]
     [SerializeField] private Image rankImage;
@@ -82,6 +86,8 @@ public class ScreenManager : MonoBehaviour
     private void Start()
     {
         ShowHUD();
+        ToggleOutlineEffect(false);
+
         if (fadeCanvasGroup != null)
             fadeCanvasGroup.alpha = 0f;
 
@@ -111,7 +117,7 @@ public class ScreenManager : MonoBehaviour
     private void OnGameVictory(object data)
     {
         PlayerHealth.gameIsOver = true;
-
+        ToggleOutlineEffect(true);
         StartCoroutine(SwitchScreenAndAnimateVictory(victoryGroup, pauseGame: true));
         ScreenManager.SetPlayerControl(false);
     }
@@ -119,9 +125,8 @@ public class ScreenManager : MonoBehaviour
     private void OnGameOver(object data)
     {
         PlayerHealth.gameIsOver = true;
-
+        ToggleOutlineEffect(true);
         SceneSetup.StopBackgroundMusic();
-
         StartCoroutine(SwitchScreen(defeatGroup, pauseGame: true));
         ScreenManager.SetPlayerControl(false);
     }
@@ -148,6 +153,7 @@ public class ScreenManager : MonoBehaviour
         if (PlayerHealth.gameIsOver || isPaused) return;
 
         isPaused = true;
+        ToggleOutlineEffect(true);
         EnginePause();
 
         SceneSetup.PauseBackgroundMusic();
@@ -163,6 +169,7 @@ public class ScreenManager : MonoBehaviour
         if (!isPaused) return;
 
         isPaused = false;
+        ToggleOutlineEffect(false);
 
         if (!isCinematicActive)
         {
@@ -179,6 +186,14 @@ public class ScreenManager : MonoBehaviour
         }
 
         EventManager.TriggerEvent(GameEvents.GAME_RESUMED, null);
+    }
+
+    private void ToggleOutlineEffect(bool active)
+    {
+        if (outlineFeature != null)
+        {
+            outlineFeature.SetActive(active);
+        }
     }
 
     public void ToggleHUD(bool active)
@@ -236,8 +251,6 @@ public class ScreenManager : MonoBehaviour
         targetScreen.SetActive(true);
 
         string finalRank = CalculateRank(Score);
-        Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
-
         UpdateRankImages(Score);
 
         yield return StartCoroutine(screenAnimations.StartVictorySequence(Score, EnemiesKilled));
@@ -323,6 +336,7 @@ public class ScreenManager : MonoBehaviour
             yield return StartCoroutine(Fade(1f));
 
         EngineResume();
+        ToggleOutlineEffect(false);
 
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
@@ -334,6 +348,7 @@ public class ScreenManager : MonoBehaviour
             yield return StartCoroutine(Fade(1f));
 
         EngineResume();
+        ToggleOutlineEffect(false);
 
         SceneManager.LoadScene(sceneName);
     }
@@ -344,6 +359,7 @@ public class ScreenManager : MonoBehaviour
             yield return StartCoroutine(Fade(1f));
 
         EngineResume();
+        ToggleOutlineEffect(false);
 
         if (sceneIndex < SceneManager.sceneCountInBuildSettings)
         {
@@ -351,7 +367,6 @@ public class ScreenManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No hay más escenas en el índice de compilación. Cargando menú...");
             SceneManager.LoadScene(menuSceneName);
         }
     }
@@ -372,7 +387,6 @@ public class ScreenManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            // Caso: Pantalla de derrota activa - reiniciar escena con clic
             if (defeatGroup.activeSelf && waitingForRestart)
             {
                 if (!EventSystem.current.IsPointerOverGameObject())
@@ -380,16 +394,12 @@ public class ScreenManager : MonoBehaviour
                     StartCoroutine(RestartCurrentScene());
                 }
             }
-            // Caso: Pantalla de victoria - saltear animación
             else if (victoryGroup.activeSelf && screenAnimations != null && screenAnimations.IsAnimationPlaying())
             {
                 if (!EventSystem.current.IsPointerOverGameObject())
                 {
                     screenAnimations.RequestSkip();
-
                     UpdateRankImages(Score);
-                    string finalRank = CalculateRank(Score);
-                    Debug.Log($"Puntaje final: {Score}. Rango Obtenido: {finalRank}");
                 }
             }
         }
