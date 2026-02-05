@@ -14,18 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   moveSpeed: 0
-  runSpeed: 6
+  runSpeed: 0
   damage: 10
   useGravity: 0
   detectionRange: 15
   stopDistance: 2
-  fieldOfView: 90
+  fieldOfView: 89.892
   proximityDetectionRadius: 3
   attackCooldown: 1.5
-  attackRange: 20
+  attackRange: 200
   projectilePrefab: {fileID: 905412429237217880, guid: 3acd38079a310d54594da35565bc3ecd, type: 3}
-  projectileSpeed: 20
-  shootRange: 15
+  projectileSpeed: 60
+  shootRange: 20
   enemyType: Default
   walkSound: {fileID: 0}
   deathSound: {fileID: 0}

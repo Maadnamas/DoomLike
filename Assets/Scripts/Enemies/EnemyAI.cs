@@ -42,7 +42,9 @@ public class EnemyAI : MonoBehaviour
     private CharacterController characterController;
     private Vector3 currentVelocity;
 
-    void Start()
+    // --- CAMBIO 1: Usamos Awake en vez de Start para obtener componentes ---
+    // Esto asegura que 'enemyAnimator' exista ANTES de que el EnemyBehaviorStarter intente usarlo.
+    void Awake()
     {
         enemyHealth = GetComponent<EnemyHealth>();
         enemyAnimator = GetComponent<EnemyAnimator>();
@@ -53,7 +55,11 @@ public class EnemyAI : MonoBehaviour
 
         if (enemyData == null)
             enemyData = ScriptableObject.CreateInstance<EnemyData>();
+    }
 
+    void Start()
+    {
+        // Buscamos al player (esto está bien dejarlo en Start)
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -63,10 +69,16 @@ public class EnemyAI : MonoBehaviour
 
         enemyHealth.Initialize(enemyData.maxHealth);
 
-        if (patrolPoints != null && patrolPoints.Length > 0)
-            SetBehavior(new EnemyPatrolBehavior());
-        else
-            SetBehavior(new EnemyIdleBehavior());
+        // --- CAMBIO 2: Protección para no sobreescribir el comportamiento ---
+        // Si 'currentBehavior' ya tiene algo (porque el Starter puso 'Shooter'), NO lo tocamos.
+        // Solo asignamos Patrulla/Idle si está vacío (null).
+        if (currentBehavior == null)
+        {
+            if (patrolPoints != null && patrolPoints.Length > 0)
+                SetBehavior(new EnemyPatrolBehavior());
+            else
+                SetBehavior(new EnemyIdleBehavior());
+        }
     }
 
     void Update()
