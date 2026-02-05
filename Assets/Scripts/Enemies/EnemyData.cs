@@ -9,6 +9,8 @@ public class EnemyData : ScriptableObject
     public float runSpeed = 6f;
     public float damage = 10f;
 
+    public bool useGravity = true;
+
     [Header("Rango y Detección")]
     public float detectionRange = 15f;
     public float stopDistance = 2f;
@@ -18,6 +20,11 @@ public class EnemyData : ScriptableObject
     [Header("Attack Settings")]
     public float attackCooldown = 1.5f;
     public float attackRange = 2.5f;
+
+    [Header("Ranged Attack (Shooter)")]
+    public GameObject projectilePrefab; 
+    public float projectileSpeed = 20f;
+    public float shootRange = 15f;      
 
     public string enemyType = "Default";
 
