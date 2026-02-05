@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdbcec14b08425f4eab199c1472d1a78, type: 3}
   m_Name: limpiador
   m_EditorClassIdentifier: 
+  npcName: Limpio McLimpio
   npcFont: {fileID: 11400000, guid: e9445544dc83202478af356e82f8b4cc, type: 2}
   npcPortraitClosed: {fileID: 21300000, guid: 439d36780ba81434baebfbfb70a2fd8b, type: 3}
   npcPortraitOpen: {fileID: 21300000, guid: f0afb6a37241d274dbc5376b450b1ba2, type: 3}

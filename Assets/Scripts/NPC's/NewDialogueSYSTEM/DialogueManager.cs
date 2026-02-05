@@ -21,11 +21,13 @@ public class DialogueManager : MonoBehaviour
     public float animationSpeed = 0.2f; // Tiempo entre frames
 
     private List<DialogueResponse> currentResponses = new List<DialogueResponse>();
+
+    // Variables para recordar los datos del NPC actual
     private string currentTitle;
     private TMP_FontAsset currentFont;
-
     private Sprite portraitClosed;
     private Sprite portraitOpen;
+
     private Coroutine talkingCoroutine;
 
     private void Awake()
@@ -65,18 +67,34 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void StartDialogue(string title, DialogueNode node, TMP_FontAsset font = null, Sprite open = null, Sprite closed = null)
+    // --- AQUÍ ESTÁ EL CAMBIO PRINCIPAL ---
+
+    // 1. Este es el método público que llamas desde Actor.cs
+    // Ahora recibe TODA la caja de datos (el ScriptableObject)
+    public void StartDialogue(Dialogue dialogueData)
     {
         ShowDialogue();
-        currentTitle = title;
-        currentFont = font;
-        portraitOpen = open;
-        portraitClosed = closed;
 
-        DialogTitleText.text = title;
-        DialogBodyText.text = node.dialogueText;
+        // Extraemos los datos del ScriptableObject y los guardamos en memoria
+        currentTitle = dialogueData.npcName; // <-- Aquí tomamos el nombre nuevo
+        currentFont = dialogueData.npcFont;
+        portraitOpen = dialogueData.npcPortraitOpen;
+        portraitClosed = dialogueData.npcPortraitClosed;
 
+        // Configuramos la UI inicial
+        DialogTitleText.text = currentTitle;
         if (currentFont != null) DialogBodyText.font = currentFont;
+
+        // Mostramos el primer nodo (el RootNode)
+        DisplayNode(dialogueData.RootNode);
+    }
+
+    // 2. Este método privado se encarga de actualizar el texto y los botones
+    // Ya no necesita pedir título ni fotos porque usa las variables guardadas arriba
+    private void DisplayNode(DialogueNode node)
+    {
+        // Actualizar texto del cuerpo
+        DialogBodyText.text = node.dialogueText;
 
         // Gestión de Retrato y Animación
         if (NpcPortraitUI != null)
@@ -99,9 +117,11 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
+        // Limpiar botones viejos
         foreach (Transform child in responseButtonContainer) Destroy(child.gameObject);
         currentResponses.Clear();
 
+        // Crear botones nuevos
         if (node.responses.Count > 0)
         {
             int index = 0;
@@ -109,6 +129,10 @@ public class DialogueManager : MonoBehaviour
             {
                 GameObject buttonObj = Instantiate(responseButtonPrefab, responseButtonContainer);
                 buttonObj.GetComponentInChildren<TextMeshProUGUI>().text = $"{index + 1}. {response.responseText}";
+
+                // Opcional: Aplicar la fuente también a los botones
+                if (currentFont != null) buttonObj.GetComponentInChildren<TextMeshProUGUI>().font = currentFont;
+
                 currentResponses.Add(response);
                 buttonObj.GetComponent<Button>().onClick.AddListener(() => SelectResponse(response));
                 index++;
@@ -118,6 +142,8 @@ public class DialogueManager : MonoBehaviour
         {
             GameObject buttonObj = Instantiate(responseButtonPrefab, responseButtonContainer);
             buttonObj.GetComponentInChildren<TextMeshProUGUI>().text = "1. [Fin]";
+            if (currentFont != null) buttonObj.GetComponentInChildren<TextMeshProUGUI>().font = currentFont;
+
             buttonObj.GetComponent<Button>().onClick.AddListener(() => HideDialogue());
             currentResponses.Add(null);
         }
@@ -139,7 +165,7 @@ public class DialogueManager : MonoBehaviour
     public void SelectResponse(DialogueResponse response)
     {
         if (response.nextNode != null)
-            StartDialogue(currentTitle, response.nextNode, currentFont, portraitOpen, portraitClosed);
+            DisplayNode(response.nextNode); // <-- Ahora llamamos a DisplayNode internamente
         else
             HideDialogue();
     }

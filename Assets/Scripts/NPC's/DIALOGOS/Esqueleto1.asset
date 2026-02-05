@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdbcec14b08425f4eab199c1472d1a78, type: 3}
   m_Name: Esqueleto1
   m_EditorClassIdentifier: 
+  npcName: John Skelington
   npcFont: {fileID: 11400000, guid: e9445544dc83202478af356e82f8b4cc, type: 2}
   npcPortraitClosed: {fileID: 21300000, guid: 12551abbd3896f742bfa8e8ad4dabba1, type: 3}
   npcPortraitOpen: {fileID: 21300000, guid: 1a45b85ab8fea9c4f85c6e02e990425e, type: 3}

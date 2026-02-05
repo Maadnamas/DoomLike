@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    public string Name;
-    public Dialogue Dialogue;
+    public Dialogue Dialogue; 
 
     [Header("Configuración Interacción")]
     public Transform player;
@@ -24,19 +23,7 @@ public class Actor : MonoBehaviour
 
     public void SpeakTo()
     {
-        // Enviamos: Nombre, Nodo Raíz, Fuente, Sprite Abierto, Sprite Cerrado
-        DialogueManager.Instance.StartDialogue(
-            Name,
-            Dialogue.RootNode,
-            Dialogue.npcFont,
-            Dialogue.npcPortraitOpen,
-            Dialogue.npcPortraitClosed
-        );
+        DialogueManager.Instance.StartDialogue(Dialogue);
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionRange);
-    }
 }
