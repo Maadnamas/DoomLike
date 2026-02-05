@@ -13,10 +13,10 @@ public class AmmoBox : CollectableObject
     [SerializeField] int m_AmmoCount;
 
     public override void Collect()
-    {
-        PlaySound();
-        EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
-        {
+    {                                                                                                                //uli participó
+        PlaySound();                                                                                                 //uli participó
+        EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData                                       //uli participó
+        {                                                                                                            //uli participó
             weaponType = m_AmmoType.ToString(),
             amount = m_AmmoCount,
             totalAmmo = m_AmmoCount
