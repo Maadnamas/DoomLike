@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: angel
   m_EditorClassIdentifier: 
   cardID: 002
-  cardTexture: {fileID: 2800000, guid: 32c8214a38529db428c30426356f839a, type: 3}
+  cardTexture: {fileID: 2800000, guid: 87870f8a1868c2c48b8e1579e6dba355, type: 3}
   isFoil: 1
