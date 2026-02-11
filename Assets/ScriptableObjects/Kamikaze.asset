@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9abe5645f4f661d4ab0238a0010b6886, type: 3}
+  m_Name: Kamikaze
+  m_EditorClassIdentifier: 
+  maxHealth: 50
+  moveSpeed: 3
+  runSpeed: 8
+  damage: 10
+  useGravity: 1
+  detectionRange: 20
+  stopDistance: 2
+  fieldOfView: 90
+  proximityDetectionRadius: 3
+  attackCooldown: 1.5
+  attackRange: 2
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 20
+  shootRange: 15
+  explosionRadius: 5
+  explosionDamage: 40
+  explosionForce: 60
+  fuseTime: 0.5
+  explosionVFX: {fileID: 0}
+  fuseSound: {fileID: 0}
+  explosionSound: {fileID: 0}
+  walkSound: {fileID: 0}
+  deathSound: {fileID: 0}
+  hitSound: {fileID: 0}

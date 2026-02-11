@@ -20,6 +20,10 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundMask;
     public KeyCode jumpKey = KeyCode.Space;
 
+    [Header("Fisicas de Impacto")] // --- NUEVO ---
+    public float mass = 3.0f;      // Cuanto más alto, menos te empujan
+    private Vector3 impact = Vector3.zero;
+
     [Header("material correr")]
     public Material runMaterial;
     public float alphaAppearSpeed = 3f;
@@ -58,8 +62,32 @@ public class PlayerMovement : MonoBehaviour
         Movimiento();
         RotacionMouse();
         AplicarGravedad();
+
+        // --- NUEVO: Aplicar fuerza de empuje ---
+        ApplyImpact();
+
         CheckRunAlpha();
         PlayFootstepSound();
+    }
+
+    // --- NUEVO MÉTODO PARA GESTIONAR EL EMPUJE ---
+    void ApplyImpact()
+    {
+        // Si hay fuerza de impacto acumulada, movemos al controller
+        if (impact.magnitude > 0.2f)
+        {
+            controller.Move(impact * Time.deltaTime);
+        }
+        // Reducimos la fuerza gradualmente (Lerp hacia cero)
+        impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
+    }
+
+    // --- NUEVO MÉTODO PÚBLICO PARA RECIBIR GOLPES ---
+    public void AddImpact(Vector3 dir, float force)
+    {
+        dir.Normalize();
+        if (dir.y < 0) dir.y = -dir.y; // Si el golpe viene de abajo, nos empuja hacia arriba (explosiones)
+        impact += dir.normalized * force / mass;
     }
 
     void CheckGround()
@@ -101,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (footstepTimer >= calculatedDelay)
             {
-                Debug.Log("Intentando reproducir paso.");
+                // Debug.Log("Intentando reproducir paso.");
                 AudioManager.PlaySFX2D(footstepSound);
                 footstepTimer = 0f;
             }
@@ -110,8 +138,6 @@ public class PlayerMovement : MonoBehaviour
         {
             footstepTimer = 0f;
         }
-
-
     }
 
     void AplicarGravedad()
@@ -214,8 +240,8 @@ public class PlayerMovement : MonoBehaviour
         if (WeaponPickupManager.Instance != null)
             WeaponPickupManager.Instance.SavePickupStates(memento);
 
-        if (LarvaManager.Instance != null)
-            LarvaManager.Instance.SaveLarvaStates(memento);
+        // if (LarvaManager.Instance != null)
+        //     LarvaManager.Instance.SaveLarvaStates(memento);
 
         return memento;
     }

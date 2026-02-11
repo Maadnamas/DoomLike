@@ -116,18 +116,26 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
 
-        Vector3 dirToPlayer = (player.position - transform.position).normalized;
         float distToPlayer = Vector3.Distance(transform.position, player.position);
 
+        // 1. DETECCIÓN POR PROXIMIDAD (Sexto sentido si estás muy pegado)
         if (distToPlayer <= enemyData.proximityDetectionRadius)
         {
             LastKnownPlayerPos = player.position;
             return;
         }
 
-        if (distToPlayer > DetectionRange) return;
+        // 2. FUERA DE RANGO -> OLVIDAR JUGADOR
+        // Esta es la parte que te faltaba. Si te alejas, te pierde.
+        if (distToPlayer > DetectionRange)
+        {
+            // Opcional: Solo olvidar si lleva tiempo sin vernos (para que no sea instantáneo al salir un milímetro)
+            LastKnownPlayerPos = null;
+            return;
+        }
 
-        if (Vector3.Angle(transform.forward, dirToPlayer) < enemyData.fieldOfView / 2f)
+        // 3. DETECCIÓN POR VISIÓN (Cono de visión y Raycast)
+        if (Vector3.Angle(transform.forward, (player.position - transform.position).normalized) < enemyData.fieldOfView / 2f)
         {
             Vector3 origin = transform.position + Vector3.up * 1.5f;
             Vector3 targetPos = player.position + Vector3.up * 1.5f;
