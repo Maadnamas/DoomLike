@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7894540110367725590
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -7,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: niebla
-  m_Shader: {fileID: -6465566751694194690, guid: ae5c79a0bd96f204c97c5ad2cc1493e5, type: 3}
+  m_Name: Outline 2
+  m_Shader: {fileID: -6465566751694194690, guid: 9e6f9c216d7faf34e894a15546c04bb1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -37,13 +50,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _FallOff: 1.06
-    - _FogDensity: 323.4
-    - _FogEnd: 0
-    - _FogStart: 0
-    - _distancia: 948.73
-    - _maxdistance: 3.22
-    - _si_o_no: 0.912
+    - _Fade_Distance: 62.78
+    - _OutlineThickness: 0.0023
+    - _QueueControl: 0
+    - _QueueOffset: 0
     m_Colors:
-    - _colorniebla: {r: 0.93849754, g: 0, b: 1, a: 1}
+    - _OutlineColor: {r: 0.92867804, g: 0.26274508, b: 0.972549, a: 0}
   m_BuildTextureStacks: []
