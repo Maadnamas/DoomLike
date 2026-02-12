@@ -3034,7 +3034,7 @@ PrefabInstance:
     - target: {fileID: 2163880202736160720, guid: 70f848da2d8b623448e90788ef915404, type: 3}
       propertyPath: cardToGive
       value: 
-      objectReference: {fileID: 11400000, guid: 2c4b9d6a05f3f2c44bf56751276b62f3, type: 2}
+      objectReference: {fileID: 11400000, guid: d807cb87c1a5ae44b8381f906543994b, type: 2}
     - target: {fileID: 3365299602762189699, guid: 70f848da2d8b623448e90788ef915404, type: 3}
       propertyPath: m_Name
       value: CartaObject
@@ -4128,6 +4128,63 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.9751806, y: 8.094202, z: 1.9751806}
   m_Center: {x: -0.0000005364418, y: 4.047101, z: -0.00000047683716}
+--- !u!1001 &1511383678
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.3573513
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.099271774
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3232244946573980425, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3677504199985975326, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
+      propertyPath: m_Name
+      value: Kamikaze
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e2a90bba321feb044b69705b2119e44e, type: 3}
 --- !u!1 &1550013763
 GameObject:
   m_ObjectHideFlags: 0
@@ -4858,8 +4915,7 @@ MonoBehaviour:
     RankSprite: {fileID: 21300000, guid: 9ae733f8a55b1e54aa64c444cd46069e, type: 3}
     LarvaSprite: {fileID: 0}
     LarvaJumpRank: 0
-  backgroundMusicClips:
-  - {fileID: 8300000, guid: 89089af61ba262e49a9473ae13aa6af1, type: 3}
+  backgroundMusicClips: []
 --- !u!1 &1771765563
 GameObject:
   m_ObjectHideFlags: 0
@@ -9320,3 +9376,4 @@ SceneRoots:
   - {fileID: 958359889}
   - {fileID: 138041131}
   - {fileID: 545202865}
+  - {fileID: 1511383678}
