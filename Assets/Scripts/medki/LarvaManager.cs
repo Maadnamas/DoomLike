@@ -4,7 +4,7 @@ using System.Linq;
 
 public class LarvaManager : MonoBehaviour
 {
-    public List<LarvaMedkit> larvas = new List<LarvaMedkit>();
+    public List<LarvaMedkit> larvae = new List<LarvaMedkit>();
     private Dictionary<string, bool> larvaCollectionState = new Dictionary<string, bool>();
 
     public static LarvaManager Instance { get; private set; }
@@ -23,18 +23,18 @@ public class LarvaManager : MonoBehaviour
 
     void Start()
     {
-        InitializeLarvas();
+        InitializeLarvae();
     }
 
-    void InitializeLarvas()
+    void InitializeLarvae()
     {
-        if (larvas.Count == 0)
+        if (larvae.Count == 0)
         {
-            LarvaMedkit[] foundLarvas = FindObjectsOfType<LarvaMedkit>(true);
-            larvas.AddRange(foundLarvas);
+            LarvaMedkit[] foundLarvae = FindObjectsOfType<LarvaMedkit>(true);
+            larvae.AddRange(foundLarvae);
         }
 
-        foreach (LarvaMedkit larva in larvas)
+        foreach (LarvaMedkit larva in larvae)
         {
             if (larva != null)
             {
@@ -71,20 +71,18 @@ public class LarvaManager : MonoBehaviour
         }
 
         string serializedKeys = string.Join("|", collectedKeys.ToArray());
-        memento.SetAdditionalData("collectedLarvas", serializedKeys);
+        memento.SetAdditionalData("collectedLarvae", serializedKeys);
     }
 
     public void LoadLarvaStates(PlayerMemento memento)
     {
-        string serializedKeys = memento.GetAdditionalData<string>("collectedLarvas", "");
+        string serializedKeys = memento.GetAdditionalData<string>("collectedLarvae", "");
 
-        // Resetear
         foreach (var key in larvaCollectionState.Keys.ToList())
         {
             larvaCollectionState[key] = false;
         }
 
-        // Marcar recolectados
         if (!string.IsNullOrEmpty(serializedKeys))
         {
             string[] collectedKeys = serializedKeys.Split('|');
@@ -97,13 +95,12 @@ public class LarvaManager : MonoBehaviour
             }
         }
 
-        // Aplicar estados
         ApplyLarvaStates();
     }
 
     void ApplyLarvaStates()
     {
-        foreach (LarvaMedkit larva in larvas)
+        foreach (LarvaMedkit larva in larvae)
         {
             if (larva != null)
             {

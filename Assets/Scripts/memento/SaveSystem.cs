@@ -8,19 +8,18 @@ public static class SaveSystem
 
     public static void SaveGame(GameMemento memento)
     {
-
-        Debug.LogWarning("SaveGame con GameMemento necesita implementación actualizada");
+        Debug.LogWarning("SaveGame with GameMemento needs updated implementation");
     }
 
     public static GameMemento LoadGame()
     {
         if (!File.Exists(savePath))
         {
-            Debug.LogWarning("No hay archivo de guardado.");
+            Debug.LogWarning("No save file found.");
             return null;
         }
 
-        Debug.LogWarning("LoadGame con GameMemento necesita implementación actualizada");
+        Debug.LogWarning("LoadGame with GameMemento needs updated implementation");
         return null;
     }
 }

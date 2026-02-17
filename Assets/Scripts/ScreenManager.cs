@@ -14,7 +14,7 @@ public class ScreenManager : MonoBehaviour
     public static int Score = 0;
     public static int EnemiesKilled = 0;
 
-    [Header("Referencias a grupos de UI")]
+    [Header("UI Group References")]
     [SerializeField] private GameObject hudGroup;
     [SerializeField] private GameObject victoryGroup;
     [SerializeField] private GameObject defeatGroup;
@@ -24,7 +24,7 @@ public class ScreenManager : MonoBehaviour
     [Header("Render Features")]
     [SerializeField] private ScriptableRendererFeature outlineFeature;
 
-    [Header("Pantalla de Victoria (Solo para Actualizar Datos)")]
+    [Header("Victory Screen (Data Update Only)")]
     [SerializeField] private Image rankImage;
     [SerializeField] private Image rankImageLarva;
 
@@ -238,7 +238,7 @@ public class ScreenManager : MonoBehaviour
     {
         if (screenAnimations == null)
         {
-            Debug.LogError("ScreenAnimations no está asignado.");
+            Debug.LogError("ScreenAnimations is not assigned.");
             yield break;
         }
 

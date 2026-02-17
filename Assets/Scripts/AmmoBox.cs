@@ -13,10 +13,10 @@ public class AmmoBox : CollectableObject
     [SerializeField] int m_AmmoCount;
 
     public override void Collect()
-    {                                                                                                                //uli participó
-        PlaySound();                                                                                                 //uli participó
-        EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData                                       //uli participó
-        {                                                                                                            //uli participó
+    {
+        PlaySound();
+        EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
+        {
             weaponType = m_AmmoType.ToString(),
             amount = m_AmmoCount,
             totalAmmo = m_AmmoCount
@@ -27,9 +27,9 @@ public class AmmoBox : CollectableObject
 
     protected override void TryCollect(Collider other)
     {
-        var pj = other.GetComponentInChildren<IAmmo>();
+        var player = other.GetComponentInChildren<IAmmo>();
 
-        if (pj != null && pj.ReloadAmmo((int)m_AmmoType, m_AmmoCount))
+        if (player != null && player.ReloadAmmo((int)m_AmmoType, m_AmmoCount))
             Collect();
     }
 }

@@ -4,12 +4,12 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
 {
     private Animator animator;
 
-    [Header("Nombres de Parámetros del Animator")]
-    [SerializeField] private string walkParameter = "camina";
-    [SerializeField] private string meleeAttackTrigger = "ataque1";
-    [SerializeField] private string spikeAttackTrigger = "ataque2";
+    [Header("Animator Parameter Names")]
+    [SerializeField] private string walkParameter = "walk";
+    [SerializeField] private string meleeAttackTrigger = "attack1";
+    [SerializeField] private string spikeAttackTrigger = "attack2";
     [SerializeField] private string hitTrigger = "hit";
-    [SerializeField] private string deathTrigger = "muerte";
+    [SerializeField] private string deathTrigger = "death";
 
     private void Awake()
     {
@@ -22,13 +22,13 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
 
         if (animator == null)
         {
-            Debug.LogError("No se encontró Animator en el Boss: " + gameObject.name);
+            Debug.LogError("No Animator found on Boss: " + gameObject.name);
         }
     }
 
     public void SetIdle(bool value)
     {
-        // Idle se maneja desactivando el caminar y correr
+        // Idle is handled by disabling walking
         if (animator != null)
         {
             animator.SetBool(walkParameter, !value);
@@ -40,7 +40,6 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
         if (animator != null)
         {
             animator.SetBool(walkParameter, value);
-
         }
     }
 
@@ -50,7 +49,7 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
 
     public void PlayAttack()
     {
-        // Este es para el ataque melee
+        // This is for the melee attack
         if (animator != null)
         {
             animator.SetTrigger(meleeAttackTrigger);
@@ -81,7 +80,7 @@ public class BossAnimator : MonoBehaviour, IEnemyAnimator
         }
     }
 
-    // Método para resetear todos los triggers (útil para evitar bugs)
+    // Method to reset all triggers (useful to avoid bugs)
     public void ResetAllTriggers()
     {
         if (animator != null)

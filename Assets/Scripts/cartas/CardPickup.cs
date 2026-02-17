@@ -4,7 +4,7 @@ public class CardPickup : MonoBehaviour, ICollectable
 {
     public CardData cardToGive;
     public Renderer cardRenderer;
-    public Renderer backrender;
+    public Renderer backRenderer;
     public float rotationSpeed = 60f;
 
     [Header("Audio")]
@@ -26,23 +26,23 @@ public class CardPickup : MonoBehaviour, ICollectable
         if (cardRenderer != null && cardToGive != null && cardToGive.cardTexture != null)
         {
             Material uniqueMaterial = cardRenderer.material;
-            Material backmat = backrender.material;
+            Material backMat = backRenderer.material;
 
             uniqueMaterial.SetTexture("_Base_Texture", cardToGive.cardTexture);
             if (cardToGive.isFoil)
             {
                 uniqueMaterial.SetFloat("_IsFoil", 1);
-                backmat.SetFloat("_IsFoil", 1);
+                backMat.SetFloat("_IsFoil", 1);
             }
             else
             {
                 uniqueMaterial.SetFloat("_IsFoil", 0);
-                backmat.SetFloat("_IsFoil", 0);
+                backMat.SetFloat("_IsFoil", 0);
             }
         }
         else
         {
-            Debug.LogWarning("CardPickup: Faltan referencias para aplicar textura");
+            Debug.LogWarning("CardPickup: Missing references to apply texture");
         }
     }
 

@@ -8,24 +8,24 @@ public class EnemyAI : MonoBehaviour
     [Header("Flyweight Data")]
     public EnemyData enemyData;
 
-    [Header("Referencias")]
+    [Header("References")]
     public Transform headTransform;
     public Transform[] patrolPoints;
 
-    [Header("Configuración de Capas (Scene Setup)")]
+    [Header("Layer Configuration")]
     public LayerMask visionMask;
     public LayerMask playerLayer;
     public LayerMask obstacleMask;
 
-    [Header("Configuración de Obstáculos y Terreno")]
+    [Header("Obstacle and Terrain Settings")]
     public float obstacleDetectionRange = 2.0f;
     public float maxSlopeAngle = 45f;
 
-    [Header("Configuración de Patrulla")]
+    [Header("Patrol Settings")]
     public float patrolPointTolerance = 1.0f;
     public float idleWaitTime = 2f;
 
-    [Header("Configuración de Comportamiento")]
+    [Header("Behavior Settings")]
     public float loseInterestWaitTime = 4f;
 
     public Transform player { get; private set; }
@@ -42,8 +42,6 @@ public class EnemyAI : MonoBehaviour
     private CharacterController characterController;
     private Vector3 currentVelocity;
 
-    // --- CAMBIO 1: Usamos Awake en vez de Start para obtener componentes ---
-    // Esto asegura que 'enemyAnimator' exista ANTES de que el EnemyBehaviorStarter intente usarlo.
     void Awake()
     {
         enemyHealth = GetComponent<EnemyHealth>();
@@ -59,7 +57,6 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
-        // Buscamos al player (esto está bien dejarlo en Start)
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -69,9 +66,6 @@ public class EnemyAI : MonoBehaviour
 
         enemyHealth.Initialize(enemyData.maxHealth);
 
-        // --- CAMBIO 2: Protección para no sobreescribir el comportamiento ---
-        // Si 'currentBehavior' ya tiene algo (porque el Starter puso 'Shooter'), NO lo tocamos.
-        // Solo asignamos Patrulla/Idle si está vacío (null).
         if (currentBehavior == null)
         {
             if (patrolPoints != null && patrolPoints.Length > 0)
@@ -88,14 +82,11 @@ public class EnemyAI : MonoBehaviour
         CheckVision();
         currentBehavior?.Execute(this);
 
-        // --- CORRECCIÓN DE GRAVEDAD ---
-
-        // Solo aplicamos física de caída si el Data lo permite
         if (enemyData.useGravity)
         {
             if (characterController.isGrounded)
             {
-                currentVelocity.y = -0.5f; // Pequeña fuerza para mantenerlo pegado al suelo
+                currentVelocity.y = -0.5f;
             }
             else
             {
@@ -104,11 +95,9 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // Si es una torreta flotante, anulamos la velocidad vertical
             currentVelocity.y = 0f;
         }
 
-        // Aplicamos el movimiento vertical
         characterController.Move(new Vector3(0, currentVelocity.y, 0) * Time.deltaTime);
     }
 
@@ -118,23 +107,18 @@ public class EnemyAI : MonoBehaviour
 
         float distToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // 1. DETECCIÓN POR PROXIMIDAD (Sexto sentido si estás muy pegado)
         if (distToPlayer <= enemyData.proximityDetectionRadius)
         {
             LastKnownPlayerPos = player.position;
             return;
         }
 
-        // 2. FUERA DE RANGO -> OLVIDAR JUGADOR
-        // Esta es la parte que te faltaba. Si te alejas, te pierde.
         if (distToPlayer > DetectionRange)
         {
-            // Opcional: Solo olvidar si lleva tiempo sin vernos (para que no sea instantáneo al salir un milímetro)
             LastKnownPlayerPos = null;
             return;
         }
 
-        // 3. DETECCIÓN POR VISIÓN (Cono de visión y Raycast)
         if (Vector3.Angle(transform.forward, (player.position - transform.position).normalized) < enemyData.fieldOfView / 2f)
         {
             Vector3 origin = transform.position + Vector3.up * 1.5f;
@@ -192,7 +176,6 @@ public class EnemyAI : MonoBehaviour
 
         bool hitFront = Physics.Raycast(origin, transform.forward, obstacleDetectionRange, obstacleMask);
         bool terrainSafeFront = IsTerrainSafe(transform.forward, speed);
-
         bool terrainSafeDesired = IsTerrainSafe(desiredDir, speed);
 
         if (hitFront || !terrainSafeFront || !terrainSafeDesired)

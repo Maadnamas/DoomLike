@@ -13,11 +13,10 @@ public class GameState : MonoBehaviour
 
     public GameMemento CreateMemento()
     {
-        // Agregar datos básicos
         SetValue("playerPosition", player.position);
-        SetValue("playerHealth", 100); // Valor por defecto
-        SetValue("playerAmmo", 10); // Valor por defecto
-        SetValue("currentLevel", "Level_01"); // Valor por defecto
+        SetValue("playerHealth", 100);
+        SetValue("playerAmmo", 10);
+        SetValue("currentLevel", "Level_01");
 
         return new GameMemento(new Dictionary<string, object>(stateData));
     }
@@ -26,10 +25,10 @@ public class GameState : MonoBehaviour
     {
         if (memento == null) return;
 
-        // Restaurar datos
         if (memento.gameData.ContainsKey("playerPosition"))
             player.position = memento.GetValue<Vector3>("playerPosition");
-            playerHealth = memento.GetValue<int>("playerHealth", 100);
+
+        playerHealth = memento.GetValue<int>("playerHealth", 100);
         playerAmmo = memento.GetValue<int>("playerAmmo", 10);
         currentLevel = memento.GetValue<string>("currentLevel", "Level_01");
     }

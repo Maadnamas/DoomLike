@@ -25,7 +25,7 @@ public class BossMeleeAttackBehavior : IBossBehavior
     {
         if (boss.player == null) return;
 
-        // Mantener parado mientras ataca
+        // Keep stationary while attacking
         if (isAttacking)
         {
             boss.StopMovement();
@@ -42,7 +42,7 @@ public class BossMeleeAttackBehavior : IBossBehavior
             return;
         }
 
-        // Volver a perseguir
+        // Return to chasing
         boss.SetBehavior(new BossChaseBehavior());
     }
 
@@ -59,7 +59,7 @@ public class BossMeleeAttackBehavior : IBossBehavior
         attackTimer = 0f;
         boss.StopMovement();
         boss.GetAnimator().PlayAttack();
-        Debug.Log("Boss: Ataque melee iniciado");
+        Debug.Log("Boss: Melee attack initiated");
     }
 
     private void ApplyDamage(BossAI boss)
@@ -72,7 +72,7 @@ public class BossMeleeAttackBehavior : IBossBehavior
                 Vector3 hitPoint = boss.player.position;
                 Vector3 hitNormal = (boss.player.position - boss.transform.position).normalized;
                 playerDamageable.TakeDamage(boss.bossData.damage, hitPoint, hitNormal);
-                Debug.Log("Boss golpeó al jugador con ataque melee");
+                Debug.Log("Boss hit the player with melee attack");
             }
         }
     }

@@ -1,14 +1,14 @@
 using UnityEngine;
 
 [RequireComponent(typeof(BossHealth))]
-[RequireComponent(typeof(BossAnimator))]  // Cambiado a BossAnimator
+[RequireComponent(typeof(BossAnimator))]
 [RequireComponent(typeof(CharacterController))]
 public class BossAI : MonoBehaviour
 {
     [Header("Boss Data")]
     public BossData bossData;
 
-    [Header("Referencias")]
+    [Header("References")]
     public Transform player;
     public LayerMask obstacleMask;
 
@@ -17,19 +17,19 @@ public class BossAI : MonoBehaviour
     public float DetectionRange => bossData.detectionRange;
 
     private BossHealth bossHealth;
-    private BossAnimator bossAnimator;  // Cambiado a BossAnimator
+    private BossAnimator bossAnimator;
     private IBossBehavior currentBehavior;
     private CharacterController characterController;
     private Vector3 currentVelocity;
 
-    // Timers para ataques
+    // Attack timers
     public float lastMeleeAttackTime { get; set; }
     public float lastSpikeAttackTime { get; set; }
 
     void Start()
     {
         bossHealth = GetComponent<BossHealth>();
-        bossAnimator = GetComponent<BossAnimator>();  // Cambiado a BossAnimator
+        bossAnimator = GetComponent<BossAnimator>();
         characterController = GetComponent<CharacterController>();
 
         if (characterController == null)
@@ -37,7 +37,7 @@ public class BossAI : MonoBehaviour
 
         if (bossData == null)
         {
-            Debug.LogError("¡Boss Data no asignado!");
+            Debug.LogError("Boss Data not assigned!");
             return;
         }
 
@@ -50,7 +50,7 @@ public class BossAI : MonoBehaviour
 
         bossHealth.Initialize(bossData.maxHealth);
 
-        // Inicializar timers
+        // Initialize timers
         lastMeleeAttackTime = -bossData.meleeAttackCooldown;
         lastSpikeAttackTime = -bossData.spikeAttackCooldown;
 
@@ -63,7 +63,7 @@ public class BossAI : MonoBehaviour
 
         currentBehavior?.Execute(this);
 
-        // Aplicar gravedad
+        // Apply gravity
         if (characterController.isGrounded)
         {
             currentVelocity.y = -0.5f;
@@ -111,7 +111,7 @@ public class BossAI : MonoBehaviour
         currentBehavior?.OnEnter(this);
     }
 
-    public BossAnimator GetAnimator() => bossAnimator;  // Cambiado tipo de retorno
+    public BossAnimator GetAnimator() => bossAnimator;
 
     public float GetDistanceToPlayer()
     {

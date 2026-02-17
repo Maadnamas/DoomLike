@@ -5,33 +5,33 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInventory
 {
-    [Header("settings de la vida")]
+    [Header("Health Settings")]
     public int maxHealth = 100;
     private int currentHealth;
 
-    [Header("Sistema de Medkits")]
+    [Header("Medkit System")]
     [SerializeField] private int maxMedkits = 5;
     private int currentMedkits = 0;
     [SerializeField] private int healAmountPerMedkit = 30;
     [SerializeField] private AudioClip useMedkitSound;
 
-    [Header("efectofeles")]
+    [Header("Visual Effects")]
     public GameObject bloodEffect;
     public Image healthBar;
     public float flashDuration = 0.1f;
     [SerializeField] private Material dithering;
     [SerializeField] Color flashColor = new Color(1, 0, 0, 0.25f);
-    [SerializeField] Color healcolor = new Color(0, 1, 0, 0.25f);
+    [SerializeField] Color healColor = new Color(0, 1, 0, 0.25f);
 
-    [Header("Sonidos")]
+    [Header("Sounds")]
     public AudioClip hurtSound;
     public AudioClip deathSound;
-    public AudioClip powerUPmusic;
+    public AudioClip powerUpMusic;
 
     private ScreenFlash screenFlash;
     private bool isDead;
-    private bool Healing;
-    private bool powered;
+    private bool isHealing;
+    private bool isPowered;
     public static bool gameIsOver = false;
 
     void Start()
@@ -62,12 +62,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
     {
         if (currentMedkits >= maxMedkits)
         {
-            Debug.Log("Inventario de medkits lleno!");
+            Debug.Log("Medkit inventory full!");
             return false;
         }
 
         currentMedkits++;
-        Debug.Log($"Medkit recogido! Total: {currentMedkits}/{maxMedkits}");
+        Debug.Log($"Medkit collected! Total: {currentMedkits}/{maxMedkits}");
 
         UpdateMedkitUI();
         return true;
@@ -77,20 +77,17 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
     {
         if (currentMedkits <= 0)
         {
-            Debug.Log("No tienes medkits!");
+            Debug.Log("No medkits available!");
             return false;
         }
 
         if (currentHealth >= maxHealth)
         {
-            Debug.Log("Ya tienes vida máxima!");
+            Debug.Log("Health is already full!");
             return false;
         }
 
-        if (isDead)
-        {
-            return false;
-        }
+        if (isDead) return false;
 
         currentMedkits--;
         Heal(healAmountPerMedkit);
@@ -100,21 +97,14 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
             AudioManager.PlaySFX2D(useMedkitSound);
         }
 
-        Debug.Log($"Medkit usado! Restantes: {currentMedkits}/{maxMedkits}");
+        Debug.Log($"Medkit used! Remaining: {currentMedkits}/{maxMedkits}");
         UpdateMedkitUI();
 
         return true;
     }
 
-    public int GetMedkitCount()
-    {
-        return currentMedkits;
-    }
-
-    public int GetMaxMedkits()
-    {
-        return maxMedkits;
-    }
+    public int GetMedkitCount() => currentMedkits;
+    public int GetMaxMedkits() => maxMedkits;
 
     private void UpdateMedkitUI()
     {
@@ -129,7 +119,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
     {
         if (gameIsOver) return false;
 
-        if (!powered)
+        if (!isPowered)
         {
             CalculateDamage(Mathf.RoundToInt(amount));
             return !isDead;
@@ -167,19 +157,17 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
             Die();
     }
 
-    // En PlayerHealth.cs, añade:
     public void SetMedkitCount(int count)
     {
         currentMedkits = Mathf.Clamp(count, 0, maxMedkits);
 
-        // Dispara el mismo evento que AddMedkit()
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_MEDKITS, new MedkitEventData
         {
             currentMedkits = currentMedkits,
             maxMedkits = maxMedkits
         });
 
-        Debug.Log("Medkits actualizados a: " + currentMedkits);
+        Debug.Log("Medkits updated to: " + currentMedkits);
     }
 
     public void Die()
@@ -191,7 +179,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
         ScreenManager.SetPlayerControl(false);
 
         EventManager.TriggerEvent(GameEvents.PLAYER_DIED, null);
-        Debug.Log("te moriste wachin");
+        Debug.Log("Player died.");
 
         EventManager.TriggerEvent(GameEvents.GAME_OVER, null);
     }
@@ -203,7 +191,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
         currentHealth += (int)amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        if (screenFlash) screenFlash.Flash(healcolor, flashDuration);
+        if (screenFlash) screenFlash.Flash(healColor, flashDuration);
 
         EventManager.TriggerEvent(GameEvents.UI_UPDATE_HEALTH, new DamageEventData
         {
@@ -218,10 +206,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
         });
     }
 
-    public int GetCurrentHealth()
-    {
-        return currentHealth;
-    }
+    public int GetCurrentHealth() => currentHealth;
 
     public void SetCurrentHealth(int value)
     {
@@ -242,15 +227,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable, IPowerable, IMedkitInven
 
     System.Collections.IEnumerator PowerRoutine(float duration)
     {
-        powered = true;
-        AudioManager.PlaySFX2D(powerUPmusic);
+        isPowered = true;
+        AudioManager.PlaySFX2D(powerUpMusic);
 
         if (dithering != null)
             dithering.SetFloat("_Color_Dithering", 1f);
 
         yield return new WaitForSeconds(duration);
 
-        powered = false;
+        isPowered = false;
 
         if (dithering != null)
             dithering.SetFloat("_Color_Dithering", 0f);

@@ -6,29 +6,29 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("movimiento")]
+    [Header("Movement")]
     public float moveSpeed = 5f;
     public float runSpeed = 8f;
 
-    [Header("rotacion con mouse")]
+    [Header("Mouse Rotation")]
     public float mouseSensitivity = 2f;
 
-    [Header("gravedad y salto")]
+    [Header("Gravity & Jump")]
     public float gravity = -9.81f;
     public float jumpHeight = 2f;
     public float groundCheckDistance = 0.3f;
     public LayerMask groundMask;
     public KeyCode jumpKey = KeyCode.Space;
 
-    [Header("Fisicas de Impacto")] // --- NUEVO ---
-    public float mass = 3.0f;      // Cuanto más alto, menos te empujan
+    [Header("Impact Physics")]
+    public float mass = 3.0f;
     private Vector3 impact = Vector3.zero;
 
-    [Header("material correr")]
+    [Header("Run Material")]
     public Material runMaterial;
     public float alphaAppearSpeed = 3f;
 
-    [Header("Sonido de Pasos")]
+    [Header("Footstep Sound")]
     public AudioClip footstepSound;
     public float footstepDelay = 0.4f;
     private float footstepTimer;
@@ -59,34 +59,29 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         CheckGround();
-        Movimiento();
-        RotacionMouse();
-        AplicarGravedad();
+        Movement();
+        MouseRotation();
+        ApplyGravity();
 
-        // --- NUEVO: Aplicar fuerza de empuje ---
         ApplyImpact();
 
         CheckRunAlpha();
         PlayFootstepSound();
     }
 
-    // --- NUEVO MÉTODO PARA GESTIONAR EL EMPUJE ---
     void ApplyImpact()
     {
-        // Si hay fuerza de impacto acumulada, movemos al controller
         if (impact.magnitude > 0.2f)
         {
             controller.Move(impact * Time.deltaTime);
         }
-        // Reducimos la fuerza gradualmente (Lerp hacia cero)
         impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
     }
 
-    // --- NUEVO MÉTODO PÚBLICO PARA RECIBIR GOLPES ---
     public void AddImpact(Vector3 dir, float force)
     {
         dir.Normalize();
-        if (dir.y < 0) dir.y = -dir.y; // Si el golpe viene de abajo, nos empuja hacia arriba (explosiones)
+        if (dir.y < 0) dir.y = -dir.y;
         impact += dir.normalized * force / mass;
     }
 
@@ -96,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
         isGrounded = Physics.CheckSphere(checkPosition, groundCheckDistance, groundMask);
     }
 
-    void Movimiento()
+    void Movement()
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
@@ -129,7 +124,6 @@ public class PlayerMovement : MonoBehaviour
 
             if (footstepTimer >= calculatedDelay)
             {
-                // Debug.Log("Intentando reproducir paso.");
                 AudioManager.PlaySFX2D(footstepSound);
                 footstepTimer = 0f;
             }
@@ -140,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void AplicarGravedad()
+    void ApplyGravity()
     {
         if (isGrounded && velocity.y < 0)
             velocity.y = -5f;
@@ -149,7 +143,7 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    void RotacionMouse()
+    void MouseRotation()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
@@ -239,9 +233,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (WeaponPickupManager.Instance != null)
             WeaponPickupManager.Instance.SavePickupStates(memento);
-
-        // if (LarvaManager.Instance != null)
-        //     LarvaManager.Instance.SaveLarvaStates(memento);
 
         return memento;
     }

@@ -17,16 +17,16 @@ public class SceneSetup : MonoBehaviour
 
     public static SceneSetup Instance { get; private set; }
 
-    [Header("Configuración de Niebla")]
+    [Header("Fog Configuration")]
     [SerializeField] private Color levelFogColor = new Color(166, 68, 68);
     [SerializeField] private Material fog;
 
-    [Header("Configuración de Ranking por Niveles")]
-    [Tooltip("Define los rangos ordenados de MAYOR a MENOR puntaje requerido.")]
+    [Header("Level Ranking Configuration")]
+    [Tooltip("Define ranks ordered from HIGHEST to LOWEST required score.")]
     [SerializeField] private RankData[] ranks;
 
-    [Header("Audio Global de Música")]
-    [Tooltip("Todos estos clips se reproducirán simultáneamente y en bucle.")]
+    [Header("Global Music Audio")]
+    [Tooltip("All these clips will play simultaneously and in a loop.")]
     public AudioClip[] backgroundMusicClips;
 
     public RankData[] Ranks => ranks;
@@ -44,7 +44,6 @@ public class SceneSetup : MonoBehaviour
         {
             if (backgroundMusicClips != null && backgroundMusicClips.Length > 0)
             {
-                // Usar AudioManager en lugar de crear AudioSources locales
                 AudioManager.PlayBackgroundMusic(backgroundMusicClips);
             }
         }
@@ -58,7 +57,6 @@ public class SceneSetup : MonoBehaviour
         }
     }
 
-    // Métodos estáticos que delegan al AudioManager
     public static void StopBackgroundMusic()
     {
         AudioManager.StopBackgroundMusic();

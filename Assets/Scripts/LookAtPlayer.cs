@@ -8,7 +8,7 @@ public class LookAtPlayer : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (player == null)
-            Debug.LogWarning("no se encontro ningun objeto con el tag 'player'");
+            Debug.LogWarning("No object with the tag 'Player' was found.");
     }
 
     void Update()
@@ -17,5 +17,5 @@ public class LookAtPlayer : MonoBehaviour
 
         Vector3 targetPos = new Vector3(player.position.x, transform.position.y, player.position.z);
         transform.LookAt(targetPos);
-    } 
+    }
 }

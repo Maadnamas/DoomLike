@@ -11,14 +11,14 @@ public static class PlayerSaveSystem
         var serializableData = new SerializablePlayerMemento(memento);
         string json = JsonUtility.ToJson(serializableData, true);
         File.WriteAllText(path, json);
-        Debug.Log("Partida guardada en: " + path);
+        Debug.Log("Game saved at: " + path);
     }
 
     public static PlayerMemento Load()
     {
         if (!File.Exists(path))
         {
-            Debug.LogWarning("No se encontro guardado en " + path);
+            Debug.LogWarning("No save found at " + path);
             return null;
         }
 
@@ -35,7 +35,7 @@ public static class PlayerSaveSystem
         public SerializableQuaternion playerRotation;
         public float cameraPitch;
         public int health;
-        public int medkitCount; // NUEVO: Para guardar medkits
+        public int medkitCount;
         public List<SerializableWeaponData> weapons = new List<SerializableWeaponData>();
         public int equippedWeaponIndex;
 
@@ -46,7 +46,7 @@ public static class PlayerSaveSystem
             playerRotation = new SerializableQuaternion(memento.playerRotation);
             cameraPitch = memento.cameraPitch;
             health = memento.health;
-            medkitCount = memento.medkitCount; // NUEVO
+            medkitCount = memento.medkitCount;
             equippedWeaponIndex = memento.equippedWeaponIndex;
 
             foreach (var weapon in memento.weapons)
@@ -70,7 +70,7 @@ public static class PlayerSaveSystem
                 playerRotation.ToQuaternion(),
                 cameraPitch,
                 health,
-                medkitCount, // NUEVO
+                medkitCount,
                 weaponList,
                 equippedWeaponIndex
             );

@@ -6,7 +6,7 @@ public class WeaponPickup : MonoBehaviour
     [Header("Weapon Settings")]
     public GameObject weaponPrefab;
     public int ammoToAdd = 30;
-    public bool destroyOnPickup = false; // CAMBIA ESTO A FALSE POR DEFECTO
+    public bool destroyOnPickup = false;
 
     [Header("Visual Feedback")]
     public GameObject pickupEffect;
@@ -58,17 +58,14 @@ public class WeaponPickup : MonoBehaviour
     {
         isCollected = true;
 
-        // Solo desactivar, NO destruir
         gameObject.SetActive(false);
 
-        // Notificar al manager
         if (WeaponPickupManager.Instance != null)
             WeaponPickupManager.Instance.MarkPickupAsCollected(this);
 
         yield break;
     }
 
-    // Método para reactivar el pickup
     public void ReactivatePickup()
     {
         isCollected = false;

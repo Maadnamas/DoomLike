@@ -4,15 +4,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Dialogue", menuName = "Dialogue/Dialogue Asset")]
 public class Dialogue : ScriptableObject
 {
-    [Header("Configuración General")]
-    public string npcName; // <--- AQUÍ GUARDAMOS EL TÍTULO AHORA
+    [Header("General Configuration")]
+    public string npcName;
 
-    [Header("Configuración Visual")]
+    [Header("Visual Configuration")]
     public TMP_FontAsset npcFont;
 
     public Sprite npcPortraitClosed;
     public Sprite npcPortraitOpen;
 
-    [Header("Nodos")]
+    [Header("Nodes")]
     public DialogueNode RootNode;
 }

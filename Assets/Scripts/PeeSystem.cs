@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PeeSystem : AbilityBase
 {
-    [Header("Ajustes Generales")]
-    [SerializeField] private ParticleSystem peeParticles; // Asignar el sistema de partículas desde el inspector
-    [SerializeField] private KeyCode peeKey = KeyCode.X; // Tecla para hacer pis
-    [SerializeField] private float maxPeeAmount = 100f; // Cantidad máxima de pis
-    [SerializeField] private float peeDrainRate = 20f; // Cuánto baja por segundo al mear
-    [SerializeField] private float peeRegenRate = 10f; // Cuánto se regenera por segundo
-    [SerializeField] private float minPeeToStart = 30f; // Mínimo para poder mear
+    [Header("General Settings")]
+    [SerializeField] private ParticleSystem peeParticles;
+    [SerializeField] private KeyCode peeKey = KeyCode.X;
+    [SerializeField] private float maxPeeAmount = 100f;
+    [SerializeField] private float peeDrainRate = 20f;
+    [SerializeField] private float peeRegenRate = 10f;
+    [SerializeField] private float minPeeToStart = 30f;
 
     private float currentPeeAmount;
     private bool isPeeing = false;
@@ -29,13 +29,11 @@ public class PeeSystem : AbilityBase
         UpdateParticleEmission();
     }
 
-    
-
     void HandleInput()
     {
         if (peeParticles == null) return;
 
-        // Si se mantiene presionada la tecla y hay pis suficiente
+        // If key is held and there is enough pee
         if (Input.GetKey(peeKey) && currentPeeAmount > minPeeToStart)
         {
             if (!isPeeing)
@@ -49,7 +47,7 @@ public class PeeSystem : AbilityBase
         }
         else if (isPeeing)
         {
-            // Si suelta la tecla o se queda sin pis, detener
+            // If key is released or out of pee, stop
             isPeeing = false;
             peeParticles.Stop();
         }
@@ -68,7 +66,7 @@ public class PeeSystem : AbilityBase
     {
         if (peeParticles == null) return;
 
-        // Ajustar la cantidad de partículas según cuánto pis le quede
+        // Adjust particle amount based on remaining pee
         var emission = peeParticles.emission;
         float emissionRate = Mathf.Lerp(0, 100, currentPeeAmount / maxPeeAmount);
         emission.rateOverTime = emissionRate;

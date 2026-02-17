@@ -6,7 +6,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public bool IsDead { get; private set; }
     private float maxHealth;
 
-    [Header("Efectos")]
+    [Header("Effects")]
     [SerializeField] private ParticleSystem hitVFXPrefab;
 
     private IEnemyAnimator enemyAnimator;
@@ -14,7 +14,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private CharacterController characterController;
     private Collider col;
     private Rigidbody rb;
-    // private AudioSource audioSource; // ELIMINADO
 
     private void Awake()
     {
@@ -23,7 +22,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         characterController = GetComponent<CharacterController>();
         col = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
-        // audioSource = GetComponent<AudioSource>(); // ELIMINADO
     }
 
     public void Initialize(float maxHealthValue)
@@ -55,7 +53,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             Destroy(effect.gameObject, effect.main.duration);
         }
 
-        // --- USO DE AUDIOMANAGER 3D PARA SONIDO DE DAÑO ---
         if (enemyAI != null && enemyAI.enemyData.hitSound != null)
         {
             AudioManager.PlaySFX3D(enemyAI.enemyData.hitSound, transform.position);
@@ -86,7 +83,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             position = transform.position
         });
 
-        // --- USO DE AUDIOMANAGER 3D PARA SONIDO DE MUERTE ---
         if (enemyAI != null && enemyAI.enemyData.deathSound != null)
         {
             AudioManager.PlaySFX3D(enemyAI.enemyData.deathSound, transform.position);

@@ -14,7 +14,7 @@ public class EventManager : MonoBehaviour
         if (_instance == null)
         {
             _instance = this;
-            eventDictionary = new Dictionary<string, Action<object>>(); // INICIALIZAR ANTES DE CUALQUIER USO
+            eventDictionary = new Dictionary<string, Action<object>>();
             DontDestroyOnLoad(gameObject);
             eventDictionary.Add(GameEvents.UI_UPDATE_MEDKITS, null);
         }
@@ -28,7 +28,7 @@ public class EventManager : MonoBehaviour
     {
         if (_instance == null)
         {
-            Debug.LogWarning("EventManager no está inicializado. No se puede suscribir a: " + eventName);
+            Debug.LogWarning("EventManager is not initialized. Cannot subscribe to: " + eventName);
             return;
         }
 

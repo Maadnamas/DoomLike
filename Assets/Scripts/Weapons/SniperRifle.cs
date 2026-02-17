@@ -11,7 +11,7 @@ public class SniperRifle : WeaponBase
     [SerializeField] float impactLife = 5f;
     [SerializeField] float zoomSpeed;
     [SerializeField] float zoomAmount;
-    [SerializeField] GameObject UI;
+    [SerializeField] GameObject uiContainer;
     [SerializeField] GameObject handCanvas;
 
     private GameObject mainUI;
@@ -30,9 +30,9 @@ public class SniperRifle : WeaponBase
         }
 
         originalPosition = handCanvas.transform.localPosition;
-        sniperUI = UI.GetComponentsInChildren<Transform>(includeInactive: true)
+        sniperUI = uiContainer.GetComponentsInChildren<Transform>(includeInactive: true)
                          .FirstOrDefault(t => t.CompareTag("SniperUI"))?.gameObject;
-        mainUI = UI.GetComponentsInChildren<Transform>(includeInactive: true)
+        mainUI = uiContainer.GetComponentsInChildren<Transform>(includeInactive: true)
                  .FirstOrDefault(t => t.CompareTag("MainUI"))?.gameObject;
     }
 
@@ -70,7 +70,7 @@ public class SniperRifle : WeaponBase
         handCanvas.transform.localPosition = new Vector3(originalPosition.x, originalPosition.y - Screen.height * 2, originalPosition.z);
 
         if (sniperUI != null) sniperUI.SetActive(true);
-        else Debug.LogWarning("No se pudo encontrar SniperUI");
+        else Debug.LogWarning("SniperUI could not be found");
 
         zoomCoroutine = StartCoroutine(ZoomRoutine(zoomAmount));
     }

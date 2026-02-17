@@ -8,18 +8,18 @@ public class ScreenFlash : MonoBehaviour
     private Image image;
     private Color flashColor;
     private float alpha;
-    private float fadeSpeed = 2.5f; 
+    private float fadeSpeed = 2.5f;
 
     void Awake()
     {
         image = GetComponent<Image>();
-        image.color = Color.clear; 
+        image.color = Color.clear;
     }
 
     public void Flash(Color color, float strength)
     {
         flashColor = color;
-        alpha = strength; 
+        alpha = strength;
         image.color = new Color(flashColor.r, flashColor.g, flashColor.b, alpha);
     }
 

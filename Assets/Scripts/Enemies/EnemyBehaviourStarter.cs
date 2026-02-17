@@ -2,16 +2,14 @@ using UnityEngine;
 
 public class EnemyBehaviorStarter : MonoBehaviour
 {
-    // 1. Definimos los tipos de enemigos disponibles
     public enum EnemyType
     {
-        Shooter,    // El de antes (Seraphim)
-        Kamikaze,   // El nuevo (Suicida)
-        Patrol      // (Opcional por si quieres uno que solo patrulle)
+        Shooter,
+        Kamikaze,
+        Patrol
     }
 
-    [Header("Configuración")]
-    // 2. Esta variable aparecerá como lista desplegable en el Inspector
+    [Header("Configuration")]
     public EnemyType enemyType = EnemyType.Shooter;
 
     void Start()
@@ -19,7 +17,6 @@ public class EnemyBehaviorStarter : MonoBehaviour
         var ai = GetComponent<EnemyAI>();
         if (ai == null) return;
 
-        // 3. Decidimos qué cerebro ponerle según lo que elegiste en el Inspector
         switch (enemyType)
         {
             case EnemyType.Shooter:
@@ -31,7 +28,6 @@ public class EnemyBehaviorStarter : MonoBehaviour
                 break;
 
             case EnemyType.Patrol:
-                // Si tienes un comportamiento solo de patrulla, úsalo aquí
                 ai.SetBehavior(new EnemyPatrolBehavior());
                 break;
         }

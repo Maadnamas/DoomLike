@@ -77,6 +77,6 @@ public class CardCollectionManager : MonoBehaviour
         if (File.Exists(savePath))
             File.Delete(savePath);
 
-        Debug.Log("datos de cartas borrados correctamente.");
+        Debug.Log("Card data deleted successfully.");
     }
 }

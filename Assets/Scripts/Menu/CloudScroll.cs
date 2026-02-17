@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class CloudScroll : MonoBehaviour
 {
     public RawImage rawImage;
-    public float scrollSpeed = 0.2f; // velocidad hacia arriba
+    public float scrollSpeed = 0.2f;
 
     private Rect uvRect;
 
@@ -18,7 +18,7 @@ public class CloudScroll : MonoBehaviour
 
     void Update()
     {
-        uvRect.y += scrollSpeed * Time.deltaTime; // movimiento hacia arriba
+        uvRect.y += scrollSpeed * Time.deltaTime;
         rawImage.uvRect = uvRect;
     }
 }

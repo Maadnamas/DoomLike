@@ -1,16 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WeaponHUDSimple : MonoBehaviour
+public class WeaponHUDManager : MonoBehaviour
 {
-    [Header("Referencias HUD")]
+    [Header("HUD References")]
     public Image[] weaponIcons = new Image[4];
 
     private WeaponManager weaponManager;
 
     void Start()
     {
-
         weaponManager = GetComponent<WeaponManager>();
         if (weaponManager == null)
         {
@@ -71,6 +70,7 @@ public class WeaponHUDSimple : MonoBehaviour
             }
         }
     }
+
     public void RefreshHUD()
     {
         UpdateHUD();

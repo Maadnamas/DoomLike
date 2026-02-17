@@ -3,12 +3,12 @@ using UnityEngine.UI;
 
 public class BobbingEffect : MonoBehaviour
 {
-    [Header("Referencias")]
+    [Header("References")]
     public Transform cameraTransform;
     public Image targetImage;
     public CharacterController playerController;
 
-    [Header("Configuración Bobbing - Cámara")]
+    [Header("Bobbing Settings - Camera")]
     public float walkBobbingSpeed = 7f;
     public float runBobbingSpeed = 10f;
     public float bobbingAmount = 0.06f;
@@ -16,7 +16,7 @@ public class BobbingEffect : MonoBehaviour
     public bool enableTilt = true;
     public float tiltAmount = 1.5f;
 
-    [Header("Configuración Bobbing - Imagen UI")]
+    [Header("Bobbing Settings - UI Image")]
     public bool applyToImage = false;
     public float imageBobbingMultiplier = 0.35f;
     public bool independentImageBobbing = false;
@@ -118,7 +118,7 @@ public class BobbingEffect : MonoBehaviour
         }
         else if (showDebug)
         {
-            Debug.LogWarning("BobbingEffect: cameraTransform es nulo");
+            Debug.LogWarning("BobbingEffect: cameraTransform is null");
         }
 
         if (applyToImage && targetImage != null)
@@ -138,8 +138,6 @@ public class BobbingEffect : MonoBehaviour
             Quaternion targetRot = cameraOriginalRot * Quaternion.Euler(0f, 0f, tilt);
             cameraTransform.localRotation = Quaternion.Slerp(cameraTransform.localRotation, targetRot, Time.deltaTime * bobbingSmoothness);
         }
-
-
     }
 
     void ApplyImageBobbing(float horizontalBob, float verticalBob, float t)
@@ -184,8 +182,6 @@ public class BobbingEffect : MonoBehaviour
             );
         }
     }
-
-
 
     void ResetToOriginalPositions()
     {

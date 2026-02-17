@@ -5,14 +5,14 @@ using TMPro;
 
 public class ScreenAnimations : MonoBehaviour
 {
-    [Header("Referencias de UI")]
+    [Header("UI References")]
     [SerializeField] private RectTransform victoryPanelRect;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI enemiesKilledText;
     [SerializeField] private Image rankImage;
     [SerializeField] private Image rankImageLarva;
 
-    [Header("Configuración de Animación")]
+    [Header("Animation Settings")]
     [SerializeField] private float fallDuration = 0.5f;
     [SerializeField] private float bounceHeight = 50f;
     [SerializeField] private float bounceDuration = 0.2f;
@@ -20,17 +20,17 @@ public class ScreenAnimations : MonoBehaviour
     [SerializeField] private float initialOffScreenOffset = 1000f;
     [SerializeField] private float rankPopDuration = 0.2f;
 
-    [Header("Animación de Larva")]
+    [Header("Larva Animation")]
     [SerializeField] private float larvaJumpHeight = 50f;
     [SerializeField] private float larvaJumpDuration = 0.3f;
     [SerializeField] private float larvaJumpInterval = 1f;
     [SerializeField] private float larvaEnterDuration = 0.5f;
 
-    [Header("Rotación de Ranking Principal")]
+    [Header("Main Rank Rotation")]
     [SerializeField] private float rankRotationSpeed = 3f;
     [SerializeField] private float rankRotationMaxAngle = 10f;
 
-    [Header("Audio de Conteo y Aparición")]
+    [Header("Audio (Counting & Appearance)")]
     [SerializeField] private AudioClip victoryStartSound;
     [SerializeField] private AudioClip countIncrementSound;
     [SerializeField] private AudioClip countEndSound;
@@ -46,7 +46,6 @@ public class ScreenAnimations : MonoBehaviour
     private Coroutine enemiesAnimationCoroutine;
     private Coroutine larvaJumpCoroutine;
     private Coroutine rankRotationCoroutine;
-    // Se elimina countSoundCoroutine
 
     private void Awake()
     {
@@ -74,7 +73,6 @@ public class ScreenAnimations : MonoBehaviour
             enemiesAnimationCoroutine = null;
         }
 
-        // Detener el sonido de conteo si está activo
         AudioManager.StopSFXLong();
 
         if (scoreText != null)
@@ -86,7 +84,6 @@ public class ScreenAnimations : MonoBehaviour
             enemiesKilledText.text = ScreenManager.EnemiesKilled.ToString();
         }
 
-        // Reproducir sonido de finalización de conteo una vez
         if (countEndSound != null)
         {
             AudioManager.PlaySFX2D(countEndSound);
@@ -142,7 +139,6 @@ public class ScreenAnimations : MonoBehaviour
         if (rankRotationCoroutine != null) StopCoroutine(rankRotationCoroutine);
         if (larvaJumpCoroutine != null) StopCoroutine(larvaJumpCoroutine);
 
-        // Asegurar que cualquier sonido largo anterior se detenga
         AudioManager.StopSFXLong();
 
         if (scoreText != null) scoreText.text = "0";
@@ -195,8 +191,7 @@ public class ScreenAnimations : MonoBehaviour
         while (time < fallDuration)
         {
             time += Time.unscaledDeltaTime;
-            float t = time / fallDuration;
-            rectToAnimate.localPosition = Vector3.Lerp(startPos, targetPos, t);
+            rectToAnimate.localPosition = Vector3.Lerp(startPos, targetPos, time / fallDuration);
             yield return null;
         }
         rectToAnimate.localPosition = targetPos;
@@ -206,18 +201,15 @@ public class ScreenAnimations : MonoBehaviour
         while (time < bounceDuration)
         {
             time += Time.unscaledDeltaTime;
-            float t = time / bounceDuration;
-            rectToAnimate.localPosition = Vector3.Lerp(targetPos, bounceUpPos, t);
+            rectToAnimate.localPosition = Vector3.Lerp(targetPos, bounceUpPos, time / bounceDuration);
             yield return null;
         }
-        rectToAnimate.localPosition = bounceUpPos;
 
         time = 0f;
         while (time < bounceDuration)
         {
             time += Time.unscaledDeltaTime;
-            float t = time / bounceDuration;
-            rectToAnimate.localPosition = Vector3.Lerp(bounceUpPos, targetPos, t);
+            rectToAnimate.localPosition = Vector3.Lerp(bounceUpPos, targetPos, time / bounceDuration);
             yield return null;
         }
         rectToAnimate.localPosition = targetPos;
@@ -227,9 +219,7 @@ public class ScreenAnimations : MonoBehaviour
     {
         float startTime = Time.unscaledTime;
         float endTime = startTime + duration;
-        int startValue = 0;
 
-        // Reproducir el sonido continuo del contador al inicio
         if (countIncrementSound != null)
         {
             AudioManager.PlaySFXLong(countIncrementSound);
@@ -238,25 +228,19 @@ public class ScreenAnimations : MonoBehaviour
         while (Time.unscaledTime < endTime && !skipAnimationRequested)
         {
             float elapsed = Time.unscaledTime - startTime;
-            float t = elapsed / duration;
-            int currentValue = Mathf.RoundToInt(Mathf.Lerp(startValue, targetValue, t));
+            int currentValue = Mathf.RoundToInt(Mathf.Lerp(0, targetValue, elapsed / duration));
             text.text = currentValue.ToString();
             yield return null;
         }
 
         text.text = targetValue.ToString();
-
-        // Detener el sonido continuo del contador al terminar
         AudioManager.StopSFXLong();
 
-        // Reproducir sonido de finalización (corto)
         if (countEndSound != null)
         {
             AudioManager.PlaySFX2D(countEndSound);
         }
     }
-
-    // Se elimina private IEnumerator PlayCountSoundLoop()
 
     private IEnumerator AnimateRankAppearance()
     {
@@ -271,16 +255,14 @@ public class ScreenAnimations : MonoBehaviour
         }
 
         float time = 0f;
-        Vector3 targetScale = Vector3.one;
-
         while (time < rankPopDuration && !skipAnimationRequested)
         {
             time += Time.unscaledDeltaTime;
-            rankImage.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, time / rankPopDuration);
+            rankImage.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, time / rankPopDuration);
             yield return null;
         }
 
-        rankImage.transform.localScale = targetScale;
+        rankImage.transform.localScale = Vector3.one;
     }
 
     private IEnumerator RotateRankImage()
@@ -289,12 +271,10 @@ public class ScreenAnimations : MonoBehaviour
         RectTransform rect = rankImage.rectTransform;
 
         float time = 0f;
-
         while (true)
         {
             time += Time.unscaledDeltaTime * rankRotationSpeed;
-            float angle = Mathf.Sin(time) * rankRotationMaxAngle;
-            rect.localRotation = Quaternion.Euler(0f, 0f, angle);
+            rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Sin(time) * rankRotationMaxAngle);
             yield return null;
         }
     }
@@ -312,20 +292,15 @@ public class ScreenAnimations : MonoBehaviour
         }
 
         Vector3 startPos = initialLarvaPosition + Vector3.down * Screen.height;
-        Vector3 targetPos = initialLarvaPosition;
-
-        rect.localPosition = startPos;
-
         float time = 0f;
         while (time < larvaEnterDuration && !skipAnimationRequested)
         {
             time += Time.unscaledDeltaTime;
-            float t = time / larvaEnterDuration;
-            rect.localPosition = Vector3.Lerp(startPos, targetPos, t);
+            rect.localPosition = Vector3.Lerp(startPos, initialLarvaPosition, time / larvaEnterDuration);
             yield return null;
         }
 
-        rect.localPosition = targetPos;
+        rect.localPosition = initialLarvaPosition;
         skipAnimationRequested = false;
     }
 
@@ -333,24 +308,19 @@ public class ScreenAnimations : MonoBehaviour
     {
         if (rankImageLarva == null) yield break;
         RectTransform rect = rankImageLarva.rectTransform;
-        Vector3 restPos = initialLarvaPosition;
 
         while (shouldLarvaJump)
         {
             float time = 0f;
-
             while (time < larvaJumpDuration)
             {
                 time += Time.unscaledDeltaTime;
-                float t = time / larvaJumpDuration;
-                float yOffset = Mathf.Sin(t * Mathf.PI) * larvaJumpHeight;
-                rect.localPosition = restPos + Vector3.up * yOffset;
+                rect.localPosition = initialLarvaPosition + Vector3.up * (Mathf.Sin((time / larvaJumpDuration) * Mathf.PI) * larvaJumpHeight);
                 yield return null;
             }
 
-            rect.localPosition = restPos;
+            rect.localPosition = initialLarvaPosition;
             yield return new WaitForSecondsRealtime(larvaJumpInterval);
         }
-        rect.localPosition = restPos;
     }
 }

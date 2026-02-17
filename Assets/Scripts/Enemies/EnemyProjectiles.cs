@@ -9,7 +9,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         speed = _speed;
         damage = _damage;
-        Destroy(gameObject, 5f); // Se autodestruye a los 5s si no choca
+        Destroy(gameObject, 5f);
     }
 
     private void Update()
@@ -19,21 +19,17 @@ public class EnemyProjectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Ignorar colisión con otros enemigos o proyectiles
         if (other.CompareTag("Enemy") || other.CompareTag("Projectile")) return;
 
-        // Si choca con el jugador
         if (other.CompareTag("Player"))
         {
             IDamageable damageable = other.GetComponent<IDamageable>();
             if (damageable != null)
             {
-                // Vector de impacto simple (hacia atrás de la bala)
                 damageable.TakeDamage(damage, transform.position, -transform.forward);
             }
         }
 
-        // Destruir la bala al chocar con Player o Paredes
         Destroy(gameObject);
     }
 }

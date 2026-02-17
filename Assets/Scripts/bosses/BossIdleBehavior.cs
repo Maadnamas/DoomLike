@@ -15,7 +15,7 @@ public class BossIdleBehavior : IBossBehavior
 
         float distance = boss.GetDistanceToPlayer();
 
-        // Si detecta al jugador, empezar a perseguirlo
+        // If player is detected, start chasing
         if (distance <= boss.DetectionRange)
         {
             boss.SetBehavior(new BossChaseBehavior());

@@ -18,25 +18,25 @@ public class BossChaseBehavior : IBossBehavior
 
         float distance = boss.GetDistanceToPlayer();
 
-        // Decidir qué ataque usar
+        // Decide which attack to use
         bool shouldUseSpikeAttack = ShouldUseSpikeAttack(boss, distance);
         bool shouldUseMeleeAttack = distance <= boss.bossData.meleeAttackRange && boss.CanMeleeAttack();
 
-        // Prioridad: Ataque de pinchos si está disponible y las condiciones son correctas
+        // Priority: Spike attack if available and conditions are right
         if (shouldUseSpikeAttack)
         {
             boss.SetBehavior(new BossSpikeAttackBehavior());
             return;
         }
 
-        // Si está cerca, ataque melee
+        // If close, melee attack
         if (shouldUseMeleeAttack)
         {
             boss.SetBehavior(new BossMeleeAttackBehavior());
             return;
         }
 
-        // Perseguir al jugador
+        // Chase the player
         boss.RotateTowards(boss.player.position);
         boss.MoveTo(boss.player.position, boss.MoveSpeed);
     }
@@ -50,9 +50,9 @@ public class BossChaseBehavior : IBossBehavior
     {
         if (!boss.CanSpikeAttack()) return false;
 
-        // Usar ataque de pinchos si:
-        // 1. El jugador está lejos (fuera de rango melee pero dentro del radio de pinchos)
-        // 2. O ha pasado suficiente tiempo desde el último ataque de pinchos
+        // Use spike attack if:
+        // 1. The player is far (outside melee range but inside spike radius)
+        // 2. Or enough time has passed since the last spike attack
         bool playerInSpikeRange = distance >= boss.bossData.spikeAttackMinDistance &&
                                   distance <= boss.bossData.spikeRadius + 2f;
 

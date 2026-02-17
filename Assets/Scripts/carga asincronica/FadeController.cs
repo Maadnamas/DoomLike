@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class FadeController : MonoBehaviour, IFade
 {
     [SerializeField] private Canvas canvas;
     [SerializeField] private Image blackImage;
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -19,10 +21,12 @@ public class FadeController : MonoBehaviour, IFade
             blackImage.color = c;
         }
     }
+
     public IEnumerator FadeOut(float duration)
     {
         if (blackImage == null)
             yield break;
+
         float t = 0f;
         Color c = blackImage.color;
         float start = c.a;
@@ -37,10 +41,12 @@ public class FadeController : MonoBehaviour, IFade
         c.a = 1f;
         blackImage.color = c;
     }
+
     public IEnumerator FadeIn(float duration)
     {
         if (blackImage == null)
             yield break;
+
         float t = 0f;
         Color c = blackImage.color;
         float start = c.a;

@@ -267,11 +267,9 @@ public class LarvaMedkit : MonoBehaviour, ICollectable
         if (collectEffect != null)
             Instantiate(collectEffect, transform.position, Quaternion.identity);
 
-        // Notificar al manager
         if (LarvaManager.Instance != null)
             LarvaManager.Instance.MarkLarvaAsCollected(this);
 
-        // Solo desactivar, NO destruir
         gameObject.SetActive(false);
     }
 }

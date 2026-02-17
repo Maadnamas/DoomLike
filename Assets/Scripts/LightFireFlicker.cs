@@ -29,10 +29,10 @@ public class LightFireHybridFlicker : MonoBehaviour
         float pingPong = Mathf.PingPong(Time.time * pingPongSpeed, 1f);
         float baseIntensity = Mathf.Lerp(minIntensity, maxIntensity, pingPong);
 
-        // --- Ruido Perlin suave ---
+        // --- Smooth Perlin Noise ---
         float noise = (Mathf.PerlinNoise(Time.time * noiseSpeed, noiseOffset) - 0.5f) * randomStrength;
 
-        // --- Resultado final ---
+        // --- Final Result ---
         pointLight.intensity = baseIntensity + noise;
     }
 }

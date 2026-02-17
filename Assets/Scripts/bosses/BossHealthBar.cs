@@ -4,15 +4,15 @@ using TMPro;
 
 public class BossHealthBar : MonoBehaviour
 {
-    [Header("Referencias UI")]
-    public Image healthBarFill; // La imagen que se va a achicar
+    [Header("UI References")]
+    public Image healthBarFill;
     public TextMeshProUGUI bossNameText;
     public GameObject healthBarPanel;
 
-    [Header("Configuración")]
+    [Header("Configuration")]
     public string bossName = "BOSS";
 
-    [Header("Colores (Opcional)")]
+    [Header("Colors (Optional)")]
     public bool useGradientColor = true;
     public Color fullHealthColor = Color.green;
     public Color halfHealthColor = Color.yellow;
@@ -32,14 +32,14 @@ public class BossHealthBar : MonoBehaviour
 
     private void Start()
     {
-        // Ocultar el panel al inicio
+        // Hide panel at start
         if (healthBarPanel != null)
             healthBarPanel.SetActive(false);
     }
 
     private void UpdateHealthBar(float currentHealth, float maxHealth)
     {
-        // Mostrar el panel la primera vez
+        // Show panel the first time
         if (healthBarPanel != null && !healthBarPanel.activeSelf)
         {
             healthBarPanel.SetActive(true);
@@ -50,23 +50,23 @@ public class BossHealthBar : MonoBehaviour
 
         if (healthBarFill != null)
         {
-            // Calcular porcentaje de vida
+            // Calculate health percentage
             float healthPercent = Mathf.Clamp01(currentHealth / maxHealth);
 
-            // Achicar la imagen (fillAmount)
+            // Update fillAmount
             healthBarFill.fillAmount = healthPercent;
 
-            // Cambiar color según la vida (opcional)
+            // Gradient color (optional)
             if (useGradientColor)
             {
                 if (healthPercent > 0.5f)
                 {
-                    // Verde a amarillo
+                    // Green to yellow
                     healthBarFill.color = Color.Lerp(halfHealthColor, fullHealthColor, (healthPercent - 0.5f) * 2f);
                 }
                 else
                 {
-                    // Amarillo a rojo
+                    // Yellow to red
                     healthBarFill.color = Color.Lerp(lowHealthColor, halfHealthColor, healthPercent * 2f);
                 }
             }

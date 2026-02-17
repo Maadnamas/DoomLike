@@ -7,14 +7,14 @@ public class BossHealth : MonoBehaviour, IDamageable
     private float maxHealth;
     public bool IsDead { get; private set; }
 
-    [Header("Efectos")]
+    [Header("Effects")]
     [SerializeField] private ParticleSystem hitVFXPrefab;
 
     [Header("Ragdoll")]
     [SerializeField] private bool useRagdoll = true;
     [SerializeField] private float ragdollDestroyDelay = 5f;
 
-    [Header("Puerta")]
+    [Header("Door")]
     [SerializeField] private DoorOpener doorToOpen;
 
     private BossAnimator bossAnimator;
@@ -23,7 +23,7 @@ public class BossHealth : MonoBehaviour, IDamageable
     private Rigidbody[] ragdollRigidbodies;
     private Collider[] ragdollColliders;
 
-    // Evento para actualizar la barra de vida
+    // Events to update health bar
     public static event Action<float, float> OnBossHealthChanged;
     public static event Action OnBossDied;
 
@@ -38,41 +38,40 @@ public class BossHealth : MonoBehaviour, IDamageable
             animator = GetComponentInChildren<Animator>();
         }
 
-        // Inicializar ragdoll
+        // Initialize ragdoll
         SetupRagdoll();
     }
 
     private void SetupRagdoll()
     {
-        // Obtener todos los Rigidbodies y Colliders del ragdoll
+        // Get all Rigidbodies and Colliders for the ragdoll
         ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
         ragdollColliders = GetComponentsInChildren<Collider>();
 
-        // Desactivar ragdoll al inicio
+        // Disable ragdoll at start
         SetRagdollActive(false);
     }
 
     private void SetRagdollActive(bool active)
     {
-        // Activar/desactivar todos los Rigidbodies
+        // Enable/disable all Rigidbodies
         foreach (Rigidbody rb in ragdollRigidbodies)
         {
             rb.isKinematic = !active;
             rb.useGravity = active;
         }
 
-        // Activar/desactivar todos los Colliders del ragdoll
-        // (excepto el collider principal del boss si existe)
+        // Enable/disable all ragdoll Colliders
         foreach (Collider col in ragdollColliders)
         {
-            // No desactivar el collider principal del CharacterController
+            // Do not disable the main CharacterController collider
             if (col != characterController)
             {
                 col.enabled = active;
             }
         }
 
-        // Desactivar animator cuando el ragdoll está activo
+        // Disable animator when ragdoll is active
         if (animator != null)
         {
             animator.enabled = !active;
@@ -85,7 +84,7 @@ public class BossHealth : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
         IsDead = false;
 
-        // Notificar la salud inicial
+        // Notify initial health
         OnBossHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
@@ -101,7 +100,7 @@ public class BossHealth : MonoBehaviour, IDamageable
             hitPoint = hitPoint
         });
 
-        // Notificar cambio de salud
+        // Notify health change
         OnBossHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (hitVFXPrefab != null)
@@ -137,17 +136,17 @@ public class BossHealth : MonoBehaviour, IDamageable
         IsDead = true;
         OnBossDied?.Invoke();
 
-        Debug.Log("¡Boss derrotado!");
+        Debug.Log("Boss defeated!");
         EventManager.TriggerEvent(GameEvents.BOSS_DIED, new BossDeathEventData
         {
             bossName = gameObject.name,
             position = transform.position,
         });
 
-        // Abrir la puerta cuando el boss muere
+        // Open the door when boss dies
         if (doorToOpen != null)
         {
-           doorToOpen.OpenDoor();
+            doorToOpen.OpenDoor();
         }
 
         if (useRagdoll)
@@ -156,35 +155,24 @@ public class BossHealth : MonoBehaviour, IDamageable
         }
         else
         {
-            // Reproducir animación de muerte tradicional
+            // Play traditional death animation
             bossAnimator?.PlayDeath();
         }
 
-        // Desactivar Character Controller
+        // Disable Character Controller
         if (characterController != null)
             characterController.enabled = false;
 
-        // Destruir el boss después de un tiempo
+        // Destroy boss after delay
         Destroy(gameObject, ragdollDestroyDelay);
     }
 
     private void ActivateRagdoll()
     {
-        Debug.Log("Activando ragdoll del boss");
+        Debug.Log("Activating boss ragdoll");
 
-        // Activar el ragdoll
+        // Enable ragdoll
         SetRagdollActive(true);
-
-        // Opcional: Aplicar una fuerza al ragdoll para que caiga de forma más dramática
-        // Puedes descomentar esto si quieres que el boss salga volando un poco
-        /*
-        Rigidbody mainRb = GetComponent<Rigidbody>();
-        if (mainRb == null && ragdollRigidbodies.Length > 0)
-        {
-            // Aplicar fuerza al torso o al primer rigidbody
-            ragdollRigidbodies[0].AddForce(Vector3.up * 300f + transform.forward * 200f);
-        }
-        */
     }
 
     public float GetCurrentHealth() => currentHealth;

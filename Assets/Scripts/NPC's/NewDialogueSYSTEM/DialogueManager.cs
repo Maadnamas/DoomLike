@@ -9,7 +9,7 @@ public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
 
-    [Header("Referencias UI")]
+    [Header("UI References")]
     public GameObject DialogueParent;
     public TextMeshProUGUI DialogTitleText;
     public TextMeshProUGUI DialogBodyText;
@@ -17,12 +17,11 @@ public class DialogueManager : MonoBehaviour
     public Transform responseButtonContainer;
     public GameObject responseButtonPrefab;
 
-    [Header("Ajustes de Animación")]
-    public float animationSpeed = 0.2f; // Tiempo entre frames
+    [Header("Animation Settings")]
+    public float animationSpeed = 0.2f;
 
     private List<DialogueResponse> currentResponses = new List<DialogueResponse>();
 
-    // Variables para recordar los datos del NPC actual
     private string currentTitle;
     private TMP_FontAsset currentFont;
     private Sprite portraitClosed;
@@ -67,46 +66,34 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    // --- AQUÍ ESTÁ EL CAMBIO PRINCIPAL ---
-
-    // 1. Este es el método público que llamas desde Actor.cs
-    // Ahora recibe TODA la caja de datos (el ScriptableObject)
     public void StartDialogue(Dialogue dialogueData)
     {
         ShowDialogue();
 
-        // Extraemos los datos del ScriptableObject y los guardamos en memoria
-        currentTitle = dialogueData.npcName; // <-- Aquí tomamos el nombre nuevo
+        currentTitle = dialogueData.npcName;
         currentFont = dialogueData.npcFont;
         portraitOpen = dialogueData.npcPortraitOpen;
         portraitClosed = dialogueData.npcPortraitClosed;
 
-        // Configuramos la UI inicial
         DialogTitleText.text = currentTitle;
         if (currentFont != null) DialogBodyText.font = currentFont;
 
-        // Mostramos el primer nodo (el RootNode)
         DisplayNode(dialogueData.RootNode);
     }
 
-    // 2. Este método privado se encarga de actualizar el texto y los botones
-    // Ya no necesita pedir título ni fotos porque usa las variables guardadas arriba
     private void DisplayNode(DialogueNode node)
     {
-        // Actualizar texto del cuerpo
         DialogBodyText.text = node.dialogueText;
 
-        // Gestión de Retrato y Animación
         if (NpcPortraitUI != null)
         {
             if (portraitOpen != null && portraitClosed != null)
             {
                 NpcPortraitUI.gameObject.SetActive(true);
-                // Reiniciar corrutina de habla
                 if (talkingCoroutine != null) StopCoroutine(talkingCoroutine);
                 talkingCoroutine = StartCoroutine(AnimateTalking());
             }
-            else if (portraitClosed != null) // Si solo hay una, se queda fija
+            else if (portraitClosed != null)
             {
                 NpcPortraitUI.sprite = portraitClosed;
                 NpcPortraitUI.gameObject.SetActive(true);
@@ -117,11 +104,9 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        // Limpiar botones viejos
         foreach (Transform child in responseButtonContainer) Destroy(child.gameObject);
         currentResponses.Clear();
 
-        // Crear botones nuevos
         if (node.responses.Count > 0)
         {
             int index = 0;
@@ -130,7 +115,6 @@ public class DialogueManager : MonoBehaviour
                 GameObject buttonObj = Instantiate(responseButtonPrefab, responseButtonContainer);
                 buttonObj.GetComponentInChildren<TextMeshProUGUI>().text = $"{index + 1}. {response.responseText}";
 
-                // Opcional: Aplicar la fuente también a los botones
                 if (currentFont != null) buttonObj.GetComponentInChildren<TextMeshProUGUI>().font = currentFont;
 
                 currentResponses.Add(response);
@@ -141,7 +125,7 @@ public class DialogueManager : MonoBehaviour
         else
         {
             GameObject buttonObj = Instantiate(responseButtonPrefab, responseButtonContainer);
-            buttonObj.GetComponentInChildren<TextMeshProUGUI>().text = "1. [Fin]";
+            buttonObj.GetComponentInChildren<TextMeshProUGUI>().text = "1. [End]";
             if (currentFont != null) buttonObj.GetComponentInChildren<TextMeshProUGUI>().font = currentFont;
 
             buttonObj.GetComponent<Button>().onClick.AddListener(() => HideDialogue());
@@ -165,7 +149,7 @@ public class DialogueManager : MonoBehaviour
     public void SelectResponse(DialogueResponse response)
     {
         if (response.nextNode != null)
-            DisplayNode(response.nextNode); // <-- Ahora llamamos a DisplayNode internamente
+            DisplayNode(response.nextNode);
         else
             HideDialogue();
     }

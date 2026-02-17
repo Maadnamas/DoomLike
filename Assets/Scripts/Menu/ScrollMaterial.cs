@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class ScrollMaterial : MonoBehaviour
 {
-    public Renderer targetRenderer;   // el Renderer del objeto (MeshRenderer)
-    public float scrollSpeedY = 0.1f; // velocidad vertical (positiva: sube, negativa: baja)
-    public float scrollSpeedX = 0f;   // opcional, si querés movimiento lateral
+    public Renderer targetRenderer;
+    public float scrollSpeedY = 0.1f;
+    public float scrollSpeedX = 0f;
 
     private Material mat;
     private Vector2 offset;
@@ -16,7 +16,6 @@ public class ScrollMaterial : MonoBehaviour
         if (targetRenderer == null)
             targetRenderer = GetComponent<Renderer>();
 
-        // Importante: instanciar el material para no modificar el material global
         mat = targetRenderer.material;
         offset = mat.mainTextureOffset;
     }

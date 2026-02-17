@@ -28,22 +28,18 @@ public class WeaponPickupManager : MonoBehaviour
 
     void InitializePickups()
     {
-        // Buscar todos los pickups en la escena
         if (weaponPickups.Count == 0)
         {
             WeaponPickup[] foundPickups = FindObjectsOfType<WeaponPickup>(true);
             weaponPickups.AddRange(foundPickups);
         }
 
-        // Inicializar todos como no recolectados
         foreach (WeaponPickup pickup in weaponPickups)
         {
             if (pickup != null)
             {
                 string key = GetPickupKey(pickup);
                 pickupCollectionState[key] = false;
-
-                // Asegurar que estén activos al inicio
                 pickup.gameObject.SetActive(true);
             }
         }
@@ -68,7 +64,7 @@ public class WeaponPickupManager : MonoBehaviour
 
         foreach (var kvp in pickupCollectionState)
         {
-            if (kvp.Value) // true = recolectado
+            if (kvp.Value)
             {
                 collectedKeys.Add(kvp.Key);
             }
@@ -82,13 +78,11 @@ public class WeaponPickupManager : MonoBehaviour
     {
         string serializedKeys = memento.GetAdditionalData<string>("collectedPickups", "");
 
-        // Resetear todos los estados a no recolectados
         foreach (var key in pickupCollectionState.Keys.ToList())
         {
             pickupCollectionState[key] = false;
         }
 
-        // Marcar los que fueron recolectados según el guardado
         if (!string.IsNullOrEmpty(serializedKeys))
         {
             string[] collectedKeys = serializedKeys.Split('|');
@@ -101,7 +95,6 @@ public class WeaponPickupManager : MonoBehaviour
             }
         }
 
-        // Aplicar los estados a los GameObjects
         ApplyPickupStates();
     }
 
@@ -115,11 +108,11 @@ public class WeaponPickupManager : MonoBehaviour
 
                 if (pickupCollectionState.ContainsKey(key))
                 {
-                    if (pickupCollectionState[key]) // Recolectado
+                    if (pickupCollectionState[key])
                     {
                         pickup.gameObject.SetActive(false);
                     }
-                    else // No recolectado
+                    else
                     {
                         pickup.ReactivatePickup();
                     }

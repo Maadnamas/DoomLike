@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    public Dialogue Dialogue; 
+    public Dialogue Dialogue;
 
-    [Header("Configuración Interacción")]
+    [Header("Interaction Configuration")]
     public Transform player;
     public float interactionRange = 3.0f;
 

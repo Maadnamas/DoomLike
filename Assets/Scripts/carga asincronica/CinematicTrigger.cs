@@ -6,16 +6,16 @@ using UnityEngine.Events;
 
 public class CinematicTrigger : MonoBehaviour
 {
-    [Header("Configuración de Video")]
+    [Header("Video Configuration")]
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private RawImage videoOutputImage;
     [SerializeField] private VideoClip videoToPlay;
 
-    [Header("Configuración de Movimiento")]
+    [Header("Movement Configuration")]
     [SerializeField] private GameObject playerObject;
     [SerializeField] private Transform teleportDestination;
 
-    [Header("Eventos")]
+    [Header("Events")]
     public UnityEvent OnCinematicStart;
     public UnityEvent OnCinematicEnd;
 
@@ -34,7 +34,6 @@ public class CinematicTrigger : MonoBehaviour
 
     private void OnEnable()
     {
-        // CORRECCIÓN: Iniciar la suscripción con espera
         StartCoroutine(SubscribeWithDelay());
     }
 
@@ -43,7 +42,6 @@ public class CinematicTrigger : MonoBehaviour
         UnsubscribeFromEvents();
     }
 
-    // NUEVO: Coroutine para asegurar que el EventManager esté listo antes de suscribir
     private IEnumerator SubscribeWithDelay()
     {
         while (EventManager.Instance == null)
@@ -126,7 +124,7 @@ public class CinematicTrigger : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Falta asignar el VideoPlayer o el VideoClip en el inspector.");
+            Debug.LogError("VideoPlayer or VideoClip missing in inspector.");
             OnVideoFinished(videoPlayer);
         }
     }
@@ -175,13 +173,11 @@ public class CinematicTrigger : MonoBehaviour
 
         if (cc != null) cc.enabled = true;
 
-        Debug.Log("Player teletransportado a: " + teleportDestination.name);
+        Debug.Log("Player teleported to: " + teleportDestination.name);
     }
 
-    // --- MANEJO DE PAUSA DEL VIDEO POR EVENTO ---
     private void OnGamePaused(object data)
     {
-        // Si el jugador pone pausa y la cinemática está activa, pausamos el video
         if (isCinematicPlaying && videoPlayer != null)
         {
             videoPlayer.Pause();
@@ -195,12 +191,10 @@ public class CinematicTrigger : MonoBehaviour
 
     private void OnGameResumed(object data)
     {
-        // Si el jugador quita la pausa y el video estaba en cinemática
         if (isCinematicPlaying && videoPlayer != null)
         {
             videoPlayer.Play();
 
-            // Reiniciamos el coroutine para que la lógica de espera continúe
             cinematicSequenceCoroutine = StartCoroutine(PlayCinematicSequence());
         }
     }
@@ -210,7 +204,6 @@ public class CinematicTrigger : MonoBehaviour
         if (videoPlayer != null)
             videoPlayer.loopPointReached -= OnVideoFinished;
 
-        // Asegurarse de desuscribir correctamente al destruir el objeto
         UnsubscribeFromEvents();
     }
 }

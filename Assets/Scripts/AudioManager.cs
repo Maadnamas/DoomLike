@@ -5,7 +5,7 @@ public class AudioManager : MonoBehaviour
 {
     static AudioManager instance;
     static AudioSource sfx2DSource;
-    static AudioSource sfxLongSource; // Nuevo AudioSource para SFX largos detenibles
+    static AudioSource sfxLongSource;
 
     [Header("Audio Mixer Settings")]
     [SerializeField] AudioMixerGroup sfxMixerGroup;
@@ -20,11 +20,9 @@ public class AudioManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // AudioSource para SFX cortos (PlayOneShot)
             sfx2DSource = gameObject.AddComponent<AudioSource>();
             sfx2DSource.spatialBlend = 0f;
 
-            // AudioSource para SFX largos detenibles (como el contador)
             sfxLongSource = gameObject.AddComponent<AudioSource>();
             sfxLongSource.spatialBlend = 0f;
             sfxLongSource.loop = false;
@@ -39,14 +37,12 @@ public class AudioManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // Para SFX cortos, no detenibles (el uso principal)
     public static void PlaySFX2D(AudioClip clip)
     {
         if (instance == null || clip == null) return;
         sfx2DSource.PlayOneShot(clip);
     }
 
-    // Nuevo método para SFX largos o detenibles
     public static void PlaySFXLong(AudioClip clip)
     {
         if (instance == null || clip == null || sfxLongSource == null) return;
@@ -55,7 +51,6 @@ public class AudioManager : MonoBehaviour
         sfxLongSource.Play();
     }
 
-    // Nuevo método para detener el SFX largo
     public static void StopSFXLong()
     {
         if (instance == null || sfxLongSource == null) return;

@@ -8,7 +8,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
     [Header("Weapons")]
     public WeaponBase[] weapons = new WeaponBase[4];
     public int currentIndex = 0;
-    public int currentweaponammo = 0;
+    public int currentWeaponAmmo = 0;
 
     [Header("Camera & References")]
     [SerializeField] private Camera playerCamera;
@@ -18,7 +18,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
     public Image weaponImage;
     public Animator weaponUIAnimator;
     public float transitionSpeed = 400f;
-    [SerializeField] float downamount = 200f;
+    [SerializeField] float downAmount = 200f;
 
     private RectTransform weaponImageRect;
     private Vector2 originalPos;
@@ -52,7 +52,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
                     foundWeapon = true;
                     currentIndex = i;
                     weapons[i].SetActive(true);
-                    currentweaponammo = weapons[i].currentAmmo;
+                    currentWeaponAmmo = weapons[i].currentAmmo;
 
                     if (weapons[i].weaponSprite != null && weaponImage != null)
                     {
@@ -64,7 +64,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
         if (!foundWeapon)
         {
-            Debug.LogWarning("No hay armas iniciales en el WeaponManager");
+            Debug.LogWarning("No initial weapons in WeaponManager");
         }
     }
 
@@ -107,7 +107,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
         }
         else
         {
-            Debug.Log("No hay arma en el slot " + index);
+            Debug.Log("No weapon in slot " + index);
         }
     }
 
@@ -135,7 +135,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
         StartCoroutine(ChangeWeaponUI(index));
 
         currentIndex = index;
-        currentweaponammo = weapons[currentIndex].currentAmmo;
+        currentWeaponAmmo = weapons[currentIndex].currentAmmo;
 
         if (weaponUIAnimator)
         {
@@ -149,7 +149,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
             if (weaponUIAnimator)
                 weaponUIAnimator.SetTrigger("Shoot");
 
-            currentweaponammo = weapons[currentIndex].currentAmmo;
+            currentWeaponAmmo = weapons[currentIndex].currentAmmo;
             TriggerAmmoChangedEvent();
         };
 
@@ -161,7 +161,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
         TriggerAmmoChangedEvent();
 
-        Debug.Log("Arma actual: " + weapons[index].weaponName);
+        Debug.Log("Current weapon: " + weapons[index].weaponName);
     }
 
     IEnumerator CameraZoomOutRoutine(float speed, float targetFOV)
@@ -194,7 +194,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
         if (weaponImageRect)
         {
-            while (weaponImageRect.anchoredPosition.y > originalPos.y - downamount)
+            while (weaponImageRect.anchoredPosition.y > originalPos.y - downAmount)
             {
                 weaponImageRect.anchoredPosition -= new Vector2(0, transitionSpeed * Time.deltaTime);
                 yield return null;
@@ -247,7 +247,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
         if (targetSlot < 0 || targetSlot >= weapons.Length)
         {
-            Debug.LogError("Slot asignado invalido para " + weaponPrefab.weaponName + ": " + targetSlot);
+            Debug.LogError("Invalid assigned slot for " + weaponPrefab.weaponName + ": " + targetSlot);
             return false;
         }
 
@@ -256,12 +256,12 @@ public class WeaponManager : MonoBehaviour, IAmmo
             if (weapons[targetSlot].weaponID == weaponPrefab.weaponID)
             {
                 weapons[targetSlot].AddAmmo(ammoToAdd);
-                Debug.Log("Municion anadida a " + weapons[targetSlot].weaponName + ": +" + ammoToAdd);
+                Debug.Log("Ammo added to " + weapons[targetSlot].weaponName + ": +" + ammoToAdd);
                 return true;
             }
             else
             {
-                Debug.LogWarning("Ya hay un arma diferente en el slot " + targetSlot + ". Reemplazando...");
+                Debug.LogWarning("Already a different weapon in slot " + targetSlot + ". Replacing...");
                 Destroy(weapons[targetSlot].gameObject);
                 weapons[targetSlot] = null;
             }
@@ -291,7 +291,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
             TrySelectWeapon(targetSlot);
         }
 
-        Debug.Log("Arma anadida: " + newWeapon.weaponName + " en slot " + targetSlot);
+        Debug.Log("Weapon added: " + newWeapon.weaponName + " in slot " + targetSlot);
         return true;
     }
 
@@ -317,7 +317,7 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
                     if (i == currentIndex)
                     {
-                        currentweaponammo = weapons[i].currentAmmo;
+                        currentWeaponAmmo = weapons[i].currentAmmo;
                     }
 
                     EventManager.TriggerEvent(GameEvents.AMMO_PICKED_UP, new AmmoEventData
@@ -394,14 +394,13 @@ public class WeaponManager : MonoBehaviour, IAmmo
             }
         }
         currentIndex = 0;
-        currentweaponammo = 0;
+        currentWeaponAmmo = 0;
     }
 
     public void LoadWeaponsFromMemento(List<PlayerMemento.WeaponData> weaponDataList)
     {
-        Debug.Log($"Cargando {weaponDataList.Count} armas desde memento...");
+        Debug.Log($"Loading {weaponDataList.Count} weapons from memento...");
 
-        // 1. Primero desactivar todas las armas actuales
         foreach (WeaponBase weapon in weapons)
         {
             if (weapon != null)
@@ -410,22 +409,18 @@ public class WeaponManager : MonoBehaviour, IAmmo
             }
         }
 
-        // 2. Resetear el array de armas
         for (int i = 0; i < weapons.Length; i++)
         {
             weapons[i] = null;
         }
 
-        // 3. Buscar todas las armas que son hijos del WeaponManager
         WeaponBase[] allWeapons = GetComponentsInChildren<WeaponBase>(true);
-        Debug.Log($"Encontradas {allWeapons.Length} armas como hijos del WeaponManager");
+        Debug.Log($"Found {allWeapons.Length} weapons as children of WeaponManager");
 
-        // 4. Reconstruir el array según los datos guardados
         foreach (var data in weaponDataList)
         {
-            Debug.Log($"Buscando arma con ID {data.weaponID} para slot {data.slotIndex}");
+            Debug.Log($"Looking for weapon with ID {data.weaponID} for slot {data.slotIndex}");
 
-            // Buscar el arma con el weaponID correspondiente
             WeaponBase matchingWeapon = null;
 
             foreach (var weapon in allWeapons)
@@ -439,7 +434,6 @@ public class WeaponManager : MonoBehaviour, IAmmo
 
             if (matchingWeapon != null)
             {
-                // Colocar el arma en su slot correcto
                 int slotIndex = data.slotIndex;
 
                 if (slotIndex >= 0 && slotIndex < weapons.Length)
@@ -448,26 +442,25 @@ public class WeaponManager : MonoBehaviour, IAmmo
                     matchingWeapon.currentAmmo = data.currentAmmo;
                     matchingWeapon.SetActive(false);
 
-                    Debug.Log($"Arma cargada: {matchingWeapon.weaponName} en slot {slotIndex} con {data.currentAmmo} balas");
+                    Debug.Log($"Weapon loaded: {matchingWeapon.weaponName} in slot {slotIndex} with {data.currentAmmo} ammo");
                 }
             }
             else
             {
-                Debug.LogWarning($"No se encontró arma con ID {data.weaponID}. El jugador debe recoger el pickup primero.");
+                Debug.LogWarning($"Weapon with ID {data.weaponID} not found. Player must pick it up first.");
             }
         }
 
-        // 5. Verificar qué armas tenemos cargadas
-        Debug.Log("Estado final del array de armas:");
+        Debug.Log("Final weapon array state:");
         for (int i = 0; i < weapons.Length; i++)
         {
             if (weapons[i] != null)
             {
-                Debug.Log($"Slot {i}: {weapons[i].weaponName} ({weapons[i].currentAmmo} balas)");
+                Debug.Log($"Slot {i}: {weapons[i].weaponName} ({weapons[i].currentAmmo} ammo)");
             }
             else
             {
-                Debug.Log($"Slot {i}: Vacío");
+                Debug.Log($"Slot {i}: Empty");
             }
         }
     }

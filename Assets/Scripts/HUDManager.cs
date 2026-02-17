@@ -6,15 +6,14 @@ using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
 {
-    [Header("Referencias UI")]
+    [Header("UI References")]
     [SerializeField] private TextMeshProUGUI ammoText;
     [SerializeField] private Image healthBar;
     [SerializeField] private GameObject ammoPanel;
 
-    [Header("Referencias Managers")]
+    [Header("Manager References")]
     [SerializeField] private WeaponManager weaponManager;
 
-    //private int currentWeaponIndex = -1;
     private bool isWeaponZeroEquipped = false;
 
     void OnEnable()
@@ -29,7 +28,6 @@ public class HUDManager : MonoBehaviour
 
     void Start()
     {
-        // Inicializar UI
         if (ammoPanel != null)
             ammoPanel.SetActive(false);
     }
@@ -41,13 +39,11 @@ public class HUDManager : MonoBehaviour
 
     private IEnumerator SubscribeWithDelay()
     {
-        // Esperar hasta que EventManager est� inicializado
         while (EventManager.Instance == null)
         {
             yield return null;
         }
 
-        // Ahora suscribirse a eventos
         EventManager.StartListening(GameEvents.UI_UPDATE_HEALTH, OnHealthUpdated);
         EventManager.StartListening(GameEvents.UI_UPDATE_AMMO, OnAmmoUpdated);
         EventManager.StartListening(GameEvents.WEAPON_SWITCHED, OnWeaponSwitched);

@@ -6,34 +6,34 @@ public class BossSpike : MonoBehaviour
     private float damage;
     private bool hasDealtDamage = false;
 
-    [Header("Configuración")]
+    [Header("Configuration")]
     public float riseSpeed = 5f;
     public float riseDuration = 0.3f;
     public float stayDuration = 2f;
-    public float sinkDuration = 0.5f; // Aumentado para que baje más suavemente
+    public float sinkDuration = 0.5f;
 
     private Vector3 startPosition;
     private Vector3 targetPosition;
-    private Vector3 originalTargetPosition; // Guardar posición original para el pincho del jugador
+    private Vector3 originalTargetPosition;
 
     public void Initialize(float spikeDamage, bool isPlayerSpike = false, float extraDownOffset = 0f)
     {
         damage = spikeDamage;
         startPosition = transform.position;
 
-        // Para el pincho del jugador, subirlo un poco para el "efecto volando"
+        // For player spike, raise it a bit for the "flying effect"
         if (isPlayerSpike)
         {
-            targetPosition = startPosition + Vector3.up * 0.3f; // Un poco más alto
-            originalTargetPosition = startPosition; // Guardamos la posición original
+            targetPosition = startPosition + Vector3.up * 0.3f;
+            originalTargetPosition = startPosition;
         }
         else
         {
             targetPosition = startPosition;
         }
 
-        // Empezar enterrado - todos más profundos, y el del jugador aún más
-        float depth = 4f + extraDownOffset; // 4f base + offset extra para el del jugador
+        // Start buried
+        float depth = 4f + extraDownOffset;
         transform.position = startPosition - Vector3.up * depth;
 
         StartCoroutine(SpikeLifecycle(isPlayerSpike));
@@ -41,9 +41,9 @@ public class BossSpike : MonoBehaviour
 
     private IEnumerator SpikeLifecycle(bool isPlayerSpike = false)
     {
-        // Fase 1: Salir del suelo
+        // Phase 1: Emerge from ground
         float elapsed = 0f;
-        Vector3 hiddenPos = transform.position; // Ya estamos en la posición enterrada
+        Vector3 hiddenPos = transform.position;
 
         while (elapsed < riseDuration)
         {
@@ -54,32 +54,29 @@ public class BossSpike : MonoBehaviour
 
         transform.position = targetPosition;
 
-        // Fase 2: Permanecer arriba
+        // Phase 2: Stay up
         yield return new WaitForSeconds(stayDuration);
 
-        // Fase 3: Hundirse - ahora bajando mucho más
+        // Phase 3: Sink
         elapsed = 0f;
-        float sinkExtraDepth = 6f; // Aumentado para que bajen más al desaparecer
+        float sinkExtraDepth = 6f;
 
-        // Para el pincho del jugador, bajamos desde su posición elevada
         Vector3 sinkStartPos = transform.position;
         Vector3 finalSinkPos;
 
         if (isPlayerSpike)
         {
-            // Bajar a la posición original y luego más abajo
             finalSinkPos = originalTargetPosition - Vector3.up * sinkExtraDepth;
         }
         else
         {
-            // Bajar mucho más desde la posición normal
             finalSinkPos = targetPosition - Vector3.up * sinkExtraDepth;
         }
 
         while (elapsed < sinkDuration)
         {
             float t = elapsed / sinkDuration;
-            // Usar ease-out para que empiece rápido y termine lento
+            // Ease-out
             t = 1f - Mathf.Pow(1f - t, 3f);
 
             transform.position = Vector3.Lerp(sinkStartPos, finalSinkPos, t);
@@ -89,10 +86,8 @@ public class BossSpike : MonoBehaviour
 
         transform.position = finalSinkPos;
 
-        // Esperar un poco antes de destruir para que se vea que baja
         yield return new WaitForSeconds(0.1f);
 
-        // Destruir
         Destroy(gameObject);
     }
 
@@ -109,7 +104,7 @@ public class BossSpike : MonoBehaviour
                 Vector3 hitNormal = Vector3.up;
                 damageable.TakeDamage(damage, hitPoint, hitNormal);
                 hasDealtDamage = true;
-                Debug.Log("Pincho golpeó al jugador");
+                Debug.Log("Spike hit the player");
             }
         }
     }

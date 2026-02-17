@@ -46,17 +46,17 @@ public class GameSaveManager : MonoBehaviour
 
         if (playerMovement == null)
         {
-            Debug.LogError("GameSaveManager: No se encontro PlayerMovement en la escena");
+            Debug.LogError("GameSaveManager: PlayerMovement not found in scene");
         }
 
         if (playerHealth == null)
         {
-            Debug.LogError("GameSaveManager: No se encontro PlayerHealth en la escena");
+            Debug.LogError("GameSaveManager: PlayerHealth not found in scene");
         }
 
         if (weaponManager == null)
         {
-            Debug.LogError("GameSaveManager: No se encontro WeaponManager en la escena");
+            Debug.LogError("GameSaveManager: WeaponManager not found in scene");
         }
     }
 
@@ -64,12 +64,12 @@ public class GameSaveManager : MonoBehaviour
     {
         if (playerMovement == null || playerHealth == null || weaponManager == null)
         {
-            Debug.LogWarning("Referencias del jugador no encontradas, intentando buscar...");
+            Debug.LogWarning("Player references not found, attempting to search...");
             FindPlayerReferences();
 
             if (playerMovement == null || playerHealth == null || weaponManager == null)
             {
-                Debug.LogError("No se puede guardar: faltan referencias del jugador");
+                Debug.LogError("Cannot save: player references are missing");
                 return;
             }
         }
@@ -79,11 +79,11 @@ public class GameSaveManager : MonoBehaviour
         if (memento != null)
         {
             PlayerSaveSystem.Save(memento);
-            Debug.Log("Juego guardado correctamente");
+            Debug.Log("Game saved successfully");
         }
         else
         {
-            Debug.LogError("Error al crear el memento para guardar");
+            Debug.LogError("Error creating memento for saving");
         }
     }
 
@@ -92,7 +92,7 @@ public class GameSaveManager : MonoBehaviour
         var memento = PlayerSaveSystem.Load();
         if (memento == null)
         {
-            Debug.LogWarning("No hay datos guardados para cargar");
+            Debug.LogWarning("No save data found to load");
             return;
         }
 
@@ -106,7 +106,7 @@ public class GameSaveManager : MonoBehaviour
         {
             if (playerMovement == null || playerHealth == null || weaponManager == null)
             {
-                Debug.Log("Buscando referencias del jugador...");
+                Debug.Log("Searching for player references...");
                 FindPlayerReferences();
             }
 
@@ -116,7 +116,7 @@ public class GameSaveManager : MonoBehaviour
 
     IEnumerator LoadSceneAndRestore(PlayerMemento memento)
     {
-        Debug.Log("Cargando escena: " + memento.sceneName);
+        Debug.Log("Loading scene: " + memento.sceneName);
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(memento.sceneName);
 
         while (!asyncLoad.isDone)
@@ -130,12 +130,12 @@ public class GameSaveManager : MonoBehaviour
 
         if (playerMovement != null && playerHealth != null && weaponManager != null)
         {
-            Debug.Log("Referencias encontradas, restaurando juego...");
+            Debug.Log("References found, restoring game...");
             RestoreGame(memento);
         }
         else
         {
-            Debug.LogError("No se pudieron encontrar las referencias del jugador despues de cargar la escena");
+            Debug.LogError("Could not find player references after loading the scene");
         }
     }
 
@@ -143,22 +143,22 @@ public class GameSaveManager : MonoBehaviour
     {
         if (playerMovement == null || playerHealth == null || weaponManager == null)
         {
-            Debug.LogError("No se pueden restaurar los datos: referencias nulas");
+            Debug.LogError("Cannot restore data: null references");
             return;
         }
 
         playerMovement.LoadState(memento, playerHealth, weaponManager);
-        Debug.Log("Juego cargado correctamente");
+        Debug.Log("Game loaded successfully");
     }
 
-    [ContextMenu("Buscar Referencias del Jugador")]
+    [ContextMenu("Find Player References")]
     void FindReferencesEditor()
     {
         FindPlayerReferences();
 
         if (playerMovement != null && playerHealth != null && weaponManager != null)
         {
-            Debug.Log("Todas las referencias encontradas correctamente");
+            Debug.Log("All references found successfully");
         }
     }
 }
